@@ -1,0 +1,88 @@
+.card {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 7px;
+  padding: 12px;
+  cursor: grab;
+  transition:
+    box-shadow 0.15s,
+    border-color 0.15s;
+  user-select: none;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: #d0d0d0;
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.taskKey {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.priorityDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.taskId {
+  font-size: 11px;
+  color: #8c8c8c;
+  font-weight: 500;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1f2e;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.labels {
+  margin-bottom: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dueDate {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+}
+
+.points {
+  font-size: 11px;
+  color: #8c8c8c;
+  background: #f5f5f5;
+  padding: 1px 5px;
+  border-radius: 3px;
+}

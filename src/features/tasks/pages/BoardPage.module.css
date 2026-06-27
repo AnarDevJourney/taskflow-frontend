@@ -1,0 +1,33 @@
+.board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  align-items: flex-start;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.projectKey {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  letter-spacing: 0.05em;
+}
+
+.projectName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1f2e;
+}

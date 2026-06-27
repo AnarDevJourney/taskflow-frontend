@@ -1,0 +1,218 @@
+.modal :global(.ant-modal-content) {
+  padding: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.modal :global(.ant-modal-body) {
+  padding: 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  min-height: 560px;
+}
+
+/* ─── Left panel ────────────────────────────────────────────────── */
+.left {
+  padding: 28px 28px 24px;
+  overflow-y: auto;
+  max-height: 80vh;
+  border-right: 1px solid #f0f0f0;
+}
+
+.taskMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.taskKey {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  letter-spacing: 0.04em;
+}
+
+.priorityBadge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: 4px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1f2e;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-left: -4px;
+  transition: background 0.15s;
+}
+
+.title:hover {
+  background: #f5f6fa;
+}
+
+.titleInput {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #1a1f2e !important;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+/* ─── Section ───────────────────────────────────────────────────── */
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 14px;
+  color: #1a1f2e;
+  line-height: 1.6;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+  min-height: 60px;
+}
+
+.description:hover {
+  background: #f5f6fa;
+  border-color: #e8e8e8;
+}
+
+.descPlaceholder {
+  color: #bfbfbf;
+}
+
+/* ─── Checklist ─────────────────────────────────────────────────── */
+.checklistProgress {
+  margin-bottom: 8px;
+}
+
+.checklistItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  border-radius: 4px;
+}
+
+.checklistItemText {
+  font-size: 13px;
+  color: #1a1f2e;
+  flex: 1;
+}
+
+.checklistItemText.done {
+  text-decoration: line-through;
+  color: #8c8c8c;
+}
+
+.addChecklistBtn {
+  margin-top: 6px;
+}
+
+/* ─── Comments ──────────────────────────────────────────────────── */
+.comment {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.commentBody {
+  flex: 1;
+  background: #f5f6fa;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.commentAuthor {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1f2e;
+  margin-bottom: 3px;
+}
+
+.commentText {
+  font-size: 13px;
+  color: #1a1f2e;
+  line-height: 1.5;
+}
+
+.commentDate {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+.commentActions {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.addComment {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ─── Right panel ───────────────────────────────────────────────── */
+.right {
+  padding: 24px 20px;
+  background: #fafafa;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.metaRow {
+  margin-bottom: 16px;
+}
+
+.metaLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 5px;
+}
+
+.metaValue {
+  font-size: 13px;
+  color: #1a1f2e;
+}
+
+.deleteBtn {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
