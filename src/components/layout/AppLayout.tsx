@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
-import { Avatar, Badge, Button, Dropdown, Menu, Skeleton, Tooltip } from "antd";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Dropdown,
+  Menu,
+  Skeleton,
+  Tooltip,
+  Popover,
+} from "antd";
 import {
   ProjectOutlined,
   CheckSquareOutlined,
@@ -18,8 +27,12 @@ import { authService } from "@features/auth/services/authService";
 import { useAppSelector } from "@store/index";
 import { queryClient } from "@lib/queryClient";
 import styles from "./AppLayout.module.css";
+import NotificationsPanel from "@features/notifications/components/NotificationsPanel";
+import { useNotificationSocket } from "@features/notifications/hooks/useNotificationSocket";
 
 export default function AppLayout() {
+  useNotificationSocket();
+
   const navigate = useNavigate();
   const location = useLocation();
   const { data: user } = useCurrentUser();
@@ -178,9 +191,17 @@ export default function AppLayout() {
               <Button icon={<SearchOutlined />} type="text" shape="circle" />
             </Tooltip>
             <Tooltip title="Notifications">
-              <Badge count={unreadCount} size="small">
-                <Button icon={<BellOutlined />} type="text" shape="circle" />
-              </Badge>
+              <Popover
+                content={<NotificationsPanel />}
+                trigger="click"
+                placement="bottomRight"
+                arrow={false}
+                styles={{ body: { padding: 0 } }}
+              >
+                <Badge count={unreadCount} size="small">
+                  <Button icon={<BellOutlined />} type="text" shape="circle" />
+                </Badge>
+              </Popover>
             </Tooltip>
           </div>
         </header>
