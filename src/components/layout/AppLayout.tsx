@@ -44,7 +44,7 @@ export default function AppLayout() {
       label: "Projects",
     },
     {
-      key: "/my-tasks",
+      key: `/workspaces/${activeWorkspace?._id}/my-tasks`,
       icon: <CheckSquareOutlined />,
       label: "My Tasks",
     },

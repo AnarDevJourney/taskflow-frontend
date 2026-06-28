@@ -59,7 +59,10 @@ export const router = createBrowserRouter([
         path: "workspaces/:workspaceId/projects/:projectId/board",
         element: s(BoardPage),
       },
-      { path: "my-tasks", element: s(MyTasksPage) },
+      {
+        path: "workspaces/:workspaceId/my-tasks",
+        element: s(MyTasksPage),
+      },
     ],
   },
 

@@ -129,4 +129,11 @@ export const taskService = {
     );
     return res.data.data;
   },
+
+  getMyTasks: async (workspaceId: string): Promise<PaginatedResponse<Task>> => {
+    const res = await api.get<ApiResponse<PaginatedResponse<Task>>>(
+      `/workspaces/${workspaceId}/projects`,
+    );
+    return res.data.data;
+  },
 };
