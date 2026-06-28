@@ -71,7 +71,7 @@ export default function TaskDetailModal({
   const [editingCommentBody, setEditingCommentBody] = useState("");
   const [newChecklistItem, setNewChecklistItem] = useState("");
   const [addingChecklist, setAddingChecklist] = useState(false);
-  const [localChecklist, setLocalChecklist] = useState(task.checklist);
+  const [localChecklist, setLocalChecklist] = useState(task.checklist ?? []);
 
   // Right panel local state — nothing fires until Save
   const [sideStatus, setSideStatus] = useState(task.status);
@@ -652,7 +652,7 @@ export default function TaskDetailModal({
           </div>
 
           {/* Labels */}
-          {task.labels.length > 0 && (
+          {(task.labels?.length ?? 0) > 0 && (
             <div className={styles.metaRow}>
               <div className={styles.metaLabel}>Labels</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>

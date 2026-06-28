@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   Avatar,
@@ -29,6 +29,7 @@ import { queryClient } from "@lib/queryClient";
 import styles from "./AppLayout.module.css";
 import NotificationsPanel from "@features/notifications/components/NotificationsPanel";
 import { useNotificationSocket } from "@features/notifications/hooks/useNotificationSocket";
+import SearchOverlay from "@features/search/components/SearchOverlay";
 
 export default function AppLayout() {
   useNotificationSocket();
@@ -38,6 +39,19 @@ export default function AppLayout() {
   const { data: user } = useCurrentUser();
   const { data: workspaces, isLoading: workspacesLoading } = useWorkspaces();
   const unreadCount = useAppSelector((s) => s.notifications.unreadCount);
+
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   // use first workspace by default
   const activeWorkspace = workspaces?.[0];
@@ -187,8 +201,13 @@ export default function AppLayout() {
         <header className={styles.topbar}>
           <div className={styles.pageTitle}>{getPageTitle()}</div>
           <div className={styles.topbarActions}>
-            <Tooltip title="Search (coming soon)">
-              <Button icon={<SearchOutlined />} type="text" shape="circle" />
+            <Tooltip title="Search (Ctrl+K)">
+              <Button
+                icon={<SearchOutlined />}
+                type="text"
+                shape="circle"
+                onClick={() => setSearchOpen(true)}
+              />
             </Tooltip>
             <Tooltip title="Notifications">
               <Popover
@@ -211,6 +230,10 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </div>
+      <SearchOverlay
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
     </div>
   );
 }
