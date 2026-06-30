@@ -1,0 +1,122 @@
+.page {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.backButton {
+  align-self: flex-start;
+  padding-left: 0;
+  color: #8c8c8c;
+}
+
+.section {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+}
+
+.sectionHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1f2e;
+  margin-bottom: 2px;
+}
+
+.sectionDesc {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.sectionBody {
+  padding: 20px;
+}
+
+.columnList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.columnRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  color: #8c8c8c;
+  flex-shrink: 0;
+  touch-action: none;
+}
+
+.colorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.columnNameInput {
+  flex: 1;
+}
+
+.wipInput {
+  width: 110px;
+}
+
+.memberList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.memberRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.memberInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.memberName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.memberEmail {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.dangerSection {
+  background: #fff5f5;
+  border: 1px solid #ffd6d6;
+  border-radius: 8px;
+}
+
+.dangerHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid #ffd6d6;
+}
+
+.dangerTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f5222d;
+  margin-bottom: 2px;
+}

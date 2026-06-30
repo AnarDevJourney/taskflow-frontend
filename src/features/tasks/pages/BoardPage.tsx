@@ -12,8 +12,9 @@ import {
   closestCorners,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import { useNavigate } from "react-router-dom";
 import { Button, Skeleton, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, SettingOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useProject } from "@features/projects/hooks/useProjects";
 import { useTasks } from "../hooks/useTasks";
@@ -32,6 +33,7 @@ export default function BoardPage() {
   }>();
 
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [defaultStatus, setDefaultStatus] = useState("To Do");
@@ -227,13 +229,25 @@ export default function BoardPage() {
           <span className={styles.projectKey}>{project.key}</span>
           <span className={styles.projectName}>{project.name}</span>
         </div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => handleAddTask("To Do")}
-        >
-          Add Task
-        </Button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button
+            icon={<SettingOutlined />}
+            onClick={() =>
+              navigate(
+                `/workspaces/${workspaceId}/projects/${projectId}/settings`,
+              )
+            }
+          >
+            Settings
+          </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => handleAddTask("To Do")}
+          >
+            Add Task
+          </Button>
+        </div>
       </div>
 
       {/* Board */}

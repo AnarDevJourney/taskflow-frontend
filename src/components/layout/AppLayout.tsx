@@ -91,6 +91,7 @@ export default function AppLayout() {
   ];
 
   const getPageTitle = () => {
+    if (location.pathname.includes("/settings")) return "Project Settings";
     if (
       location.pathname.includes("/projects") &&
       location.pathname.includes("/board")
