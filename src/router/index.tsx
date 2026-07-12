@@ -23,6 +23,7 @@ const ProjectSettingsPage = lazy(
   () => import("@features/projects/pages/ProjectSettingsPage"),
 );
 const MyTasksPage = lazy(() => import("@features/tasks/pages/MyTasksPage"));
+const SprintsPage = lazy(() => import("@features/sprints/pages/SprintsPage"));
 
 const PageLoader = () => (
   <div
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
       {
         path: "workspaces/:workspaceId/projects/:projectId/settings",
         element: s(ProjectSettingsPage),
+      },
+      {
+        path: "workspaces/:workspaceId/projects/:projectId/sprints",
+        element: s(SprintsPage),
       },
       {
         path: "workspaces/:workspaceId/my-tasks",

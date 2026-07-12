@@ -20,6 +20,7 @@ export interface UpdateTaskDto {
   dueDate?: string | null;
   storyPoints?: number | null;
   labels?: string[];
+  sprintId?: string | null;
 }
 
 export interface ReorderTaskDto {

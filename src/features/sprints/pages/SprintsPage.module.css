@@ -1,0 +1,129 @@
+.page {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.projectKey {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  letter-spacing: 0.05em;
+}
+
+.projectName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+}
+
+.sidebarCard {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.sidebarTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.sprintHeader {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.sprintHeaderTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.sprintTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.sprintDates {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-bottom: 8px;
+}
+
+.sprintGoal {
+  font-size: 13px;
+  color: #1a1f2e;
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emptyState {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 48px 0;
+}
+
+.statsRow {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.statBox {
+  flex: 1;
+  background: #f5f6fa;
+  border-radius: 6px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.statValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-top: 2px;
+}

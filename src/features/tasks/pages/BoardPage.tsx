@@ -14,7 +14,11 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { useNavigate } from "react-router-dom";
 import { Button, Skeleton, message } from "antd";
-import { PlusOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  SettingOutlined,
+  ThunderboltOutlined,
+} from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useProject } from "@features/projects/hooks/useProjects";
 import { useTasks } from "../hooks/useTasks";
@@ -230,6 +234,18 @@ export default function BoardPage() {
           <span className={styles.projectName}>{project.name}</span>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
+          {project.sprintMode && (
+            <Button
+              icon={<ThunderboltOutlined />}
+              onClick={() =>
+                navigate(
+                  `/workspaces/${workspaceId}/projects/${projectId}/sprints`,
+                )
+              }
+            >
+              Sprints
+            </Button>
+          )}
           <Button
             icon={<SettingOutlined />}
             onClick={() =>

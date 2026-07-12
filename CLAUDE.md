@@ -84,6 +84,18 @@ src/
     │       └── MyTasksPage.tsx
     ├── comments/
     │   └── services/commentService.ts   # getAll, create, update, remove
+    ├── sprints/
+    │   ├── services/sprintService.ts    # CRUD, start, complete, getVelocity, getBurndown
+    │   ├── hooks/useSprints.ts
+    │   ├── components/
+    │   │   ├── SprintCard.tsx + SprintCard.module.css   # sidebar list item
+    │   │   ├── BurndownChart.tsx        # recharts LineChart (ideal vs actual)
+    │   │   ├── VelocityChart.tsx        # recharts BarChart (completed points per sprint)
+    │   │   ├── CreateSprintModal.tsx
+    │   │   ├── CompleteSprintModal.tsx  # incomplete task action radio + next sprint select
+    │   │   └── AddTasksToSprintModal.tsx # backlog task picker with checkboxes
+    │   └── pages/
+    │       ├── SprintsPage.tsx + SprintsPage.module.css
     ├── notifications/
     │   └── hooks/useNotifications.ts
     └── search/
@@ -454,6 +466,7 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Projects page: project grid, create project modal
 - ✅ Board page: kanban columns, task cards, drag and drop (cross-column + same-column reorder), create task modal
 - ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), comments (add/edit/delete)
+- ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
 
 ## In Progress / Remaining
 

@@ -1,0 +1,52 @@
+.card {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition:
+    box-shadow 0.15s,
+    border-color 0.15s;
+  margin-bottom: 8px;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-color: #d0d0d0;
+}
+
+.selected {
+  border-color: #4a6cf7;
+  background: #f0f4ff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: 10px;
+}
+
+.dates {
+  font-size: 11px;
+  color: #8c8c8c;
+}
+
+.points {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-top: 4px;
+}
