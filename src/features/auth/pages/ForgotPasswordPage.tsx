@@ -3,36 +3,41 @@ import { Form, Input, Button, Alert, Typography, Result } from "antd";
 import { MailOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useTranslation } from "react-i18next";
 import { authService } from "../services/authService";
+import LanguageSwitcher from "@components/ui/LanguageSwitcher";
 import styles from "./AuthPage.module.css";
 
 const { Title, Text } = Typography;
 
 export default function ForgotPasswordPage() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
   const { mutate, isPending, isSuccess, error } = useMutation({
-    mutationFn: (dto: { email: string }) => authService.forgotPassword(dto),
+    mutationFn: (dto: { email: string }) =>
+      authService.forgotPassword({ ...dto, lang: i18n.resolvedLanguage }),
   });
 
   const errorMessage = (() => {
     if (!error) return null;
     const msg = (error as AxiosError<any>)?.response?.data?.error?.message;
-    return Array.isArray(msg) ? msg[0] : msg || "Something went wrong.";
+    return Array.isArray(msg) ? msg[0] : msg || t("auth.forgotPassword.genericError");
   })();
 
   if (isSuccess) {
     return (
       <div className={styles.wrapper}>
+        <LanguageSwitcher className={styles.languageSwitch} />
         <div className={styles.card}>
           <Result
             status="success"
-            title="Check your email"
-            subTitle="If an account exists for that email, we sent a password reset link. It expires in 1 hour."
+            title={t("auth.forgotPassword.successTitle")}
+            subTitle={t("auth.forgotPassword.successSubtitle")}
             extra={
               <Button type="primary" onClick={() => navigate("/login")}>
-                Back to login
+                {t("auth.forgotPassword.backToLogin")}
               </Button>
             }
           />
@@ -43,6 +48,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className={styles.wrapper}>
+      <LanguageSwitcher className={styles.languageSwitch} />
       <div className={styles.card}>
         <div className={styles.logo}>
           <div className={styles.logoIcon}>
@@ -61,10 +67,10 @@ export default function ForgotPasswordPage() {
             </svg>
           </div>
           <Title level={4} className={styles.appName}>
-            Reset password
+            {t("auth.forgotPassword.title")}
           </Title>
           <Text type="secondary" className={styles.subtitle}>
-            Enter your email and we'll send you a reset link
+            {t("auth.forgotPassword.subtitle")}
           </Text>
         </div>
 
@@ -86,22 +92,24 @@ export default function ForgotPasswordPage() {
         >
           <Form.Item
             name="email"
-            label="Email"
+            label={t("auth.forgotPassword.emailLabel")}
             rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Enter a valid email" },
+              { required: true, message: t("auth.forgotPassword.emailRequired") },
+              { type: "email", message: t("auth.forgotPassword.emailInvalid") },
             ]}
           >
             <Input
               prefix={<MailOutlined style={{ color: "#8c8c8c" }} />}
-              placeholder="you@company.com"
+              placeholder={t("auth.forgotPassword.emailPlaceholder")}
               autoComplete="email"
             />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
             <Button type="primary" htmlType="submit" loading={isPending} block>
-              {isPending ? "Sending…" : "Send reset link"}
+              {isPending
+                ? t("auth.forgotPassword.sending")
+                : t("auth.forgotPassword.sendResetLink")}
             </Button>
           </Form.Item>
         </Form>
@@ -109,7 +117,7 @@ export default function ForgotPasswordPage() {
         <div className={styles.footer}>
           <Link to="/login" className={styles.backLink}>
             <ArrowLeftOutlined style={{ marginRight: 6 }} />
-            Back to login
+            {t("auth.forgotPassword.backToLogin")}
           </Link>
         </div>
       </div>

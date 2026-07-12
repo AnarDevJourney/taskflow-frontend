@@ -19,6 +19,7 @@ import {
   DownOutlined,
   PlusOutlined,
   SearchOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
@@ -30,6 +31,7 @@ import styles from "./AppLayout.module.css";
 import NotificationsPanel from "@features/notifications/components/NotificationsPanel";
 import { useNotificationSocket } from "@features/notifications/hooks/useNotificationSocket";
 import SearchOverlay from "@features/search/components/SearchOverlay";
+import LanguageSwitcher from "@components/ui/LanguageSwitcher";
 
 export default function AppLayout() {
   useNotificationSocket();
@@ -75,6 +77,11 @@ export default function AppLayout() {
       icon: <CheckSquareOutlined />,
       label: "My Tasks",
     },
+    {
+      key: `/workspaces/${activeWorkspace?._id}/members`,
+      icon: <TeamOutlined />,
+      label: "Members",
+    },
   ];
 
   const selectedKey =
@@ -99,6 +106,7 @@ export default function AppLayout() {
       return "Board";
     if (location.pathname.includes("/projects")) return "Projects";
     if (location.pathname.includes("/my-tasks")) return "My Tasks";
+    if (location.pathname.includes("/members")) return "Members";
     return "TaskFlow";
   };
 
@@ -202,6 +210,7 @@ export default function AppLayout() {
         <header className={styles.topbar}>
           <div className={styles.pageTitle}>{getPageTitle()}</div>
           <div className={styles.topbarActions}>
+            <LanguageSwitcher size="small" />
             <Tooltip title="Search (Ctrl+K)">
               <Button
                 icon={<SearchOutlined />}

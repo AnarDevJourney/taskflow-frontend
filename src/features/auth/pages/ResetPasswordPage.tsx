@@ -3,12 +3,15 @@ import { Form, Input, Button, Alert, Typography, Result } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useTranslation } from "react-i18next";
 import { authService } from "../services/authService";
+import LanguageSwitcher from "@components/ui/LanguageSwitcher";
 import styles from "./AuthPage.module.css";
 
 const { Title, Text } = Typography;
 
 export default function ResetPasswordPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
@@ -22,23 +25,24 @@ export default function ResetPasswordPage() {
   const errorMessage = (() => {
     if (!error) return null;
     const msg = (error as AxiosError<any>)?.response?.data?.error?.message;
-    return Array.isArray(msg) ? msg[0] : msg || "Something went wrong.";
+    return Array.isArray(msg) ? msg[0] : msg || t("auth.resetPassword.genericError");
   })();
 
   if (!token) {
     return (
       <div className={styles.wrapper}>
+        <LanguageSwitcher className={styles.languageSwitch} />
         <div className={styles.card}>
           <Result
             status="error"
-            title="Invalid reset link"
-            subTitle="This password reset link is missing a token. Please request a new one."
+            title={t("auth.resetPassword.invalidLinkTitle")}
+            subTitle={t("auth.resetPassword.invalidLinkSubtitle")}
             extra={
               <Button
                 type="primary"
                 onClick={() => navigate("/forgot-password")}
               >
-                Request new link
+                {t("auth.resetPassword.requestNewLink")}
               </Button>
             }
           />
@@ -50,14 +54,15 @@ export default function ResetPasswordPage() {
   if (isSuccess) {
     return (
       <div className={styles.wrapper}>
+        <LanguageSwitcher className={styles.languageSwitch} />
         <div className={styles.card}>
           <Result
             status="success"
-            title="Password updated"
-            subTitle="Your password has been changed successfully."
+            title={t("auth.resetPassword.successTitle")}
+            subTitle={t("auth.resetPassword.successSubtitle")}
             extra={
               <Button type="primary" onClick={() => navigate("/login")}>
-                Sign in
+                {t("auth.resetPassword.signIn")}
               </Button>
             }
           />
@@ -68,6 +73,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className={styles.wrapper}>
+      <LanguageSwitcher className={styles.languageSwitch} />
       <div className={styles.card}>
         <div className={styles.logo}>
           <div className={styles.logoIcon}>
@@ -86,10 +92,10 @@ export default function ResetPasswordPage() {
             </svg>
           </div>
           <Title level={4} className={styles.appName}>
-            New password
+            {t("auth.resetPassword.title")}
           </Title>
           <Text type="secondary" className={styles.subtitle}>
-            Choose a strong password for your account
+            {t("auth.resetPassword.subtitle")}
           </Text>
         </div>
 
@@ -111,43 +117,47 @@ export default function ResetPasswordPage() {
         >
           <Form.Item
             name="password"
-            label="New password"
+            label={t("auth.resetPassword.passwordLabel")}
             rules={[
-              { required: true, message: "Please enter a password" },
-              { min: 8, message: "Password must be at least 8 characters" },
+              { required: true, message: t("auth.resetPassword.passwordRequired") },
+              { min: 8, message: t("auth.resetPassword.passwordMinLength") },
             ]}
           >
             <Input.Password
               prefix={<LockOutlined style={{ color: "#8c8c8c" }} />}
-              placeholder="••••••••"
+              placeholder={t("auth.resetPassword.passwordPlaceholder")}
             />
           </Form.Item>
 
           <Form.Item
             name="confirm"
-            label="Confirm password"
+            label={t("auth.resetPassword.confirmLabel")}
             dependencies={["password"]}
             rules={[
-              { required: true, message: "Please confirm your password" },
+              { required: true, message: t("auth.resetPassword.confirmRequired") },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error("Passwords do not match"));
+                  return Promise.reject(
+                    new Error(t("auth.resetPassword.confirmMismatch")),
+                  );
                 },
               }),
             ]}
           >
             <Input.Password
               prefix={<LockOutlined style={{ color: "#8c8c8c" }} />}
-              placeholder="••••••••"
+              placeholder={t("auth.resetPassword.passwordPlaceholder")}
             />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
             <Button type="primary" htmlType="submit" loading={isPending} block>
-              {isPending ? "Updating…" : "Update password"}
+              {isPending
+                ? t("auth.resetPassword.updating")
+                : t("auth.resetPassword.updatePassword")}
             </Button>
           </Form.Item>
         </Form>

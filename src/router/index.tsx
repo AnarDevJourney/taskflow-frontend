@@ -15,6 +15,9 @@ const AppLayout = lazy(() => import("@components/layout/AppLayout"));
 const WorkspacesPage = lazy(
   () => import("@features/workspaces/pages/WorkspacesPage"),
 );
+const WorkspaceMembersPage = lazy(
+  () => import("@features/workspaces/pages/WorkspaceMembersPage"),
+);
 const ProjectsPage = lazy(
   () => import("@features/projects/pages/ProjectsPage"),
 );
@@ -59,6 +62,10 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/workspaces" replace /> },
       { path: "workspaces", element: s(WorkspacesPage) },
       { path: "workspaces/:workspaceId/projects", element: s(ProjectsPage) },
+      {
+        path: "workspaces/:workspaceId/members",
+        element: s(WorkspaceMembersPage),
+      },
       {
         path: "workspaces/:workspaceId/projects/:projectId/board",
         element: s(BoardPage),

@@ -33,6 +33,10 @@ export const lightTheme: ThemeConfig = {
     colorBgLayout: tokens.bg,
     borderRadius: 6,
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontSize: 15,
+    fontSizeLG: 16,
+    controlHeight: 38,
+    controlHeightLG: 44,
   },
   components: {
     Layout: {

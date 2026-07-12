@@ -1,5 +1,15 @@
 import api from "@lib/axios";
-import { ApiResponse, Workspace } from "@types/index";
+import { ApiResponse, Workspace, WorkspaceMember, WorkspaceRole } from "@types/index";
+
+export interface InviteMemberDto {
+  email: string;
+  role: WorkspaceRole;
+}
+
+export interface InviteMemberResult {
+  message: string;
+  token: string;
+}
 
 export const workspaceService = {
   getMyWorkspaces: async (): Promise<Workspace[]> => {
@@ -12,5 +22,27 @@ export const workspaceService = {
       `/workspaces/${workspaceId}`,
     );
     return res.data.data;
+  },
+
+  getMembers: async (workspaceId: string): Promise<WorkspaceMember[]> => {
+    const res = await api.get<ApiResponse<WorkspaceMember[]>>(
+      `/workspaces/${workspaceId}/members`,
+    );
+    return res.data.data;
+  },
+
+  inviteMember: async (
+    workspaceId: string,
+    dto: InviteMemberDto,
+  ): Promise<InviteMemberResult> => {
+    const res = await api.post<ApiResponse<InviteMemberResult>>(
+      `/workspaces/${workspaceId}/members/invite`,
+      dto,
+    );
+    return res.data.data;
+  },
+
+  removeMember: async (workspaceId: string, memberId: string): Promise<void> => {
+    await api.delete(`/workspaces/${workspaceId}/members/${memberId}`);
   },
 };

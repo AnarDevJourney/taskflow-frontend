@@ -1,17 +1,20 @@
 import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Form, Input, Button, Alert, Typography } from "antd";
+import { Form, Input, Button, Alert, Typography, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useTranslation } from "react-i18next";
 import { authService, LoginDto } from "../services/authService";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { queryClient } from "@lib/queryClient";
+import LanguageSwitcher from "@components/ui/LanguageSwitcher";
 import styles from "./AuthPage.module.css";
 
 const { Title, Text } = Typography;
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
@@ -28,6 +31,7 @@ export default function LoginPage() {
     mutationFn: (dto: LoginDto) => authService.login(dto),
     onSuccess: (user) => {
       queryClient.setQueryData(["me"], user);
+      message.success(t("auth.login.loginSuccess"));
       navigate("/workspaces", { replace: true });
     },
   });
@@ -36,19 +40,23 @@ export default function LoginPage() {
     if (!error) return null;
     const axiosError = error as AxiosError<any>;
     const msg = axiosError?.response?.data?.error?.message;
-    if (Array.isArray(msg)) return msg[0];
-    return msg || "Something went wrong. Please try again.";
+    const rawMsg = Array.isArray(msg) ? msg[0] : msg;
+    if (rawMsg === "Invalid email or password") {
+      return t("auth.login.invalidCredentials");
+    }
+    return rawMsg || t("auth.login.genericError");
   })();
 
   return (
     <div className={styles.wrapper}>
+      <LanguageSwitcher className={styles.languageSwitch} />
       <div className={styles.card}>
         {/* Logo */}
         <div className={styles.logo}>
           <div className={styles.logoIcon}>
             <svg
-              width="22"
-              height="22"
+              width="26"
+              height="26"
               viewBox="0 0 24 24"
               fill="none"
               stroke="#fff"
@@ -61,10 +69,10 @@ export default function LoginPage() {
             </svg>
           </div>
           <Title level={4} className={styles.appName}>
-            TaskFlow
+            {t("auth.login.appName")}
           </Title>
           <Text type="secondary" className={styles.subtitle}>
-            Sign in to your workspace
+            {t("auth.login.subtitle")}
           </Text>
         </div>
 
@@ -88,47 +96,47 @@ export default function LoginPage() {
         >
           <Form.Item
             name="email"
-            label="Email"
+            label={t("auth.login.emailLabel")}
             rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Enter a valid email" },
+              { required: true, message: t("auth.login.emailRequired") },
+              { type: "email", message: t("auth.login.emailInvalid") },
             ]}
           >
             <Input
               prefix={<MailOutlined style={{ color: "#8c8c8c" }} />}
-              placeholder="you@company.com"
+              placeholder={t("auth.login.emailPlaceholder")}
               autoComplete="email"
             />
           </Form.Item>
 
           <Form.Item
             name="password"
-            label="Password"
-            rules={[{ required: true, message: "Please enter your password" }]}
+            label={t("auth.login.passwordLabel")}
+            rules={[
+              { required: true, message: t("auth.login.passwordRequired") },
+            ]}
             extra={
               <Link to="/forgot-password" className={styles.forgotLink}>
-                Forgot password?
+                {t("auth.login.forgotPassword")}
               </Link>
             }
           >
             <Input.Password
               prefix={<LockOutlined style={{ color: "#8c8c8c" }} />}
-              placeholder="••••••••"
+              placeholder={t("auth.login.passwordPlaceholder")}
               autoComplete="current-password"
             />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
             <Button type="primary" htmlType="submit" loading={isPending} block>
-              {isPending ? "Signing in…" : "Sign in"}
+              {isPending ? t("auth.login.signingIn") : t("auth.login.signIn")}
             </Button>
           </Form.Item>
         </Form>
 
         <div className={styles.footer}>
-          <Text type="secondary">
-            TaskFlow is invite-only. Contact your admin if you need access.
-          </Text>
+          <Text type="secondary">{t("auth.login.footer")}</Text>
         </div>
       </div>
     </div>
