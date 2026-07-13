@@ -21,14 +21,14 @@
 }
 
 .sectionTitle {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   color: #1a1f2e;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .sectionDesc {
-  font-size: 12px;
+  font-size: 14px;
   color: #8c8c8c;
 }
 
@@ -54,13 +54,13 @@
 }
 
 .memberName {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #1a1f2e;
 }
 
 .memberEmail {
-  font-size: 12px;
+  font-size: 13px;
   color: #8c8c8c;
 }
 
@@ -81,6 +81,6 @@
   color: #f5222d;
   border-radius: 6px;
   padding: 8px 12px;
-  font-size: 13px;
+  font-size: 14px;
   margin-bottom: 16px;
 }

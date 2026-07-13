@@ -25,6 +25,11 @@ export interface RegisterDto {
 export interface ValidateInviteResponse {
   email: string;
   role: string;
+  userExists: boolean;
+}
+
+export interface AcceptInviteResult {
+  workspaceId: string;
 }
 
 export const authService = {
@@ -63,5 +68,13 @@ export const authService = {
       dto,
     );
     return res.data.data.user;
+  },
+
+  acceptInvite: async (token: string): Promise<AcceptInviteResult> => {
+    const res = await api.post<ApiResponse<AcceptInviteResult>>(
+      "/auth/accept-invite",
+      { token },
+    );
+    return res.data.data;
   },
 };

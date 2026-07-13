@@ -62,9 +62,12 @@ src/
     │       ├── ResetPasswordPage.tsx
     │       └── AuthPage.module.css       # shared CSS for all auth pages
     ├── workspaces/
-    │   ├── services/workspaceService.ts  # getMyWorkspaces, getOne
+    │   ├── services/workspaceService.ts  # getMyWorkspaces, create, getOne, update, archive, getArchivedWorkspaces, restore, getMembers, inviteMember, removeMember, updateMemberRole
     │   ├── hooks/useWorkspaces.ts
-    │   └── pages/WorkspacesPage.tsx
+    │   └── pages/
+    │       ├── WorkspacesPage.tsx + WorkspacesPage.module.css   # grid of workspace cards, create/edit/archive/restore modals
+    │       ├── WorkspaceMembersPage.tsx + .module.css           # member list, invite, remove, per-member role Select
+    │       └── (workspace "active" selection is Redux `ui.activeWorkspaceId`, persisted to localStorage — see Redux Store Rules)
     ├── projects/
     │   ├── services/projectService.ts    # getAll, getOne, create
     │   ├── hooks/useProjects.ts          # useProjects (list) + useProject (single — includes statuses)
@@ -261,7 +264,7 @@ const errorMessage = (() => {
 Only these things belong in Redux:
 
 - `ui.sidebarCollapsed` — sidebar open/closed
-- `ui.activeWorkspaceId` — currently selected workspace
+- `ui.activeWorkspaceId` — currently selected workspace. Persisted to `localStorage` (`taskflow.activeWorkspaceId`) inside the `setActiveWorkspace` reducer itself, so it survives a page reload — `AppLayout` reads the URL's `:workspaceId` first, falls back to this stored value on routes without one (e.g. `/workspaces`), and only then falls back to the first workspace in the list.
 - `ui.activeProjectId` — currently selected project
 - `notifications.items` — notification list pushed via WebSocket
 - `notifications.unreadCount` — badge count
@@ -291,16 +294,18 @@ Routes defined in `src/router/index.tsx`.
 
 Public routes (no auth required):
 
-- `/login`
-- `/register` — requires `?token=` query param
+- `/login` — accepts an optional `?inviteToken=` query param (set when redirected here from `/register` because the invited email already has an account); after a successful login it calls `authService.acceptInvite` and lands on that workspace instead of `/workspaces`
+- `/register` — requires `?token=` query param. Branches three ways based on `GET /auth/invite/:token`: normal signup form, an "accept invite" screen if the same invited user is already logged in, or a redirect prompt to `/login?inviteToken=...` if the invited email already has an account and no one is logged in
 - `/forgot-password`
 - `/reset-password` — requires `?token=` query param
 
 Protected routes (wrapped in `AuthGuard`):
 
+- `/workspaces` — workspace list/grid, create/edit/archive/restore
 - `/workspaces/:workspaceId/projects`
 - `/workspaces/:workspaceId/projects/:projectId/board`
-- `/my-tasks`
+- `/workspaces/:workspaceId/members` — member list, invite, remove, role update
+- `/workspaces/:workspaceId/my-tasks`
 
 `AuthGuard` checks `useCurrentUser()` — if loading shows spinner, if error/no user redirects to `/login`.
 
@@ -459,21 +464,24 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 
 ## Completed Features
 
-- ✅ Foundation: Axios, React Query, Redux store, router, theme
+- ✅ Foundation: Axios, React Query, Redux store, router, theme, i18n (en/az/ru)
 - ✅ Auth pages: Login, Register, ForgotPassword, ResetPassword
-- ✅ AppLayout: sidebar, topbar, workspace switcher, user menu
+- ✅ Invite re-use flow: `RegisterPage` branches to an "accept invite" screen (already logged in as the invited user) or redirects to `Login` with `?inviteToken=` (invited email already has an account, not logged in) — see `authService.acceptInvite`
+- ✅ AppLayout: sidebar, topbar, workspace switcher (derived from URL, falling back to the persisted `ui.activeWorkspaceId`, falling back to first workspace), user menu, notifications panel, Cmd+K search overlay
 - ✅ AuthGuard: route protection
+- ✅ Workspaces page: grid of workspace cards (member count, description), create/edit/archive/restore modals, owner-only archive/restore
+- ✅ Workspace Members page: member list, invite (email + role), remove member, per-member role update (Select, owner/admin only, can't change own role)
 - ✅ Projects page: project grid, create project modal
+- ✅ Project Settings page: edit project, manage columns and members
 - ✅ Board page: kanban columns, task cards, drag and drop (cross-column + same-column reorder), create task modal
 - ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), comments (add/edit/delete)
+- ✅ My Tasks page — cross-project task list
 - ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
+- ✅ Notifications panel — bell icon dropdown with real-time updates (WebSocket)
+- ✅ Search overlay — Cmd+K global search
 
 ## In Progress / Remaining
 
-- ⬜ My Tasks page — cross-project task list
-- ⬜ Project Settings page — edit project, manage columns and members
-- ⬜ Notifications panel — bell icon dropdown with real-time updates
-- ⬜ Search overlay — Cmd+K global search
 - ⬜ Activity log — inside task detail modal
 
 ---

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Form, Input, Button, Alert, Typography, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
@@ -16,11 +16,28 @@ const { Title, Text } = Typography;
 export default function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get("inviteToken") || "";
   const [form] = Form.useForm();
+
+  const goToWorkspace = () => {
+    if (!inviteToken) {
+      navigate("/workspaces", { replace: true });
+      return;
+    }
+    authService
+      .acceptInvite(inviteToken)
+      .then(({ workspaceId }) => {
+        message.success(t("auth.register.inviteAccepted"));
+        navigate(`/workspaces/${workspaceId}/projects`, { replace: true });
+      })
+      .catch(() => navigate("/workspaces", { replace: true }));
+  };
 
   const { data: currentUser } = useCurrentUser();
   useEffect(() => {
-    if (currentUser) navigate("/workspaces", { replace: true });
+    if (currentUser) goToWorkspace();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, navigate]);
 
   const {
@@ -32,7 +49,7 @@ export default function LoginPage() {
     onSuccess: (user) => {
       queryClient.setQueryData(["me"], user);
       message.success(t("auth.login.loginSuccess"));
-      navigate("/workspaces", { replace: true });
+      goToWorkspace();
     },
   });
 

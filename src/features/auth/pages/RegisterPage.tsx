@@ -20,11 +20,7 @@ export default function RegisterPage() {
   const token = searchParams.get("token") || "";
   const [form] = Form.useForm();
 
-  // redirect if already logged in
   const { data: currentUser } = useCurrentUser();
-  useEffect(() => {
-    if (currentUser) navigate("/workspaces", { replace: true });
-  }, [currentUser, navigate]);
 
   // validate the invite token and get email
   const {
@@ -37,6 +33,18 @@ export default function RegisterPage() {
     enabled: !!token,
     retry: false,
   });
+
+  const sameUserLoggedIn =
+    !!currentUser &&
+    !!invite &&
+    currentUser.email.toLowerCase() === invite.email.toLowerCase();
+
+  // redirect away if already logged in as someone other than the invited user
+  useEffect(() => {
+    if (currentUser && !inviteLoading && !sameUserLoggedIn) {
+      navigate("/workspaces", { replace: true });
+    }
+  }, [currentUser, inviteLoading, sameUserLoggedIn, navigate]);
 
   const {
     mutate: register,
@@ -52,9 +60,27 @@ export default function RegisterPage() {
     },
   });
 
+  const {
+    mutate: acceptInvite,
+    isPending: isAccepting,
+    error: acceptError,
+  } = useMutation({
+    mutationFn: () => authService.acceptInvite(token),
+    onSuccess: ({ workspaceId }) => {
+      message.success(t("auth.register.inviteAccepted"));
+      navigate(`/workspaces/${workspaceId}/projects`, { replace: true });
+    },
+  });
+
   const errorMessage = (() => {
     if (!error) return null;
     const msg = (error as AxiosError<any>)?.response?.data?.error?.message;
+    return Array.isArray(msg) ? msg[0] : msg || t("auth.register.genericError");
+  })();
+
+  const acceptErrorMessage = (() => {
+    if (!acceptError) return null;
+    const msg = (acceptError as AxiosError<any>)?.response?.data?.error?.message;
     return Array.isArray(msg) ? msg[0] : msg || t("auth.register.genericError");
   })();
 
@@ -102,6 +128,72 @@ export default function RegisterPage() {
             status="error"
             title={t("auth.register.expiredInviteTitle")}
             subTitle={t("auth.register.expiredInviteSubtitle")}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // invited user already has an account and is currently logged in as
+  // that same account — just add them back to the workspace, no need
+  // to register or re-enter a password
+  if (sameUserLoggedIn) {
+    return (
+      <div className={styles.wrapper}>
+        <LanguageSwitcher className={styles.languageSwitch} />
+        <div className={styles.card}>
+          {acceptErrorMessage && (
+            <Alert
+              message={acceptErrorMessage}
+              type="error"
+              showIcon
+              style={{ marginBottom: 20, borderRadius: 6 }}
+            />
+          )}
+          <Result
+            status="info"
+            title={t("auth.register.acceptInviteTitle")}
+            subTitle={t("auth.register.acceptInviteSubtitle", {
+              email: invite.email,
+            })}
+            extra={
+              <Button
+                type="primary"
+                loading={isAccepting}
+                onClick={() => acceptInvite()}
+              >
+                {t("auth.register.acceptInviteButton")}
+              </Button>
+            }
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // invited email already has an account, but no one is logged in —
+  // send them to log in instead of registering a brand new account
+  if (invite.userExists) {
+    return (
+      <div className={styles.wrapper}>
+        <LanguageSwitcher className={styles.languageSwitch} />
+        <div className={styles.card}>
+          <Result
+            status="info"
+            title={t("auth.register.existingAccountTitle")}
+            subTitle={t("auth.register.existingAccountSubtitle", {
+              email: invite.email,
+            })}
+            extra={
+              <Button
+                type="primary"
+                onClick={() =>
+                  navigate(`/login?inviteToken=${encodeURIComponent(token)}`)
+                }
+              >
+                {t("auth.register.existingAccountButton")}
+              </Button>
+            }
           />
         </div>
       </div>

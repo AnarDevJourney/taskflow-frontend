@@ -69,6 +69,21 @@ export default function WorkspaceMembersPage() {
     onError: () => message.error(t("members.removeMemberFailed")),
   });
 
+  const { mutate: updateRole, isPending: isUpdatingRole } = useMutation({
+    mutationFn: ({ memberId, role }: { memberId: string; role: WorkspaceRole }) =>
+      workspaceService.updateMemberRole(workspaceId ?? "", memberId, role),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["workspace-members", workspaceId] });
+      message.success(t("members.roleUpdated"));
+    },
+    onError: (error: AxiosError<any>) => {
+      const msg = error?.response?.data?.error?.message;
+      message.error(
+        Array.isArray(msg) ? msg[0] : msg || t("members.roleUpdateFailed"),
+      );
+    },
+  });
+
   const inviteErrorMessage = (() => {
     if (!inviteError) return null;
     const msg = (inviteError as AxiosError<any>)?.response?.data?.error?.message;
@@ -128,7 +143,22 @@ export default function WorkspaceMembersPage() {
                       <div className={styles.memberName}>{member.userId.name}</div>
                       <div className={styles.memberEmail}>{member.userId.email}</div>
                     </div>
-                    <Tag>{t(`members.role.${member.role}`)}</Tag>
+                    {canManageMembers &&
+                    member.role !== WorkspaceRole.OWNER &&
+                    member.userId._id !== currentUser?._id ? (
+                      <Select
+                        size="small"
+                        value={member.role}
+                        options={ROLE_OPTIONS}
+                        loading={isUpdatingRole}
+                        style={{ width: 110 }}
+                        onChange={(role) =>
+                          updateRole({ memberId: member.userId._id, role })
+                        }
+                      />
+                    ) : (
+                      <Tag>{t(`members.role.${member.role}`)}</Tag>
+                    )}
                     {canManageMembers && member.role !== WorkspaceRole.OWNER && (
                       <Button
                         danger

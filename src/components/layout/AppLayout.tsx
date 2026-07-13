@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Outlet, useNavigate, useLocation, Link } from "react-router-dom";
+import { Outlet, useNavigate, useLocation, useParams, Link } from "react-router-dom";
 import {
   Avatar,
   Badge,
@@ -11,6 +11,7 @@ import {
   Popover,
 } from "antd";
 import {
+  AppstoreOutlined,
   ProjectOutlined,
   CheckSquareOutlined,
   BellOutlined,
@@ -25,7 +26,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { useWorkspaces } from "@features/workspaces/hooks/useWorkspaces";
 import { authService } from "@features/auth/services/authService";
-import { useAppSelector } from "@store/index";
+import { useAppDispatch, useAppSelector } from "@store/index";
+import { setActiveWorkspace } from "@store/uiSlice";
 import { queryClient } from "@lib/queryClient";
 import styles from "./AppLayout.module.css";
 import NotificationsPanel from "@features/notifications/components/NotificationsPanel";
@@ -37,10 +39,13 @@ export default function AppLayout() {
   useNotificationSocket();
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const location = useLocation();
+  const { workspaceId: routeWorkspaceId } = useParams<{ workspaceId?: string }>();
   const { data: user } = useCurrentUser();
   const { data: workspaces, isLoading: workspacesLoading } = useWorkspaces();
   const unreadCount = useAppSelector((s) => s.notifications.unreadCount);
+  const storedWorkspaceId = useAppSelector((s) => s.ui.activeWorkspaceId);
 
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -55,8 +60,16 @@ export default function AppLayout() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  // use first workspace by default
-  const activeWorkspace = workspaces?.[0];
+  // remember whichever workspace the URL points to, so it stays "active"
+  // even after navigating to a route without a :workspaceId (e.g. /workspaces)
+  useEffect(() => {
+    if (routeWorkspaceId) dispatch(setActiveWorkspace(routeWorkspaceId));
+  }, [routeWorkspaceId, dispatch]);
+
+  const activeWorkspace =
+    workspaces?.find((ws) => ws._id === routeWorkspaceId) ??
+    workspaces?.find((ws) => ws._id === storedWorkspaceId) ??
+    workspaces?.[0];
 
   const { mutate: logout } = useMutation({
     mutationFn: authService.logout,
@@ -67,6 +80,11 @@ export default function AppLayout() {
   });
 
   const menuItems = [
+    {
+      key: "/workspaces",
+      icon: <AppstoreOutlined />,
+      label: "Workspaces",
+    },
     {
       key: `/workspaces/${activeWorkspace?._id}/projects`,
       icon: <ProjectOutlined />,
@@ -85,7 +103,9 @@ export default function AppLayout() {
   ];
 
   const selectedKey =
-    menuItems.find((item) => location.pathname.startsWith(item.key))?.key ?? "";
+    menuItems
+      .filter((item) => location.pathname.startsWith(item.key))
+      .sort((a, b) => b.key.length - a.key.length)[0]?.key ?? "";
 
   const userMenuItems = [
     {
@@ -107,6 +127,7 @@ export default function AppLayout() {
     if (location.pathname.includes("/projects")) return "Projects";
     if (location.pathname.includes("/my-tasks")) return "My Tasks";
     if (location.pathname.includes("/members")) return "Members";
+    if (location.pathname === "/workspaces") return "Workspaces";
     return "TaskFlow";
   };
 
@@ -142,12 +163,20 @@ export default function AppLayout() {
             ) : (
               <Dropdown
                 menu={{
-                  items:
-                    workspaces?.map((ws) => ({
+                  items: [
+                    ...(workspaces?.map((ws) => ({
                       key: ws._id,
                       label: ws.name,
                       onClick: () => navigate(`/workspaces/${ws._id}/projects`),
-                    })) ?? [],
+                    })) ?? []),
+                    { type: "divider" as const },
+                    {
+                      key: "all-workspaces",
+                      icon: <AppstoreOutlined />,
+                      label: "All workspaces",
+                      onClick: () => navigate("/workspaces"),
+                    },
+                  ],
                 }}
                 trigger={["click"]}
               >
