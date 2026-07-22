@@ -83,6 +83,17 @@ export const projectService = {
     return res.data.data;
   },
 
+  addMember: async (
+    workspaceId: string,
+    projectId: string,
+    memberId: string,
+  ): Promise<ProjectMember> => {
+    const res = await api.post<ApiResponse<ProjectMember>>(
+      `/workspaces/${workspaceId}/projects/${projectId}/members/${memberId}`,
+    );
+    return res.data.data;
+  },
+
   removeMember: async (
     workspaceId: string,
     projectId: string,
@@ -96,6 +107,19 @@ export const projectService = {
   archive: async (workspaceId: string, projectId: string): Promise<void> => {
     await api.delete<ApiResponse<void>>(
       `/workspaces/${workspaceId}/projects/${projectId}`,
+    );
+  },
+
+  getArchivedProjects: async (workspaceId: string): Promise<Project[]> => {
+    const res = await api.get<ApiResponse<Project[]>>(
+      `/workspaces/${workspaceId}/projects/archived`,
+    );
+    return res.data.data;
+  },
+
+  restore: async (workspaceId: string, projectId: string): Promise<void> => {
+    await api.patch<ApiResponse<void>>(
+      `/workspaces/${workspaceId}/projects/${projectId}/restore`,
     );
   },
 };

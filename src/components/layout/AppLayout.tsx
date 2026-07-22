@@ -23,6 +23,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { useWorkspaces } from "@features/workspaces/hooks/useWorkspaces";
 import { authService } from "@features/auth/services/authService";
@@ -37,6 +38,7 @@ import LanguageSwitcher from "@components/ui/LanguageSwitcher";
 
 export default function AppLayout() {
   useNotificationSocket();
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -83,22 +85,22 @@ export default function AppLayout() {
     {
       key: "/workspaces",
       icon: <AppstoreOutlined />,
-      label: "Workspaces",
+      label: t("appLayout.nav.workspaces"),
     },
     {
       key: `/workspaces/${activeWorkspace?._id}/projects`,
       icon: <ProjectOutlined />,
-      label: "Projects",
+      label: t("appLayout.nav.projects"),
     },
     {
       key: `/workspaces/${activeWorkspace?._id}/my-tasks`,
       icon: <CheckSquareOutlined />,
-      label: "My Tasks",
+      label: t("appLayout.nav.myTasks"),
     },
     {
       key: `/workspaces/${activeWorkspace?._id}/members`,
       icon: <TeamOutlined />,
-      label: "Members",
+      label: t("appLayout.nav.members"),
     },
   ];
 
@@ -111,24 +113,29 @@ export default function AppLayout() {
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: "Sign out",
+      label: t("appLayout.signOut"),
       danger: true,
       onClick: () => logout(),
     },
   ];
 
   const getPageTitle = () => {
-    if (location.pathname.includes("/settings")) return "Project Settings";
+    if (location.pathname.includes("/settings"))
+      return t("appLayout.pageTitle.projectSettings");
     if (
       location.pathname.includes("/projects") &&
       location.pathname.includes("/board")
     )
-      return "Board";
-    if (location.pathname.includes("/projects")) return "Projects";
-    if (location.pathname.includes("/my-tasks")) return "My Tasks";
-    if (location.pathname.includes("/members")) return "Members";
-    if (location.pathname === "/workspaces") return "Workspaces";
-    return "TaskFlow";
+      return t("appLayout.pageTitle.board");
+    if (location.pathname.includes("/projects"))
+      return t("appLayout.pageTitle.projects");
+    if (location.pathname.includes("/my-tasks"))
+      return t("appLayout.pageTitle.myTasks");
+    if (location.pathname.includes("/members"))
+      return t("appLayout.pageTitle.members");
+    if (location.pathname === "/workspaces")
+      return t("appLayout.pageTitle.workspaces");
+    return t("appLayout.pageTitle.default");
   };
 
   return (
@@ -153,7 +160,7 @@ export default function AppLayout() {
                 <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
               </svg>
             </div>
-            <span className={styles.logoText}>TaskFlow</span>
+            <span className={styles.logoText}>{t("appLayout.logoText")}</span>
           </Link>
 
           {/* Workspace switcher */}
@@ -173,7 +180,7 @@ export default function AppLayout() {
                     {
                       key: "all-workspaces",
                       icon: <AppstoreOutlined />,
-                      label: "All workspaces",
+                      label: t("appLayout.allWorkspaces"),
                       onClick: () => navigate("/workspaces"),
                     },
                   ],
@@ -188,7 +195,7 @@ export default function AppLayout() {
                     {activeWorkspace?.name?.[0]?.toUpperCase()}
                   </Avatar>
                   <span className={styles.workspaceName}>
-                    {activeWorkspace?.name ?? "Select workspace"}
+                    {activeWorkspace?.name ?? t("appLayout.selectWorkspace")}
                   </span>
                   <DownOutlined style={{ fontSize: 10, color: "#8c8c8c" }} />
                 </button>
@@ -198,7 +205,7 @@ export default function AppLayout() {
 
           {/* Navigation */}
           <nav className={styles.nav}>
-            <div className={styles.navSection}>Navigation</div>
+            <div className={styles.navSection}>{t("appLayout.navigation")}</div>
             <Menu
               mode="inline"
               selectedKeys={[selectedKey]}
@@ -240,7 +247,7 @@ export default function AppLayout() {
           <div className={styles.pageTitle}>{getPageTitle()}</div>
           <div className={styles.topbarActions}>
             <LanguageSwitcher size="small" />
-            <Tooltip title="Search (Ctrl+K)">
+            <Tooltip title={t("appLayout.searchTooltip")}>
               <Button
                 icon={<SearchOutlined />}
                 type="text"
@@ -248,7 +255,7 @@ export default function AppLayout() {
                 onClick={() => setSearchOpen(true)}
               />
             </Tooltip>
-            <Tooltip title="Notifications">
+            <Tooltip title={t("appLayout.notificationsTooltip")}>
               <Popover
                 content={<NotificationsPanel />}
                 trigger="click"

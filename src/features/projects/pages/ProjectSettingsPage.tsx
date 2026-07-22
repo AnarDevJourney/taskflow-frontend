@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Avatar,
@@ -7,7 +8,8 @@ import {
   Form,
   Input,
   InputNumber,
-  Popconfirm,
+  Modal,
+  Select,
   Skeleton,
   Switch,
   Tag,
@@ -18,6 +20,7 @@ import {
   DeleteOutlined,
   HolderOutlined,
   PlusOutlined,
+  UserAddOutlined,
 } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -41,7 +44,8 @@ import {
   UpdateProjectDto,
   UpdateStatusConfigItem,
 } from "../services/projectService";
-import { StatusConfig } from "@types/index";
+import { workspaceService } from "@features/workspaces/services/workspaceService";
+import { ProjectMember, StatusConfig } from "@types/index";
 import styles from "./ProjectSettingsPage.module.css";
 
 const DEFAULT_STATUS_COLOR = "#4a6cf7";
@@ -72,6 +76,7 @@ function SortableColumnRow({
   onChange,
   onRemove,
 }: SortableColumnRowProps) {
+  const { t } = useTranslation();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: row.id });
 
@@ -103,7 +108,7 @@ function SortableColumnRow({
       <InputNumber
         value={row.wipLimit ?? undefined}
         onChange={(value) => onChange(row.id, "wipLimit", value ?? null)}
-        placeholder="WIP limit"
+        placeholder={t("projectSettings.wipLimitPlaceholder")}
         min={1}
         className={styles.wipInput}
       />
@@ -126,6 +131,7 @@ export default function ProjectSettingsPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [form] = Form.useForm();
+  const { t } = useTranslation();
 
   const { data: project, isLoading } = useProject(
     workspaceId ?? "",
@@ -159,9 +165,9 @@ export default function ProjectSettingsPage() {
       projectService.update(workspaceId ?? "", projectId ?? "", dto),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
-      message.success("Project updated");
+      message.success(t("projectSettings.updated"));
     },
-    onError: () => message.error("Failed to update project"),
+    onError: () => message.error(t("projectSettings.updateFailed")),
   });
 
   // ─── Statuses ───────────────────────────────────────────────────
@@ -174,9 +180,9 @@ export default function ProjectSettingsPage() {
       ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
-      message.success("Columns updated");
+      message.success(t("projectSettings.columnsUpdated"));
     },
-    onError: () => message.error("Failed to update columns"),
+    onError: () => message.error(t("projectSettings.columnsUpdateFailed")),
   });
 
   const handleAddColumn = () => {
@@ -184,7 +190,7 @@ export default function ProjectSettingsPage() {
       ...prev,
       {
         id: makeId(),
-        name: "New Column",
+        name: t("projectSettings.newColumnName"),
         color: DEFAULT_STATUS_COLOR,
         order: prev.length,
         wipLimit: null,
@@ -237,7 +243,11 @@ export default function ProjectSettingsPage() {
     enabled: !!workspaceId && !!projectId,
   });
 
-  const { mutate: removeMember } = useMutation({
+  const [removingMember, setRemovingMember] = useState<ProjectMember | null>(
+    null,
+  );
+
+  const { mutate: removeMember, isPending: isRemovingMember } = useMutation({
     mutationFn: (memberId: string) =>
       projectService.removeMember(
         workspaceId ?? "",
@@ -246,21 +256,53 @@ export default function ProjectSettingsPage() {
       ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["project-members", projectId] });
-      message.success("Member removed");
+      message.success(t("projectSettings.memberRemoved"));
+      setRemovingMember(null);
     },
-    onError: () => message.error("Failed to remove member"),
+    onError: () => message.error(t("projectSettings.memberRemoveFailed")),
+  });
+
+  const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
+  const [addMemberForm] = Form.useForm();
+
+  const { data: workspaceMembers } = useQuery({
+    queryKey: ["workspace-members", workspaceId],
+    queryFn: () => workspaceService.getMembers(workspaceId ?? ""),
+    enabled: addMemberModalOpen && !!workspaceId,
+  });
+
+  const availableMembers = (workspaceMembers ?? []).filter(
+    (wm) => !members?.some((pm) => pm.userId._id === wm.userId._id),
+  );
+
+  const closeAddMemberModal = () => {
+    setAddMemberModalOpen(false);
+    addMemberForm.resetFields();
+  };
+
+  const { mutate: addMember, isPending: isAddingMember } = useMutation({
+    mutationFn: (memberId: string) =>
+      projectService.addMember(workspaceId ?? "", projectId ?? "", memberId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["project-members", projectId] });
+      message.success(t("projectSettings.memberAdded"));
+      closeAddMemberModal();
+    },
+    onError: () => message.error(t("projectSettings.memberAddFailed")),
   });
 
   // ─── Danger zone ────────────────────────────────────────────────
+  const [archiveModalOpen, setArchiveModalOpen] = useState(false);
+
   const { mutate: archiveProject, isPending: isArchiving } = useMutation({
     mutationFn: () =>
       projectService.archive(workspaceId ?? "", projectId ?? ""),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
-      message.success("Project archived");
+      message.success(t("projectSettings.archived"));
       navigate(`/workspaces/${workspaceId}/projects`);
     },
-    onError: () => message.error("Failed to archive project"),
+    onError: () => message.error(t("projectSettings.archiveFailed")),
   });
 
   if (isLoading || !project) {
@@ -281,15 +323,15 @@ export default function ProjectSettingsPage() {
         }
         className={styles.backButton}
       >
-        Back to board
+        {t("projectSettings.backToBoard")}
       </Button>
 
       {/* General */}
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <div className={styles.sectionTitle}>General</div>
+          <div className={styles.sectionTitle}>{t("projectSettings.general")}</div>
           <div className={styles.sectionDesc}>
-            Basic project details and settings
+            {t("projectSettings.generalDesc")}
           </div>
         </div>
         <div className={styles.sectionBody}>
@@ -301,24 +343,26 @@ export default function ProjectSettingsPage() {
           >
             <Form.Item
               name="name"
-              label="Project name"
-              rules={[{ required: true, message: "Please enter a project name" }]}
+              label={t("projectSettings.nameLabel")}
+              rules={[
+                { required: true, message: t("projectSettings.nameRequired") },
+              ]}
             >
               <Input />
             </Form.Item>
-            <Form.Item name="description" label="Description">
+            <Form.Item name="description" label={t("projectSettings.descriptionLabel")}>
               <Input.TextArea rows={3} />
             </Form.Item>
             <Form.Item
               name="sprintMode"
-              label="Sprint mode"
+              label={t("projectSettings.sprintModeLabel")}
               valuePropName="checked"
             >
               <Switch />
             </Form.Item>
             <Form.Item style={{ marginBottom: 0 }}>
               <Button type="primary" htmlType="submit" loading={isSavingGeneral}>
-                Save
+                {t("projectSettings.save")}
               </Button>
             </Form.Item>
           </Form>
@@ -328,9 +372,9 @@ export default function ProjectSettingsPage() {
       {/* Board Columns */}
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <div className={styles.sectionTitle}>Board Columns</div>
+          <div className={styles.sectionTitle}>{t("projectSettings.boardColumns")}</div>
           <div className={styles.sectionDesc}>
-            Configure the Kanban columns for this project
+            {t("projectSettings.boardColumnsDesc")}
           </div>
         </div>
         <div className={styles.sectionBody}>
@@ -363,7 +407,7 @@ export default function ProjectSettingsPage() {
             block
             style={{ marginTop: 8 }}
           >
-            Add column
+            {t("projectSettings.addColumn")}
           </Button>
           <Button
             type="primary"
@@ -371,7 +415,7 @@ export default function ProjectSettingsPage() {
             loading={isSavingStatuses}
             style={{ marginTop: 16 }}
           >
-            Save columns
+            {t("projectSettings.saveColumns")}
           </Button>
         </div>
       </div>
@@ -379,9 +423,23 @@ export default function ProjectSettingsPage() {
       {/* Members */}
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <div className={styles.sectionTitle}>Members</div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div className={styles.sectionTitle}>{t("projectSettings.members")}</div>
+            <Button
+              icon={<UserAddOutlined />}
+              onClick={() => setAddMemberModalOpen(true)}
+            >
+              {t("projectSettings.addMember")}
+            </Button>
+          </div>
           <div className={styles.sectionDesc}>
-            People with access to this project
+            {t("projectSettings.membersDesc")}
           </div>
         </div>
         <div className={styles.sectionBody}>
@@ -398,13 +456,13 @@ export default function ProjectSettingsPage() {
                     <div className={styles.memberName}>{member.userId.name}</div>
                     <div className={styles.memberEmail}>{member.userId.email}</div>
                   </div>
-                  <Tag>{member.role}</Tag>
+                  <Tag>{t(`members.role.${member.role}`)}</Tag>
                   {member.role !== "owner" && (
                     <Button
                       danger
                       type="text"
                       icon={<DeleteOutlined />}
-                      onClick={() => removeMember(member.userId._id)}
+                      onClick={() => setRemovingMember(member)}
                     />
                   )}
                 </div>
@@ -417,25 +475,103 @@ export default function ProjectSettingsPage() {
       {/* Danger Zone */}
       <div className={styles.dangerSection}>
         <div className={styles.dangerHeader}>
-          <div className={styles.dangerTitle}>Danger Zone</div>
+          <div className={styles.dangerTitle}>{t("projectSettings.dangerZone")}</div>
           <div className={styles.sectionDesc}>
-            Irreversible and destructive actions
+            {t("projectSettings.dangerZoneDesc")}
           </div>
         </div>
         <div className={styles.sectionBody}>
-          <Popconfirm
-            title="Archive this project?"
-            description="This will soft-delete the project. It can be restored later."
-            onConfirm={() => archiveProject()}
-            okText="Archive"
-            okButtonProps={{ danger: true }}
+          <Button
+            danger
+            loading={isArchiving}
+            onClick={() => setArchiveModalOpen(true)}
           >
-            <Button danger loading={isArchiving}>
-              Archive project
-            </Button>
-          </Popconfirm>
+            {t("projectSettings.archiveProject")}
+          </Button>
         </div>
       </div>
+
+      <Modal
+        title={t("projectSettings.addMemberTitle")}
+        open={addMemberModalOpen}
+        onCancel={closeAddMemberModal}
+        footer={null}
+        width={420}
+        destroyOnClose
+      >
+        <Form
+          form={addMemberForm}
+          layout="vertical"
+          requiredMark={false}
+          onFinish={(values) => addMember(values.memberId)}
+        >
+          <Form.Item
+            name="memberId"
+            label={t("projectSettings.addMemberSelectLabel")}
+            rules={[
+              {
+                required: true,
+                message: t("projectSettings.addMemberSelectRequired"),
+              },
+            ]}
+          >
+            <Select
+              placeholder={t("projectSettings.addMemberSelectPlaceholder")}
+              notFoundContent={t("projectSettings.noMembersToAdd")}
+              options={availableMembers.map((wm) => ({
+                value: wm.userId._id,
+                label: `${wm.userId.name} (${wm.userId.email})`,
+              }))}
+            />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <Button onClick={closeAddMemberModal}>
+                {t("projectSettings.cancel")}
+              </Button>
+              <Button type="primary" htmlType="submit" loading={isAddingMember}>
+                {t("projectSettings.addMember")}
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title={t("projectSettings.removeMemberConfirmTitle")}
+        open={!!removingMember}
+        onCancel={() => setRemovingMember(null)}
+        centered
+        width={560}
+        okText={t("projectSettings.removeMemberConfirmOk")}
+        cancelText={t("projectSettings.cancel")}
+        okButtonProps={{ danger: true, loading: isRemovingMember }}
+        onOk={() =>
+          removingMember && removeMember(removingMember.userId._id)
+        }
+      >
+        <p style={{ fontSize: 15, lineHeight: 1.6 }}>
+          {t("projectSettings.removeMemberConfirmDesc", {
+            name: removingMember?.userId.name,
+          })}
+        </p>
+      </Modal>
+
+      <Modal
+        title={t("projectSettings.archiveConfirmTitle")}
+        open={archiveModalOpen}
+        onCancel={() => setArchiveModalOpen(false)}
+        centered
+        width={560}
+        okText={t("projectSettings.archiveConfirmOk")}
+        cancelText={t("projectSettings.cancel")}
+        okButtonProps={{ danger: true, loading: isArchiving }}
+        onOk={() => archiveProject()}
+      >
+        <p style={{ fontSize: 15, lineHeight: 1.6 }}>
+          {t("projectSettings.archiveConfirmDesc", { name: project.name })}
+        </p>
+      </Modal>
     </div>
   );
 }

@@ -99,6 +99,7 @@ export default function WorkspacesPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspaces"] });
       setEditingWorkspace(null);
+      message.success(t("workspaces.updated"));
     },
   });
 

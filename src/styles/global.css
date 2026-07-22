@@ -32,3 +32,13 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #4a6cf7;
 }
+
+.ant-message .ant-message-notice-content {
+  padding: 14px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+.ant-message .ant-message-notice-content .anticon {
+  font-size: 18px;
+}
