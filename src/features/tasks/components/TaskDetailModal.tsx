@@ -120,14 +120,22 @@ export default function TaskDetailModal({
   const taskKey = `FE-${task.taskNumber}`;
 
   // ─── Invalidate helper ───────────────────────────────────────────
-  const invalidateTasks = () =>
+  // This modal is opened from both BoardPage (["tasks", workspaceId,
+  // projectId]) and MyTasksPage (["my-tasks", workspaceId, userId, query]) —
+  // invalidate both prefixes so whichever page opened it refetches.
+  const invalidateTasks = () => {
     qc.invalidateQueries({ queryKey: ["tasks", workspaceId, projectId] });
+    qc.invalidateQueries({ queryKey: ["my-tasks"] });
+  };
 
   // ─── Update task mutation ────────────────────────────────────────
   const { mutate: updateTask } = useMutation({
     mutationFn: (dto: UpdateTaskDto) =>
       taskService.update(workspaceId, projectId, task._id, dto),
-    onSuccess: invalidateTasks,
+    onSuccess: () => {
+      invalidateTasks();
+      toast.success(t("taskDetailModal.updateSuccess"));
+    },
     onError: () => toast.error(t("taskDetailModal.updateFailed")),
   });
 

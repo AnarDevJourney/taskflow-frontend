@@ -39,12 +39,22 @@
   flex-shrink: 0;
 }
 
+/* Horizontal scroll container for every row-table variant — when the
+   columns' combined width (fixed pixel widths from resize mode, or just a
+   narrow viewport) doesn't fit, this scrolls instead of letting the table
+   squish its columns or overflow the page. */
+.tableScroll {
+  overflow-x: auto;
+}
+
 /* ─── Shared row-based table (base look — used by "classic") ──────── */
 .table {
   background: #ffffff;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   overflow: hidden;
+  width: fit-content;
+  min-width: 100%;
 }
 
 .row {
@@ -56,6 +66,8 @@
   cursor: pointer;
   transition: background 0.12s;
   gap: 12px;
+  width: max-content;
+  min-width: 100%;
 }
 
 .row:last-child {
@@ -85,6 +97,54 @@
   font-size: 12px;
   font-weight: 500;
   color: #8c8c8c;
+}
+
+/* ─── Column resize mode ────────────────────────────────────────── */
+.resizableHeaderCell {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  padding-right: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  touch-action: none;
+}
+
+.resizeHandle::after {
+  content: "";
+  width: 2px;
+  height: 60%;
+  background: #d9d9d9;
+  border-radius: 1px;
+  transition: background 0.12s;
+}
+
+.resizeHandle:hover::after {
+  background: #4a6cf7;
+}
+
+.rowResizing {
+  cursor: default;
+}
+
+.rowResizing:hover {
+  background: inherit;
 }
 
 .taskTitle {
@@ -141,6 +201,8 @@
   border: 1px solid #d9d9d9;
   border-radius: 0;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  width: fit-content;
+  min-width: 100%;
 }
 
 .row_spreadsheet {
@@ -161,6 +223,8 @@
   background: transparent;
   border: none;
   border-radius: 0;
+  width: fit-content;
+  min-width: 100%;
 }
 
 .row_minimal {
@@ -181,6 +245,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: fit-content;
+  min-width: 100%;
 }
 
 .row_colorful {

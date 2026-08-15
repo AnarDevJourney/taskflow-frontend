@@ -326,7 +326,8 @@
     "columnPriority": "Приоритет",
     "searchPlaceholder": "Поиск задач…",
     "allProjects": "Все проекты",
-    "clearFilters": "Очистить фильтры"
+    "clearFilters": "Очистить фильтры",
+    "perPage": "На странице:"
   },
   "taskDetailModal": {
     "updateFailed": "Не удалось обновить задачу",
@@ -372,7 +373,8 @@
     "created": "Создано",
     "deleteTaskConfirmTitle": "Удалить эту задачу?",
     "deleteTaskConfirmDesc": "Это действие нельзя отменить.",
-    "deleteTask": "Удалить задачу"
+    "deleteTask": "Удалить задачу",
+    "updateSuccess": "Задача успешно обновлена"
   },
   "tableViews": {
     "customizeTable": "Настроить таблицу",
@@ -414,5 +416,13 @@
       "name": "Колонки по статусу",
       "desc": "Задачи сгруппированы в колонки по статусу."
     }
+  },
+  "tableColumns": {
+    "customizeColumns": "Столбцы",
+    "modalTitle": "Настройка столбцов",
+    "modalHint": "Отключите столбец, чтобы скрыть его, или перетащите для изменения порядка.",
+    "resizeColumns": "Изменить размер столбцов",
+    "saveWidths": "Сохранить",
+    "cancelResize": "Отмена"
   }
 }

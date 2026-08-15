@@ -19,7 +19,8 @@ Consumes the TaskFlow NestJS REST API. Real-time notifications via Socket.io.
 | Forms         | React Hook Form (or Ant Design Form) | Form state and validation                       |
 | HTTP          | Axios                                | API calls with cookie credentials               |
 | Routing       | React Router v6                      | Client-side routing                             |
-| Drag & Drop   | @dnd-kit/core + @dnd-kit/sortable    | Kanban board drag and drop                      |
+| Drag & Drop   | @dnd-kit/core + @dnd-kit/sortable    | Kanban board drag and drop, column reordering   |
+| Resize        | react-resizable                      | My Tasks column-width resize handles            |
 | Real-time     | Socket.io-client                     | WebSocket notifications                         |
 | Dates         | dayjs                                | Date formatting and manipulation                |
 
@@ -75,7 +76,8 @@ src/
     │       ├── ProjectsPage.tsx + ProjectsPage.module.css
     ├── tasks/
     │   ├── services/taskService.ts       # getAll, create, update, reorder, remove, addChecklistItem, toggleChecklistItem
-    │   ├── hooks/useTasks.ts, useMyTasks.ts
+    │   ├── services/taskService.ts       # ...getMyTasks(workspaceId, query) — paginated, hits GET /workspaces/:id/my-tasks (page/limit/status/priority/projectId/search/sortBy/sortOrder)
+    │   ├── hooks/useTasks.ts, useMyTasks.ts   # useMyTasks(workspaceId, query) wraps getMyTasks in useQuery with placeholderData so the previous page stays visible while the next loads
     │   ├── utils/taskGrouping.ts         # priorityColors, due-date grouping (getDueDateGroup/groupByDueDate) + groupByStatus — shared by MyTasksPage and TaskListViews
     │   ├── components/
     │   │   ├── BoardColumn.tsx + BoardColumn.module.css
@@ -83,11 +85,16 @@ src/
     │   │   ├── CreateTaskModal.tsx
     │   │   ├── TaskDetailModal.tsx       # full task detail — title/desc editing, right panel, checklist, comments
     │   │   ├── TaskDetailModal.module.css
-    │   │   ├── TaskListViews.tsx + .module.css   # renders My Tasks' task list in 9 selectable UI variants (classic/compact/spreadsheet/cards/minimal/colorful/avatar/striped/kanban) — same data, different layout/CSS per `TableViewId`
-    │   │   └── TableViewModal.tsx + .module.css  # "Customize table" picker modal — 3x3 grid of mini CSS-mockup previews, one per TableViewId
+    │   │   ├── TaskListViews.tsx + .module.css   # renders My Tasks' task list in 9 selectable UI variants (classic/compact/spreadsheet/cards/minimal/colorful/avatar/striped/kanban) — same data, different layout/CSS per `TableViewId`. Also owns column customization: `ColumnId`/`ColumnSetting` (`{id, visible, width?}`)/`DEFAULT_COLUMNS`/`COLUMN_LABEL_KEYS`/`normalizeColumns`, and `isRowTableVariant()` — true only for the 7 row-table variants (not `cards`/`kanban`), gating whether the Columns/Resize buttons show. `TaskListView`'s `resizable`/`onColumnResize` props (threaded into `RowsTable`) wrap each header cell in `react-resizable`'s `<Resizable>` (axis "e", handle is `.resizeHandle`) when resize mode is on; `columnWidthCss()` picks a column's saved pixel width over its `COLUMN_WIDTHS` default (`title` stays fluid `1fr` until explicitly resized)
+    │   │   ├── TableViewModal.tsx + .module.css  # "Customize table" picker modal — 3x3 grid of mini CSS-mockup previews, one per TableViewId
+    │   │   ├── TableColumnsModal.tsx + .module.css   # "Columns" picker modal — checkbox per column (visible/hidden) + @dnd-kit drag handle to reorder; array order = display order
+    │   │   └── SimplePagination.tsx + .module.css    # first/prev/[page-1, page, page+1]/next/last pagination control (not antd's Pagination — see MyTasksPage)
     │   └── pages/
     │       ├── BoardPage.tsx + BoardPage.module.css
-    │       └── MyTasksPage.tsx + MyTasksPage.module.css   # search/status/priority/project filters + TaskListView + TableViewModal trigger
+    │       └── MyTasksPage.tsx + MyTasksPage.module.css   # search/status/priority/project filters (server-side, debounced) + per-page size selector + SimplePagination + TaskListView + TableViewModal/TableColumnsModal triggers — table view/page size/columns are loaded from and saved to `useTableSettings`/`useSaveTableSettings` (backend-persisted, see tableSettings feature), not localStorage. Column *resizing* is a separate mode from the Columns modal: a "Resize columns" toggle swaps in a `draftColumns` working copy that absorbs every drag live (via `TaskListView`'s `onColumnResize`) without saving anything; only the "Save" button that replaces the toggle while active commits `draftColumns` → `columns` + `saveSettings({ columns: draftColumns })` in one request, "Cancel" just discards the draft
+    ├── tableSettings/
+    │   ├── services/tableSettingsService.ts   # getOne(key), upsert(key, dto) — talks to GET/PUT /table-settings/:key
+    │   └── hooks/useTableSettings.ts          # useTableSettings(key) (useQuery, staleTime: Infinity — this tab is the only writer) + useSaveTableSettings(key) (useMutation, writes through to the query cache on success)
     ├── comments/
     │   └── services/commentService.ts   # getAll, create, update, remove
     ├── sprints/
@@ -275,7 +282,9 @@ Only these things belong in Redux:
 
 Everything else (server data) belongs in React Query, not Redux.
 
-Purely local, per-browser UI preferences that aren't shared app state (e.g. My Tasks' selected table view, `taskflow.myTasksTableView`) can skip Redux entirely and read/write `localStorage` directly in the component — same pattern `uiSlice.setActiveWorkspace` uses for its own persistence, just without the Redux layer since nothing else needs to react to it.
+Purely local, per-browser UI preferences that aren't shared app state can skip Redux entirely and read/write `localStorage` directly in the component — same pattern `uiSlice.setActiveWorkspace` uses for its own persistence, just without the Redux layer since nothing else needs to react to it.
+
+Preferences that should follow the *user* rather than the browser (e.g. My Tasks' selected table view/page size/column layout) don't belong in either Redux or `localStorage` — they're saved server-side per user via the `table-settings` backend module (see `tableSettings` feature, `useTableSettings`/`useSaveTableSettings`). `MyTasksPage` applies the fetched settings exactly once (a `useRef` guard) and then saves on every change; watch that ordering if you touch it, or the initial defaults will get saved over the user's real settings before they load.
 
 Always use typed hooks:
 
@@ -480,7 +489,7 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Project Settings page: edit project, manage columns and members
 - ✅ Board page: kanban columns, task cards, drag and drop (cross-column + same-column reorder), create task modal
 - ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), comments (add/edit/delete)
-- ✅ My Tasks page — cross-project task list, search + status/priority/project filters, "Customize table" modal offering 9 alternate UI layouts for the same data (`TaskListViews.tsx`), selection persisted to `localStorage` (`taskflow.myTasksTableView`, outside Redux — see Redux Store Rules)
+- ✅ My Tasks page — cross-project task list, server-side paginated (page-size selector: 10/25/50/100) with `SimplePagination`, search + status/priority/project filters (server-side, debounced), "Customize table" modal offering 9 alternate UI layouts for the same data (`TaskListViews.tsx`), a "Columns" modal to show/hide and drag-reorder individual columns, and a column-resize mode (`react-resizable` drag handles, explicit Save/Cancel) — all row-table variants only (`cards`/`kanban` don't have literal columns). All four preferences (table view, page size, columns incl. widths) are saved per-user on the backend via `table-settings` — see Redux Store Rules
 - ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
 - ✅ Notifications panel — bell icon dropdown with real-time updates (WebSocket)
 - ✅ Search overlay — Cmd+K global search

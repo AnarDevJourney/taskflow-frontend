@@ -326,7 +326,8 @@
     "columnPriority": "Priority",
     "searchPlaceholder": "Search tasks…",
     "allProjects": "All projects",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "perPage": "Per page:"
   },
   "taskDetailModal": {
     "updateFailed": "Failed to update task",
@@ -372,7 +373,8 @@
     "created": "Created",
     "deleteTaskConfirmTitle": "Delete this task?",
     "deleteTaskConfirmDesc": "This action cannot be undone.",
-    "deleteTask": "Delete task"
+    "deleteTask": "Delete task",
+    "updateSuccess": "Task updated successfully"
   },
   "tableViews": {
     "customizeTable": "Customize table",
@@ -414,5 +416,13 @@
       "name": "Status columns",
       "desc": "Tasks grouped into columns by status."
     }
+  },
+  "tableColumns": {
+    "customizeColumns": "Columns",
+    "modalTitle": "Customize columns",
+    "modalHint": "Toggle a column off to hide it, or drag it to reorder.",
+    "resizeColumns": "Resize columns",
+    "saveWidths": "Save",
+    "cancelResize": "Cancel"
   }
 }

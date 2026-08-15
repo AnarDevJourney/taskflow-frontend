@@ -326,7 +326,8 @@
     "columnPriority": "Prioritet",
     "searchPlaceholder": "Tapşırıq axtar…",
     "allProjects": "Bütün layihələr",
-    "clearFilters": "Filtrləri təmizlə"
+    "clearFilters": "Filtrləri təmizlə",
+    "perPage": "Səhifədə:"
   },
   "taskDetailModal": {
     "updateFailed": "Tapşırığı yeniləmək alınmadı",
@@ -372,7 +373,8 @@
     "created": "Yaradılıb",
     "deleteTaskConfirmTitle": "Bu tapşırıq silinsin?",
     "deleteTaskConfirmDesc": "Bu əməliyyat geri qaytarıla bilməz.",
-    "deleteTask": "Tapşırığı sil"
+    "deleteTask": "Tapşırığı sil",
+    "updateSuccess": "Tapşırıq uğurla redaktə olundu"
   },
   "tableViews": {
     "customizeTable": "Cədvəli fərdiləşdir",
@@ -414,5 +416,13 @@
       "name": "Status sütunları",
       "desc": "Tapşırıqlar status üzrə sütunlara qruplaşdırılıb."
     }
+  },
+  "tableColumns": {
+    "customizeColumns": "Sütunlar",
+    "modalTitle": "Sütunları fərdiləşdir",
+    "modalHint": "Sütunu gizlətmək üçün söndürün, sırasını dəyişmək üçün sürükləyin.",
+    "resizeColumns": "Sütunların ölçüsü",
+    "saveWidths": "Yadda saxla",
+    "cancelResize": "Ləğv et"
   }
 }

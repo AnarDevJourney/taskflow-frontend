@@ -43,6 +43,17 @@ export interface QueryTasksDto {
   search?: string;
 }
 
+export interface QueryMyTasksDto {
+  page?: number;
+  limit?: number;
+  status?: string;
+  priority?: string;
+  projectId?: string;
+  search?: string;
+  sortBy?: "createdAt" | "updatedAt" | "dueDate" | "priority" | "taskNumber";
+  sortOrder?: "asc" | "desc";
+}
+
 const base = (workspaceId: string, projectId: string) =>
   `/workspaces/${workspaceId}/projects/${projectId}/tasks`;
 
@@ -149,9 +160,22 @@ export const taskService = {
     return res.data.data;
   },
 
-  getMyTasks: async (workspaceId: string): Promise<PaginatedResponse<Task>> => {
+  getMyTasks: async (
+    workspaceId: string,
+    query: QueryMyTasksDto = {},
+  ): Promise<PaginatedResponse<Task>> => {
+    const params = new URLSearchParams();
+    if (query.status) params.set("status", query.status);
+    if (query.priority) params.set("priority", query.priority);
+    if (query.projectId) params.set("projectId", query.projectId);
+    if (query.search) params.set("search", query.search);
+    if (query.sortBy) params.set("sortBy", query.sortBy);
+    if (query.sortOrder) params.set("sortOrder", query.sortOrder);
+    params.set("limit", String(query.limit ?? 25));
+    params.set("page", String(query.page ?? 1));
+
     const res = await api.get<ApiResponse<PaginatedResponse<Task>>>(
-      `/workspaces/${workspaceId}/projects`,
+      `/workspaces/${workspaceId}/my-tasks?${params.toString()}`,
     );
     return res.data.data;
   },
