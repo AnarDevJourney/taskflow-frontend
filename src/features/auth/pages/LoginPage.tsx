@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { Form, Input, Button, Alert, Typography, message } from "antd";
+import { Form, Input, Button, Alert, Typography } from "antd";
+import { toast } from "@lib/toast";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -28,7 +29,7 @@ export default function LoginPage() {
     authService
       .acceptInvite(inviteToken)
       .then(({ workspaceId }) => {
-        message.success(t("auth.register.inviteAccepted"));
+        toast.success(t("auth.register.inviteAccepted"));
         navigate(`/workspaces/${workspaceId}/projects`, { replace: true });
       })
       .catch(() => navigate("/workspaces", { replace: true }));
@@ -48,7 +49,7 @@ export default function LoginPage() {
     mutationFn: (dto: LoginDto) => authService.login(dto),
     onSuccess: (user) => {
       queryClient.setQueryData(["me"], user);
-      message.success(t("auth.login.loginSuccess"));
+      toast.success(t("auth.login.loginSuccess"));
       goToWorkspace();
     },
   });

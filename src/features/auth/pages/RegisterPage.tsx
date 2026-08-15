@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Form, Input, Button, Alert, Typography, Result, Spin, message } from "antd";
+import { Form, Input, Button, Alert, Typography, Result, Spin } from "antd";
+import { toast } from "@lib/toast";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -55,7 +56,7 @@ export default function RegisterPage() {
       authService.register({ ...values, token }),
     onSuccess: (user) => {
       queryClient.setQueryData(["me"], user);
-      message.success(t("auth.register.registerSuccess"));
+      toast.success(t("auth.register.registerSuccess"));
       navigate("/workspaces", { replace: true });
     },
   });
@@ -67,7 +68,7 @@ export default function RegisterPage() {
   } = useMutation({
     mutationFn: () => authService.acceptInvite(token),
     onSuccess: ({ workspaceId }) => {
-      message.success(t("auth.register.inviteAccepted"));
+      toast.success(t("auth.register.inviteAccepted"));
       navigate(`/workspaces/${workspaceId}/projects`, { replace: true });
     },
   });

@@ -262,5 +262,157 @@
     "archiveProject": "Архивировать проект",
     "archived": "Проект архивирован",
     "archiveFailed": "Не удалось архивировать проект"
+  },
+  "board": {
+    "sprints": "Спринты",
+    "settings": "Настройки",
+    "addTask": "Добавить задачу",
+    "addTaskTooltip": "Добавить задачу",
+    "dropTasksHere": "Перетащите задачи сюда",
+    "createTaskFailed": "Не удалось создать задачу",
+    "moveTaskFailed": "Не удалось переместить задачу",
+    "select": "Выбрать",
+    "cancelSelect": "Отмена",
+    "selectedCount": "Выбрано: {{count}}",
+    "moveTasksFailed": "Не удалось переместить задачи",
+    "searchPlaceholder": "Поиск задач…",
+    "priorityFilterPlaceholder": "Приоритет",
+    "assigneeFilterPlaceholder": "Исполнитель",
+    "assigneeMe": "Назначено мне",
+    "assigneeUnassigned": "Без исполнителя",
+    "dueFilterPlaceholder": "Срок",
+    "dueOverdue": "Просрочено",
+    "dueThisWeek": "На этой неделе",
+    "dueNone": "Без срока",
+    "clearFilters": "Очистить фильтры"
+  },
+  "createTaskModal": {
+    "title": "Новая задача",
+    "titleLabel": "Название задачи",
+    "titleRequired": "Пожалуйста, введите название",
+    "titlePlaceholder": "напр. Исправить ошибку входа",
+    "statusLabel": "Статус",
+    "priorityLabel": "Приоритет",
+    "priorityCritical": "🔴 Критический",
+    "priorityHigh": "🟠 Высокий",
+    "priorityMedium": "🔵 Средний",
+    "priorityLow": "⚪ Низкий",
+    "descriptionLabel": "Описание (необязательно)",
+    "descriptionPlaceholder": "Добавьте подробности…",
+    "cancel": "Отмена",
+    "createTask": "Создать задачу"
+  },
+  "myTasksPage": {
+    "title": "Мои задачи",
+    "subtitle": "{{count}} задача назначена вам",
+    "subtitle_other": "{{count}} задач назначено вам",
+    "allStatuses": "Все статусы",
+    "allPriorities": "Все приоритеты",
+    "priorityCritical": "🔴 Критический",
+    "priorityHigh": "🟠 Высокий",
+    "priorityMedium": "🔵 Средний",
+    "priorityLow": "⚪ Низкий",
+    "emptyDescription": "Вам не назначено ни одной задачи",
+    "groupOverdue": "Просрочено",
+    "groupToday": "Сегодня",
+    "groupThisWeek": "На этой неделе",
+    "groupLater": "Позже",
+    "groupNoDueDate": "Без срока",
+    "columnKey": "Ключ",
+    "columnTitle": "Название",
+    "columnProject": "Проект",
+    "columnStatus": "Статус",
+    "columnDueDate": "Срок",
+    "columnPriority": "Приоритет",
+    "searchPlaceholder": "Поиск задач…",
+    "allProjects": "Все проекты",
+    "clearFilters": "Очистить фильтры"
+  },
+  "taskDetailModal": {
+    "updateFailed": "Не удалось обновить задачу",
+    "deleted": "Задача удалена",
+    "deleteFailed": "Не удалось удалить задачу",
+    "addCommentFailed": "Не удалось добавить комментарий",
+    "updateCommentFailed": "Не удалось обновить комментарий",
+    "deleteCommentFailed": "Не удалось удалить комментарий",
+    "addChecklistItemFailed": "Не удалось добавить пункт чек-листа",
+    "updateChecklistItemFailed": "Не удалось обновить пункт чек-листа",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "description": "Описание",
+    "descriptionPlaceholder": "Добавьте описание…",
+    "checklist": "Чек-лист",
+    "checklistItemPlaceholder": "Пункт чек-листа…",
+    "add": "Добавить",
+    "addChecklistItem": "Добавить пункт чек-листа",
+    "comments": "Комментарии",
+    "edited": "(отредактировано)",
+    "deleteCommentConfirmTitle": "Удалить комментарий?",
+    "delete": "Удалить",
+    "addCommentPlaceholder": "Добавьте комментарий…",
+    "comment": "Комментировать",
+    "statusLabel": "Статус",
+    "priorityLabel": "Приоритет",
+    "priorityCritical": "🔴 Критический",
+    "priorityHigh": "🟠 Высокий",
+    "priorityMedium": "🔵 Средний",
+    "priorityLow": "⚪ Низкий",
+    "priorityLabels": {
+      "critical": "Критический",
+      "high": "Высокий",
+      "medium": "Средний",
+      "low": "Низкий"
+    },
+    "assignee": "Исполнитель",
+    "unassigned": "Не назначено",
+    "reporter": "Автор",
+    "dueDate": "Срок выполнения",
+    "storyPoints": "Стори-поинты",
+    "labels": "Метки",
+    "created": "Создано",
+    "deleteTaskConfirmTitle": "Удалить эту задачу?",
+    "deleteTaskConfirmDesc": "Это действие нельзя отменить.",
+    "deleteTask": "Удалить задачу"
+  },
+  "tableViews": {
+    "customizeTable": "Настроить таблицу",
+    "modalTitle": "Настройка вида таблицы",
+    "modalHint": "Выберите, как должен выглядеть список задач. Ваш выбор будет сохранён.",
+    "classic": {
+      "name": "Классический",
+      "desc": "Стандартная сгруппированная таблица с чистыми строками."
+    },
+    "compact": {
+      "name": "Компактный",
+      "desc": "Плотные строки — больше задач на экране."
+    },
+    "spreadsheet": {
+      "name": "Таблица (Excel)",
+      "desc": "Полная сетка линий и моноширинный шрифт, стиль Excel."
+    },
+    "cards": {
+      "name": "Карточки",
+      "desc": "Каждая задача — карточка в адаптивной сетке."
+    },
+    "minimal": {
+      "name": "Минимальный",
+      "desc": "Без рамок, только тонкие разделители."
+    },
+    "colorful": {
+      "name": "Цветной",
+      "desc": "Скруглённые строки с цветной полосой по приоритету."
+    },
+    "avatar": {
+      "name": "С аватаром",
+      "desc": "Высокие строки с аватаром исполнителя."
+    },
+    "striped": {
+      "name": "Полосатый",
+      "desc": "Классические строки в стиле зебра."
+    },
+    "kanban": {
+      "name": "Колонки по статусу",
+      "desc": "Задачи сгруппированы в колонки по статусу."
+    }
   }
 }

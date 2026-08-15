@@ -262,5 +262,157 @@
     "archiveProject": "Layihəni arxivləşdir",
     "archived": "Layihə arxivləşdirildi",
     "archiveFailed": "Layihəni arxivləşdirmək alınmadı"
+  },
+  "board": {
+    "sprints": "Sprintlər",
+    "settings": "Ayarlar",
+    "addTask": "Tapşırıq əlavə et",
+    "addTaskTooltip": "Tapşırıq əlavə et",
+    "dropTasksHere": "Tapşırıqları buraya buraxın",
+    "createTaskFailed": "Tapşırığı yaratmaq alınmadı",
+    "moveTaskFailed": "Tapşırığı köçürmək alınmadı",
+    "select": "Seç",
+    "cancelSelect": "Ləğv et",
+    "selectedCount": "{{count}} seçildi",
+    "moveTasksFailed": "Tapşırıqları köçürmək alınmadı",
+    "searchPlaceholder": "Tapşırıq axtar…",
+    "priorityFilterPlaceholder": "Prioritet",
+    "assigneeFilterPlaceholder": "İcraçı",
+    "assigneeMe": "Mənə aid olanlar",
+    "assigneeUnassigned": "Təyin olunmayıb",
+    "dueFilterPlaceholder": "Son tarix",
+    "dueOverdue": "Gecikmiş",
+    "dueThisWeek": "Bu həftə",
+    "dueNone": "Tarixi yoxdur",
+    "clearFilters": "Filtrləri təmizlə"
+  },
+  "createTaskModal": {
+    "title": "Yeni tapşırıq",
+    "titleLabel": "Tapşırıq adı",
+    "titleRequired": "Zəhmət olmasa başlıq daxil edin",
+    "titlePlaceholder": "məs. Giriş xətasını düzəlt",
+    "statusLabel": "Status",
+    "priorityLabel": "Prioritet",
+    "priorityCritical": "🔴 Kritik",
+    "priorityHigh": "🟠 Yüksək",
+    "priorityMedium": "🔵 Orta",
+    "priorityLow": "⚪ Aşağı",
+    "descriptionLabel": "Təsvir (istəyə bağlı)",
+    "descriptionPlaceholder": "Ətraflı məlumat əlavə edin…",
+    "cancel": "Ləğv et",
+    "createTask": "Tapşırıq yarat"
+  },
+  "myTasksPage": {
+    "title": "Tapşırıqlarım",
+    "subtitle": "Sizə {{count}} tapşırıq təyin edilib",
+    "subtitle_other": "Sizə {{count}} tapşırıq təyin edilib",
+    "allStatuses": "Bütün statuslar",
+    "allPriorities": "Bütün prioritetlər",
+    "priorityCritical": "🔴 Kritik",
+    "priorityHigh": "🟠 Yüksək",
+    "priorityMedium": "🔵 Orta",
+    "priorityLow": "⚪ Aşağı",
+    "emptyDescription": "Sizə təyin edilmiş tapşırıq yoxdur",
+    "groupOverdue": "Gecikmiş",
+    "groupToday": "Bu gün",
+    "groupThisWeek": "Bu həftə",
+    "groupLater": "Sonra",
+    "groupNoDueDate": "Son tarix yoxdur",
+    "columnKey": "Açar",
+    "columnTitle": "Başlıq",
+    "columnProject": "Layihə",
+    "columnStatus": "Status",
+    "columnDueDate": "Son tarix",
+    "columnPriority": "Prioritet",
+    "searchPlaceholder": "Tapşırıq axtar…",
+    "allProjects": "Bütün layihələr",
+    "clearFilters": "Filtrləri təmizlə"
+  },
+  "taskDetailModal": {
+    "updateFailed": "Tapşırığı yeniləmək alınmadı",
+    "deleted": "Tapşırıq silindi",
+    "deleteFailed": "Tapşırığı silmək alınmadı",
+    "addCommentFailed": "Şərh əlavə etmək alınmadı",
+    "updateCommentFailed": "Şərhi yeniləmək alınmadı",
+    "deleteCommentFailed": "Şərhi silmək alınmadı",
+    "addChecklistItemFailed": "Yoxlama siyahısı elementini əlavə etmək alınmadı",
+    "updateChecklistItemFailed": "Yoxlama siyahısı elementini yeniləmək alınmadı",
+    "save": "Yadda saxla",
+    "cancel": "Ləğv et",
+    "description": "Təsvir",
+    "descriptionPlaceholder": "Təsvir əlavə edin…",
+    "checklist": "Yoxlama siyahısı",
+    "checklistItemPlaceholder": "Yoxlama elementi…",
+    "add": "Əlavə et",
+    "addChecklistItem": "Yoxlama siyahısı elementi əlavə et",
+    "comments": "Şərhlər",
+    "edited": "(redaktə edilib)",
+    "deleteCommentConfirmTitle": "Şərh silinsin?",
+    "delete": "Sil",
+    "addCommentPlaceholder": "Şərh əlavə edin…",
+    "comment": "Şərh",
+    "statusLabel": "Status",
+    "priorityLabel": "Prioritet",
+    "priorityCritical": "🔴 Kritik",
+    "priorityHigh": "🟠 Yüksək",
+    "priorityMedium": "🔵 Orta",
+    "priorityLow": "⚪ Aşağı",
+    "priorityLabels": {
+      "critical": "Kritik",
+      "high": "Yüksək",
+      "medium": "Orta",
+      "low": "Aşağı"
+    },
+    "assignee": "İcraçı",
+    "unassigned": "Təyin edilməyib",
+    "reporter": "Yaradan",
+    "dueDate": "Son tarix",
+    "storyPoints": "Story Point",
+    "labels": "Etiketlər",
+    "created": "Yaradılıb",
+    "deleteTaskConfirmTitle": "Bu tapşırıq silinsin?",
+    "deleteTaskConfirmDesc": "Bu əməliyyat geri qaytarıla bilməz.",
+    "deleteTask": "Tapşırığı sil"
+  },
+  "tableViews": {
+    "customizeTable": "Cədvəli fərdiləşdir",
+    "modalTitle": "Cədvəl görünüşünü fərdiləşdir",
+    "modalHint": "Tapşırıq siyahınızın necə görünməsini seçin. Seçiminiz növbəti dəfə üçün yadda saxlanılacaq.",
+    "classic": {
+      "name": "Klassik",
+      "desc": "Təmiz sətirlərlə standart qruplaşdırılmış cədvəl."
+    },
+    "compact": {
+      "name": "Yığcam",
+      "desc": "Ekrana daha çox tapşırıq sığdırmaq üçün sıx sətirlər."
+    },
+    "spreadsheet": {
+      "name": "Cədvəl (Excel)",
+      "desc": "Tam grid xətləri və monospace şrift, Excel üslubu."
+    },
+    "cards": {
+      "name": "Kartlar",
+      "desc": "Hər tapşırıq responsiv grid daxilində kart kimi."
+    },
+    "minimal": {
+      "name": "Minimal",
+      "desc": "Çərçivəsiz, sadəcə incə ayırıcı xətlər."
+    },
+    "colorful": {
+      "name": "Rəngli",
+      "desc": "Prioritet rənginə uyğun kənarlı yumru sətirlər."
+    },
+    "avatar": {
+      "name": "Avatar fokuslu",
+      "desc": "İcraçının avatarı ilə hündür sətirlər."
+    },
+    "striped": {
+      "name": "Zolaqlı",
+      "desc": "Klassik zebra üslublu sətirlər."
+    },
+    "kanban": {
+      "name": "Status sütunları",
+      "desc": "Tapşırıqlar status üzrə sütunlara qruplaşdırılıb."
+    }
   }
 }

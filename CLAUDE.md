@@ -75,16 +75,19 @@ src/
     │       ├── ProjectsPage.tsx + ProjectsPage.module.css
     ├── tasks/
     │   ├── services/taskService.ts       # getAll, create, update, reorder, remove, addChecklistItem, toggleChecklistItem
-    │   ├── hooks/useTasks.ts
+    │   ├── hooks/useTasks.ts, useMyTasks.ts
+    │   ├── utils/taskGrouping.ts         # priorityColors, due-date grouping (getDueDateGroup/groupByDueDate) + groupByStatus — shared by MyTasksPage and TaskListViews
     │   ├── components/
     │   │   ├── BoardColumn.tsx + BoardColumn.module.css
     │   │   ├── TaskCard.tsx + TaskCard.module.css
     │   │   ├── CreateTaskModal.tsx
     │   │   ├── TaskDetailModal.tsx       # full task detail — title/desc editing, right panel, checklist, comments
-    │   │   └── TaskDetailModal.module.css
+    │   │   ├── TaskDetailModal.module.css
+    │   │   ├── TaskListViews.tsx + .module.css   # renders My Tasks' task list in 9 selectable UI variants (classic/compact/spreadsheet/cards/minimal/colorful/avatar/striped/kanban) — same data, different layout/CSS per `TableViewId`
+    │   │   └── TableViewModal.tsx + .module.css  # "Customize table" picker modal — 3x3 grid of mini CSS-mockup previews, one per TableViewId
     │   └── pages/
     │       ├── BoardPage.tsx + BoardPage.module.css
-    │       └── MyTasksPage.tsx
+    │       └── MyTasksPage.tsx + MyTasksPage.module.css   # search/status/priority/project filters + TaskListView + TableViewModal trigger
     ├── comments/
     │   └── services/commentService.ts   # getAll, create, update, remove
     ├── sprints/
@@ -271,6 +274,8 @@ Only these things belong in Redux:
 - `notifications.isOpen` — notification panel open/closed
 
 Everything else (server data) belongs in React Query, not Redux.
+
+Purely local, per-browser UI preferences that aren't shared app state (e.g. My Tasks' selected table view, `taskflow.myTasksTableView`) can skip Redux entirely and read/write `localStorage` directly in the component — same pattern `uiSlice.setActiveWorkspace` uses for its own persistence, just without the Redux layer since nothing else needs to react to it.
 
 Always use typed hooks:
 
@@ -475,7 +480,7 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Project Settings page: edit project, manage columns and members
 - ✅ Board page: kanban columns, task cards, drag and drop (cross-column + same-column reorder), create task modal
 - ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), comments (add/edit/delete)
-- ✅ My Tasks page — cross-project task list
+- ✅ My Tasks page — cross-project task list, search + status/priority/project filters, "Customize table" modal offering 9 alternate UI layouts for the same data (`TaskListViews.tsx`), selection persisted to `localStorage` (`taskflow.myTasksTableView`, outside Redux — see Redux Store Rules)
 - ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
 - ✅ Notifications panel — bell icon dropdown with real-time updates (WebSocket)
 - ✅ Search overlay — Cmd+K global search

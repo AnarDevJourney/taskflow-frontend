@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   Modal,
   Avatar,
@@ -12,9 +12,9 @@ import {
   Tag,
   Tooltip,
   Popconfirm,
-  message,
   Divider,
 } from "antd";
+import { toast } from "@lib/toast";
 import {
   UserOutlined,
   DeleteOutlined,
@@ -24,6 +24,7 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -31,6 +32,7 @@ import { Task, Priority, Comment } from "@types/index";
 import { taskService, UpdateTaskDto } from "../services/taskService";
 import { commentService } from "@features/comments/services/commentService";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
+import { workspaceService } from "@features/workspaces/services/workspaceService";
 import styles from "./TaskDetailModal.module.css";
 
 dayjs.extend(relativeTime);
@@ -59,9 +61,11 @@ export default function TaskDetailModal({
   open,
   onClose,
 }: Props) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { data: currentUser } = useCurrentUser();
 
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState(task.title);
   const [editingDesc, setEditingDesc] = useState(false);
@@ -78,12 +82,16 @@ export default function TaskDetailModal({
   const [sidePriority, setSidePriority] = useState(task.priority);
   const [sideDueDate, setSideDueDate] = useState(task.dueDate);
   const [sideStoryPoints, setSideStoryPoints] = useState(task.storyPoints);
+  const [sideAssigneeId, setSideAssigneeId] = useState(
+    task.assigneeId?._id ?? null,
+  );
 
   const hasChanges =
     sideStatus !== task.status ||
     sidePriority !== task.priority ||
     sideDueDate !== task.dueDate ||
-    sideStoryPoints !== task.storyPoints;
+    sideStoryPoints !== task.storyPoints ||
+    sideAssigneeId !== (task.assigneeId?._id ?? null);
 
   const handleSideSave = () => {
     updateTask({
@@ -91,6 +99,7 @@ export default function TaskDetailModal({
       priority: sidePriority,
       dueDate: sideDueDate,
       storyPoints: sideStoryPoints,
+      assigneeId: sideAssigneeId,
     });
   };
 
@@ -99,7 +108,14 @@ export default function TaskDetailModal({
     setSidePriority(task.priority);
     setSideDueDate(task.dueDate);
     setSideStoryPoints(task.storyPoints);
+    setSideAssigneeId(task.assigneeId?._id ?? null);
   };
+
+  const { data: members = [] } = useQuery({
+    queryKey: ["workspaceMembers", workspaceId],
+    queryFn: () => workspaceService.getMembers(workspaceId),
+    enabled: open,
+  });
 
   const taskKey = `FE-${task.taskNumber}`;
 
@@ -112,7 +128,7 @@ export default function TaskDetailModal({
     mutationFn: (dto: UpdateTaskDto) =>
       taskService.update(workspaceId, projectId, task._id, dto),
     onSuccess: invalidateTasks,
-    onError: () => message.error("Failed to update task"),
+    onError: () => toast.error(t("taskDetailModal.updateFailed")),
   });
 
   // ─── Delete task mutation ────────────────────────────────────────
@@ -120,10 +136,11 @@ export default function TaskDetailModal({
     mutationFn: () => taskService.remove(workspaceId, projectId, task._id),
     onSuccess: () => {
       invalidateTasks();
+      setDeleteConfirmOpen(false);
       onClose();
-      message.success("Task deleted");
+      toast.success(t("taskDetailModal.deleted"));
     },
-    onError: () => message.error("Failed to delete task"),
+    onError: () => toast.error(t("taskDetailModal.deleteFailed")),
   });
 
   // ─── Comments ────────────────────────────────────────────────────
@@ -140,7 +157,7 @@ export default function TaskDetailModal({
       qc.invalidateQueries({ queryKey: ["comments", task._id] });
       setNewComment("");
     },
-    onError: () => message.error("Failed to add comment"),
+    onError: () => toast.error(t("taskDetailModal.addCommentFailed")),
   });
 
   const { mutate: updateComment } = useMutation({
@@ -150,17 +167,19 @@ export default function TaskDetailModal({
       qc.invalidateQueries({ queryKey: ["comments", task._id] });
       setEditingCommentId(null);
     },
-    onError: () => message.error("Failed to update comment"),
+    onError: () => toast.error(t("taskDetailModal.updateCommentFailed")),
   });
 
   const { mutate: deleteComment } = useMutation({
     mutationFn: (commentId: string) =>
       commentService.remove(workspaceId, projectId, task._id, commentId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["comments", task._id] }),
-    onError: () => message.error("Failed to delete comment"),
+    onError: () => toast.error(t("taskDetailModal.deleteCommentFailed")),
   });
 
   // ─── Checklist ───────────────────────────────────────────────────
+  // Toggling only flips local state. Nothing is sent to the server until
+  // the user explicitly clicks Save — avoids one request per click.
   const { mutate: addChecklistItem } = useMutation({
     mutationFn: (title: string) =>
       taskService.addChecklistItem(workspaceId, projectId, task._id, title),
@@ -175,26 +194,44 @@ export default function TaskDetailModal({
     onSuccess: invalidateTasks,
     onError: () => {
       setLocalChecklist(task.checklist);
-      message.error("Failed to add checklist item");
+      toast.error(t("taskDetailModal.addChecklistItemFailed"));
     },
   });
 
-  const { mutate: toggleChecklist } = useMutation({
-    mutationFn: (index: number) =>
-      taskService.toggleChecklistItem(workspaceId, projectId, task._id, index),
-    onMutate: (index) => {
-      setLocalChecklist((prev) =>
-        prev.map((item, i) =>
-          i === index ? { ...item, completed: !item.completed } : item,
+  const { mutate: toggleChecklistRequest, isPending: isSavingChecklist } = useMutation({
+    mutationFn: (indexes: number[]) =>
+      Promise.all(
+        indexes.map((index) =>
+          taskService.toggleChecklistItem(workspaceId, projectId, task._id, index),
         ),
-      );
-    },
+      ),
     onSuccess: invalidateTasks,
     onError: () => {
       setLocalChecklist(task.checklist);
-      message.error("Failed to update checklist item");
+      toast.error(t("taskDetailModal.updateChecklistItemFailed"));
     },
   });
+
+  const toggleChecklist = (index: number) => {
+    setLocalChecklist((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, completed: !item.completed } : item,
+      ),
+    );
+  };
+
+  const changedChecklistIndexes = localChecklist
+    .map((item, i) => (item.completed !== task.checklist?.[i]?.completed ? i : -1))
+    .filter((i) => i !== -1);
+  const hasChecklistChanges = changedChecklistIndexes.length > 0;
+
+  const handleChecklistSave = () => {
+    toggleChecklistRequest(changedChecklistIndexes);
+  };
+
+  const handleChecklistCancel = () => {
+    setLocalChecklist(task.checklist ?? []);
+  };
 
   // ─── Checklist progress ──────────────────────────────────────────
   const completedCount = localChecklist.filter((i) => i.completed).length;
@@ -205,11 +242,12 @@ export default function TaskDetailModal({
   const priorityStyle = priorityColors[task.priority];
 
   return (
+    <>
     <Modal
       open={open}
       onCancel={onClose}
       footer={null}
-      width={860}
+      width={920}
       className={styles.modal}
       closeIcon={null}
       styles={{ body: { padding: 0 } }}
@@ -227,7 +265,7 @@ export default function TaskDetailModal({
                 color: priorityStyle.color,
               }}
             >
-              {task.priority}
+              {t(`taskDetailModal.priorityLabels.${task.priority}`)}
             </span>
           </div>
 
@@ -258,7 +296,7 @@ export default function TaskDetailModal({
                     setEditingTitle(false);
                   }}
                 >
-                  Save
+                  {t("taskDetailModal.save")}
                 </Button>
                 <Button
                   size="small"
@@ -267,7 +305,7 @@ export default function TaskDetailModal({
                     setEditingTitle(false);
                   }}
                 >
-                  Cancel
+                  {t("taskDetailModal.cancel")}
                 </Button>
               </div>
             </>
@@ -285,7 +323,9 @@ export default function TaskDetailModal({
 
           {/* Description */}
           <div className={styles.section}>
-            <div className={styles.sectionTitle}>Description</div>
+            <div className={styles.sectionTitle}>
+              {t("taskDetailModal.description")}
+            </div>
             {editingDesc ? (
               <>
                 <Input.TextArea
@@ -303,7 +343,7 @@ export default function TaskDetailModal({
                       setEditingDesc(false);
                     }}
                   >
-                    Save
+                    {t("taskDetailModal.save")}
                   </Button>
                   <Button
                     size="small"
@@ -312,7 +352,7 @@ export default function TaskDetailModal({
                       setEditingDesc(false);
                     }}
                   >
-                    Cancel
+                    {t("taskDetailModal.cancel")}
                   </Button>
                 </div>
               </>
@@ -326,7 +366,7 @@ export default function TaskDetailModal({
               >
                 {task.description || (
                   <span className={styles.descPlaceholder}>
-                    Add a description…
+                    {t("taskDetailModal.descriptionPlaceholder")}
                   </span>
                 )}
               </div>
@@ -337,7 +377,8 @@ export default function TaskDetailModal({
           {(localChecklist.length > 0 || addingChecklist) && (
             <div className={styles.section}>
               <div className={styles.sectionTitle}>
-                Checklist — {completedCount}/{totalCount}
+                {t("taskDetailModal.checklist")} — {completedCount}/
+                {totalCount}
               </div>
               {totalCount > 0 && (
                 <Progress
@@ -360,6 +401,25 @@ export default function TaskDetailModal({
                   </span>
                 </div>
               ))}
+              {hasChecklistChanges && (
+                <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                  <Button
+                    size="small"
+                    type="primary"
+                    loading={isSavingChecklist}
+                    onClick={handleChecklistSave}
+                  >
+                    {t("taskDetailModal.save")}
+                  </Button>
+                  <Button
+                    size="small"
+                    disabled={isSavingChecklist}
+                    onClick={handleChecklistCancel}
+                  >
+                    {t("taskDetailModal.cancel")}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
@@ -368,7 +428,7 @@ export default function TaskDetailModal({
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
               <Input
                 size="small"
-                placeholder="Checklist item…"
+                placeholder={t("taskDetailModal.checklistItemPlaceholder")}
                 value={newChecklistItem}
                 onChange={(e) => setNewChecklistItem(e.target.value)}
                 onPressEnter={() => {
@@ -386,10 +446,10 @@ export default function TaskDetailModal({
                     addChecklistItem(newChecklistItem.trim());
                 }}
               >
-                Add
+                {t("taskDetailModal.add")}
               </Button>
               <Button size="small" onClick={() => setAddingChecklist(false)}>
-                Cancel
+                {t("taskDetailModal.cancel")}
               </Button>
             </div>
           ) : (
@@ -401,7 +461,7 @@ export default function TaskDetailModal({
               onClick={() => setAddingChecklist(true)}
               style={{ marginBottom: 20 }}
             >
-              Add checklist item
+              {t("taskDetailModal.addChecklistItem")}
             </Button>
           )}
 
@@ -410,14 +470,14 @@ export default function TaskDetailModal({
           {/* Comments */}
           <div className={styles.section}>
             <div className={styles.sectionTitle}>
-              Comments ({comments.length})
+              {t("taskDetailModal.comments")} ({comments.length})
             </div>
 
             {comments.map((comment: Comment) => (
               <div key={comment._id} className={styles.comment}>
                 <Avatar
-                  size={28}
-                  style={{ background: "#4a6cf7", flexShrink: 0, fontSize: 11 }}
+                  size={30}
+                  style={{ background: "#4a6cf7", flexShrink: 0, fontSize: 12 }}
                 >
                   {comment.authorId?.name?.[0]?.toUpperCase()}
                 </Avatar>
@@ -426,7 +486,7 @@ export default function TaskDetailModal({
                     {comment.authorId?.name}
                     <span className={styles.commentDate}>
                       {dayjs(comment.createdAt).fromNow()}
-                      {comment.editedAt && " (edited)"}
+                      {comment.editedAt && ` ${t("taskDetailModal.edited")}`}
                     </span>
                   </div>
 
@@ -449,13 +509,13 @@ export default function TaskDetailModal({
                             })
                           }
                         >
-                          Save
+                          {t("taskDetailModal.save")}
                         </Button>
                         <Button
                           size="small"
                           onClick={() => setEditingCommentId(null)}
                         >
-                          Cancel
+                          {t("taskDetailModal.cancel")}
                         </Button>
                       </div>
                     </>
@@ -475,9 +535,11 @@ export default function TaskDetailModal({
                               }}
                             />
                             <Popconfirm
-                              title="Delete comment?"
+                              title={t(
+                                "taskDetailModal.deleteCommentConfirmTitle",
+                              )}
                               onConfirm={() => deleteComment(comment._id)}
-                              okText="Delete"
+                              okText={t("taskDetailModal.delete")}
                               okType="danger"
                             >
                               <Button
@@ -506,7 +568,7 @@ export default function TaskDetailModal({
               <Input.TextArea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Add a comment…"
+                placeholder={t("taskDetailModal.addCommentPlaceholder")}
                 rows={2}
                 onKeyDown={(e) => {
                   if (
@@ -534,7 +596,7 @@ export default function TaskDetailModal({
                   loading={isAddingComment}
                   onClick={() => addComment()}
                 >
-                  Comment
+                  {t("taskDetailModal.comment")}
                 </Button>
               </div>
             )}
@@ -554,11 +616,12 @@ export default function TaskDetailModal({
 
           {/* Status */}
           <div className={styles.metaRow}>
-            <div className={styles.metaLabel}>Status</div>
+            <div className={styles.metaLabel}>
+              {t("taskDetailModal.statusLabel")}
+            </div>
             <Select
               value={sideStatus}
               style={{ width: "100%" }}
-              size="small"
               onChange={(value) => setSideStatus(value)}
             >
               {statuses.map((s) => (
@@ -571,66 +634,88 @@ export default function TaskDetailModal({
 
           {/* Priority */}
           <div className={styles.metaRow}>
-            <div className={styles.metaLabel}>Priority</div>
+            <div className={styles.metaLabel}>
+              {t("taskDetailModal.priorityLabel")}
+            </div>
             <Select
               value={sidePriority}
               style={{ width: "100%" }}
-              size="small"
               onChange={(value) => setSidePriority(value)}
             >
               <Select.Option value={Priority.CRITICAL}>
-                🔴 Critical
+                {t("taskDetailModal.priorityCritical")}
               </Select.Option>
-              <Select.Option value={Priority.HIGH}>🟠 High</Select.Option>
-              <Select.Option value={Priority.MEDIUM}>🔵 Medium</Select.Option>
-              <Select.Option value={Priority.LOW}>⚪ Low</Select.Option>
+              <Select.Option value={Priority.HIGH}>
+                {t("taskDetailModal.priorityHigh")}
+              </Select.Option>
+              <Select.Option value={Priority.MEDIUM}>
+                {t("taskDetailModal.priorityMedium")}
+              </Select.Option>
+              <Select.Option value={Priority.LOW}>
+                {t("taskDetailModal.priorityLow")}
+              </Select.Option>
             </Select>
           </div>
 
           {/* Assignee */}
           <div className={styles.metaRow}>
-            <div className={styles.metaLabel}>Assignee</div>
-            <div className={styles.metaValue}>
-              {task.assigneeId ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <Avatar
-                    size={20}
-                    style={{ background: "#4a6cf7", fontSize: 10 }}
-                  >
-                    {task.assigneeId.name?.[0]?.toUpperCase()}
-                  </Avatar>
-                  <span style={{ fontSize: 13 }}>{task.assigneeId.name}</span>
-                </div>
-              ) : (
-                <span style={{ color: "#bfbfbf", fontSize: 13 }}>
-                  Unassigned
-                </span>
-              )}
+            <div className={styles.metaLabel}>
+              {t("taskDetailModal.assignee")}
             </div>
+            <Select
+              value={sideAssigneeId}
+              allowClear
+              placeholder={t("taskDetailModal.unassigned")}
+              style={{ width: "100%" }}
+              onChange={(value) => setSideAssigneeId(value ?? null)}
+              onClear={() => setSideAssigneeId(null)}
+              optionLabelProp="label"
+            >
+              {members.map((m) => (
+                <Select.Option
+                  key={m.userId._id}
+                  value={m.userId._id}
+                  label={m.userId.name}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Avatar
+                      size={18}
+                      style={{ background: "#4a6cf7", fontSize: 10 }}
+                    >
+                      {m.userId.name?.[0]?.toUpperCase()}
+                    </Avatar>
+                    <span>{m.userId.name}</span>
+                  </div>
+                </Select.Option>
+              ))}
+            </Select>
           </div>
 
           {/* Reporter */}
           <div className={styles.metaRow}>
-            <div className={styles.metaLabel}>Reporter</div>
+            <div className={styles.metaLabel}>
+              {t("taskDetailModal.reporter")}
+            </div>
             <div className={styles.metaValue}>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <Avatar
-                  size={20}
-                  style={{ background: "#4a6cf7", fontSize: 10 }}
+                  size={22}
+                  style={{ background: "#4a6cf7", fontSize: 11 }}
                 >
                   {task.reporterId?.name?.[0]?.toUpperCase()}
                 </Avatar>
-                <span style={{ fontSize: 13 }}>{task.reporterId?.name}</span>
+                <span style={{ fontSize: 14 }}>{task.reporterId?.name}</span>
               </div>
             </div>
           </div>
 
           {/* Due date */}
           <div className={styles.metaRow}>
-            <div className={styles.metaLabel}>Due Date</div>
+            <div className={styles.metaLabel}>
+              {t("taskDetailModal.dueDate")}
+            </div>
             <DatePicker
               value={sideDueDate ? dayjs(sideDueDate) : null}
-              size="small"
               style={{ width: "100%" }}
               onChange={(date) =>
                 setSideDueDate(date ? date.toISOString() : null)
@@ -640,10 +725,11 @@ export default function TaskDetailModal({
 
           {/* Story points */}
           <div className={styles.metaRow}>
-            <div className={styles.metaLabel}>Story Points</div>
+            <div className={styles.metaLabel}>
+              {t("taskDetailModal.storyPoints")}
+            </div>
             <InputNumber
               value={sideStoryPoints}
-              size="small"
               style={{ width: "100%" }}
               min={0}
               placeholder="—"
@@ -654,10 +740,12 @@ export default function TaskDetailModal({
           {/* Labels */}
           {(task.labels?.length ?? 0) > 0 && (
             <div className={styles.metaRow}>
-              <div className={styles.metaLabel}>Labels</div>
+              <div className={styles.metaLabel}>
+                {t("taskDetailModal.labels")}
+              </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                 {task.labels.map((label) => (
-                  <Tag key={label} style={{ fontSize: 11 }}>
+                  <Tag key={label} style={{ fontSize: 12 }}>
                     {label}
                   </Tag>
                 ))}
@@ -667,10 +755,12 @@ export default function TaskDetailModal({
 
           {/* Created */}
           <div className={styles.metaRow}>
-            <div className={styles.metaLabel}>Created</div>
+            <div className={styles.metaLabel}>
+              {t("taskDetailModal.created")}
+            </div>
             <div
               className={styles.metaValue}
-              style={{ fontSize: 12, color: "#8c8c8c" }}
+              style={{ fontSize: 13, color: "#8c8c8c" }}
             >
               {dayjs(task.createdAt).format("MMM D, YYYY")}
             </div>
@@ -685,37 +775,48 @@ export default function TaskDetailModal({
                 style={{ flex: 1 }}
                 onClick={handleSideSave}
               >
-                Save
+                {t("taskDetailModal.save")}
               </Button>
               <Button size="small" style={{ flex: 1 }} onClick={handleSideCancel}>
-                Cancel
+                {t("taskDetailModal.cancel")}
               </Button>
             </div>
           )}
 
           {/* Delete */}
           <div className={styles.deleteBtn}>
-            <Popconfirm
-              title="Delete this task?"
-              description="This action cannot be undone."
-              onConfirm={() => deleteTask()}
-              okText="Delete"
-              okType="danger"
+            <Button
+              danger
+              type="text"
+              size="small"
+              icon={<DeleteOutlined />}
+              loading={isDeleting}
+              block
+              onClick={() => setDeleteConfirmOpen(true)}
             >
-              <Button
-                danger
-                type="text"
-                size="small"
-                icon={<DeleteOutlined />}
-                loading={isDeleting}
-                block
-              >
-                Delete task
-              </Button>
-            </Popconfirm>
+              {t("taskDetailModal.deleteTask")}
+            </Button>
           </div>
         </div>
       </div>
     </Modal>
+
+    {/* Delete confirmation */}
+    <Modal
+      title={t("taskDetailModal.deleteTaskConfirmTitle")}
+      open={deleteConfirmOpen}
+      onCancel={() => setDeleteConfirmOpen(false)}
+      centered
+      width={480}
+      okText={t("taskDetailModal.delete")}
+      cancelText={t("taskDetailModal.cancel")}
+      okButtonProps={{ danger: true, loading: isDeleting }}
+      onOk={() => deleteTask()}
+    >
+      <p style={{ fontSize: 15, lineHeight: 1.6 }}>
+        {t("taskDetailModal.deleteTaskConfirmDesc")}
+      </p>
+    </Modal>
+    </>
   );
 }

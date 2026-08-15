@@ -9,8 +9,8 @@ import {
   Modal,
   Skeleton,
   Tooltip,
-  message,
 } from "antd";
+import { toast } from "@lib/toast";
 import {
   EditOutlined,
   InboxOutlined,
@@ -99,7 +99,7 @@ export default function WorkspacesPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspaces"] });
       setEditingWorkspace(null);
-      message.success(t("workspaces.updated"));
+      toast.success(t("workspaces.updated"));
     },
   });
 
@@ -128,11 +128,11 @@ export default function WorkspacesPage() {
         dispatch(setActiveWorkspace(null));
       }
       setArchivingWorkspace(null);
-      message.success(t("workspaces.archived"));
+      toast.success(t("workspaces.archived"));
     },
     onError: (error: AxiosError<any>) => {
       const msg = error?.response?.data?.error?.message;
-      message.error(
+      toast.error(
         Array.isArray(msg) ? msg[0] : msg || t("workspaces.archiveFailed"),
       );
     },
@@ -151,11 +151,11 @@ export default function WorkspacesPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspaces"] });
       qc.invalidateQueries({ queryKey: ["workspaces", "archived"] });
-      message.success(t("workspaces.restored"));
+      toast.success(t("workspaces.restored"));
     },
     onError: (error: AxiosError<any>) => {
       const msg = error?.response?.data?.error?.message;
-      message.error(
+      toast.error(
         Array.isArray(msg) ? msg[0] : msg || t("workspaces.restoreFailed"),
       );
     },

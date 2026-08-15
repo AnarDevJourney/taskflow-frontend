@@ -1,6 +1,6 @@
 .board {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   overflow-x: auto;
   padding-bottom: 24px;
   align-items: flex-start;
@@ -10,24 +10,54 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
 .toolbarLeft {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .projectKey {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #8c8c8c;
   letter-spacing: 0.05em;
 }
 
 .projectName {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   color: #1a1f2e;
+}
+
+.multiDragOverlay {
+  position: relative;
+}
+
+.multiDragBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #4a6cf7;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }

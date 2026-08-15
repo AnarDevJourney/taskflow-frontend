@@ -1,0 +1,326 @@
+.empty {
+  padding: 60px 24px;
+  text-align: center;
+}
+
+/* ─── Shared group header building blocks ─────────────────────────── */
+.group {
+  margin-bottom: 28px;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.groupTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1f2e;
+}
+
+.groupCount {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8c8c8c;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.groupDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ─── Shared row-based table (base look — used by "classic") ──────── */
+.table {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 90px 1fr 160px 120px 120px 100px;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  transition: background 0.12s;
+  gap: 12px;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: #f9fafc;
+}
+
+.rowHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8c8c8c;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #fafafa;
+  padding: 12px 16px;
+  cursor: default;
+}
+
+.rowHeader:hover {
+  background: #fafafa;
+}
+
+.taskKey {
+  font-size: 12px;
+  font-weight: 500;
+  color: #8c8c8c;
+}
+
+.taskTitle {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1f2e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.projectName {
+  font-size: 13px;
+  color: #8c8c8c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dueDate {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.overdue {
+  color: #f5222d;
+}
+
+/* ─── compact: dense rows, subdued group header, no card border ───── */
+.table_compact {
+  composes: table;
+  border-radius: 4px;
+}
+
+.row_compact {
+  composes: row;
+  padding: 8px 12px;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.groupHeader_compact {
+  composes: groupHeader;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+}
+
+/* ─── spreadsheet: full grid borders, monospace, no rounding ──────── */
+.table_spreadsheet {
+  border: 1px solid #d9d9d9;
+  border-radius: 0;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.row_spreadsheet {
+  composes: row;
+  border: 1px solid #e8e8e8;
+  border-radius: 0;
+  padding: 8px 12px;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.row_spreadsheet:hover {
+  background: #f0f5ff;
+}
+
+/* ─── minimal: no card chrome, plain hairline dividers ─────────────── */
+.table_minimal {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.row_minimal {
+  composes: row;
+  border-bottom: 1px solid #ececec;
+  padding: 10px 4px;
+}
+
+.row_minimal:hover {
+  background: transparent;
+  opacity: 0.7;
+}
+
+/* ─── colorful: rounded cards with a priority-colored left bar ────── */
+.table_colorful {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row_colorful {
+  composes: row;
+  background: #fff;
+  border: 1px solid #eef0f4;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.row_colorful:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ─── avatar: taller rows, assignee avatar in the title cell ──────── */
+.table_avatar {
+  composes: table;
+}
+
+.row_avatar {
+  composes: row;
+  padding: 16px;
+}
+
+/* ─── striped: zebra rows ──────────────────────────────────────────── */
+.table_striped {
+  composes: table;
+}
+
+.row_striped {
+  composes: row;
+}
+
+.rowStriped {
+  background: #fafbfd;
+}
+
+.rowStriped:hover {
+  background: #f0f4fb;
+}
+
+/* ─── cards grid variant ───────────────────────────────────────────── */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.taskCard {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.12s,
+    box-shadow 0.12s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.taskCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.taskCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.taskCardPriority {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.taskCardTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1f2e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.taskCardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ─── kanban-by-status variant ─────────────────────────────────────── */
+.kanbanBoard {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.kanbanColumn {
+  flex: 0 0 260px;
+  background: #f5f6fa;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 640px;
+  display: flex;
+  flex-direction: column;
+}
+
+.kanbanColumnHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1f2e;
+  padding: 4px 6px 10px;
+}
+
+.kanbanColumnBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.kanbanCard {
+  composes: taskCard;
+  padding: 10px 12px;
+  box-shadow: none;
+}
+
+.kanbanCard:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Form, Input, Select, Button, Modal } from "antd";
+import { useTranslation } from "react-i18next";
 import { Priority } from "@types/index";
 import { CreateTaskDto } from "../services/taskService";
 
@@ -20,6 +21,7 @@ export default function CreateTaskModal({
   onClose,
   isPending,
 }: Props) {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function CreateTaskModal({
 
   return (
     <Modal
-      title="New Task"
+      title={t("createTaskModal.title")}
       open={open}
       onCancel={handleClose}
       footer={null}
@@ -51,16 +53,21 @@ export default function CreateTaskModal({
         >
           <Form.Item
             name="title"
-            label="Task title"
-            rules={[{ required: true, message: "Please enter a title" }]}
+            label={t("createTaskModal.titleLabel")}
+            rules={[
+              { required: true, message: t("createTaskModal.titleRequired") },
+            ]}
           >
-            <Input placeholder="e.g. Fix login bug" autoFocus />
+            <Input
+              placeholder={t("createTaskModal.titlePlaceholder")}
+              autoFocus
+            />
           </Form.Item>
 
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
           >
-            <Form.Item name="status" label="Status">
+            <Form.Item name="status" label={t("createTaskModal.statusLabel")}>
               <Select>
                 {statuses.map((s) => (
                   <Select.Option key={s} value={s}>
@@ -72,31 +79,45 @@ export default function CreateTaskModal({
 
             <Form.Item
               name="priority"
-              label="Priority"
+              label={t("createTaskModal.priorityLabel")}
               initialValue={Priority.MEDIUM}
             >
               <Select>
                 <Select.Option value={Priority.CRITICAL}>
-                  🔴 Critical
+                  {t("createTaskModal.priorityCritical")}
                 </Select.Option>
-                <Select.Option value={Priority.HIGH}>🟠 High</Select.Option>
-                <Select.Option value={Priority.MEDIUM}>🔵 Medium</Select.Option>
-                <Select.Option value={Priority.LOW}>⚪ Low</Select.Option>
+                <Select.Option value={Priority.HIGH}>
+                  {t("createTaskModal.priorityHigh")}
+                </Select.Option>
+                <Select.Option value={Priority.MEDIUM}>
+                  {t("createTaskModal.priorityMedium")}
+                </Select.Option>
+                <Select.Option value={Priority.LOW}>
+                  {t("createTaskModal.priorityLow")}
+                </Select.Option>
               </Select>
             </Form.Item>
           </div>
 
-          <Form.Item name="description" label="Description (optional)">
-            <Input.TextArea rows={3} placeholder="Add more details…" />
+          <Form.Item
+            name="description"
+            label={t("createTaskModal.descriptionLabel")}
+          >
+            <Input.TextArea
+              rows={3}
+              placeholder={t("createTaskModal.descriptionPlaceholder")}
+            />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
             <div
               style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}
             >
-              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose}>
+                {t("createTaskModal.cancel")}
+              </Button>
               <Button type="primary" htmlType="submit" loading={isPending}>
-                Create Task
+                {t("createTaskModal.createTask")}
               </Button>
             </div>
           </Form.Item>

@@ -4,6 +4,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Button, Tooltip } from "antd";
+import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import { Task, StatusConfig } from "@types/index";
 import TaskCard from "./TaskCard";
@@ -14,6 +15,9 @@ interface Props {
   tasks: Task[];
   onAddTask: (status: string) => void;
   onTaskClick: (task: Task) => void;
+  selectMode?: boolean;
+  selectedIds?: Set<string>;
+  onToggleSelect?: (task: Task) => void;
 }
 
 export default function BoardColumn({
@@ -21,7 +25,11 @@ export default function BoardColumn({
   tasks,
   onAddTask,
   onTaskClick,
+  selectMode = false,
+  selectedIds,
+  onToggleSelect,
 }: Props) {
+  const { t } = useTranslation();
   const { setNodeRef, isOver } = useDroppable({ id: status.name });
 
   const isOverLimit = status.wipLimit != null && tasks.length > status.wipLimit;
@@ -52,7 +60,7 @@ export default function BoardColumn({
             {status.wipLimit != null && `/${status.wipLimit}`}
           </span>
         </div>
-        <Tooltip title="Add task">
+        <Tooltip title={t("board.addTaskTooltip")}>
           <Button
             type="text"
             size="small"
@@ -77,11 +85,18 @@ export default function BoardColumn({
           }}
         >
           {tasks.map((task) => (
-            <TaskCard key={task._id} task={task} onClick={onTaskClick} />
+            <TaskCard
+              key={task._id}
+              task={task}
+              onClick={onTaskClick}
+              selectMode={selectMode}
+              selected={selectedIds?.has(task._id)}
+              onToggleSelect={onToggleSelect}
+            />
           ))}
 
           {tasks.length === 0 && (
-            <div className={styles.empty}>Drop tasks here</div>
+            <div className={styles.empty}>{t("board.dropTasksHere")}</div>
           )}
         </div>
       </SortableContext>

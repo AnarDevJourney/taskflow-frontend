@@ -10,13 +10,13 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 260px;
-  min-height: 560px;
+  grid-template-columns: 1fr 280px;
+  min-height: 580px;
 }
 
 /* ─── Left panel ────────────────────────────────────────────────── */
 .left {
-  padding: 28px 28px 24px;
+  padding: 32px 32px 28px;
   overflow-y: auto;
   max-height: 80vh;
   border-right: 1px solid #f0f0f0;
@@ -25,32 +25,32 @@
 .taskMeta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .taskKey {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #8c8c8c;
   letter-spacing: 0.04em;
 }
 
 .priorityBadge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  padding: 1px 8px;
+  padding: 2px 10px;
   border-radius: 4px;
 }
 
 .title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: #1a1f2e;
   line-height: 1.4;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   padding: 2px 4px;
   margin-left: -4px;
   transition: background 0.15s;
@@ -61,11 +61,11 @@
 }
 
 .titleInput {
-  font-size: 18px !important;
+  font-size: 20px !important;
   font-weight: 600 !important;
   color: #1a1f2e !important;
-  margin-bottom: 20px;
-  border-radius: 4px;
+  margin-bottom: 22px;
+  border-radius: 6px;
 }
 
 /* ─── Section ───────────────────────────────────────────────────── */
@@ -79,7 +79,7 @@
   color: #8c8c8c;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .description {
@@ -87,8 +87,8 @@
   color: #1a1f2e;
   line-height: 1.6;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 10px;
+  border-radius: 8px;
   border: 1px solid transparent;
   transition:
     border-color 0.15s,
@@ -119,7 +119,7 @@
 }
 
 .checklistItemText {
-  font-size: 13px;
+  font-size: 14px;
   color: #1a1f2e;
   flex: 1;
 }
@@ -148,20 +148,20 @@
 }
 
 .commentAuthor {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #1a1f2e;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
 .commentText {
-  font-size: 13px;
+  font-size: 14px;
   color: #1a1f2e;
   line-height: 1.5;
 }
 
 .commentDate {
-  font-size: 11px;
+  font-size: 12px;
   color: #8c8c8c;
   margin-left: 8px;
   font-weight: 400;
@@ -181,7 +181,7 @@
 
 /* ─── Right panel ───────────────────────────────────────────────── */
 .right {
-  padding: 24px 20px;
+  padding: 28px 22px;
   background: #fafafa;
   overflow-y: auto;
   max-height: 80vh;
@@ -189,25 +189,25 @@
 
 .closeBtn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 18px;
+  right: 18px;
 }
 
 .metaRow {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .metaLabel {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #8c8c8c;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .metaValue {
-  font-size: 13px;
+  font-size: 14px;
   color: #1a1f2e;
 }
 

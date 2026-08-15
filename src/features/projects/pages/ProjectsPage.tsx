@@ -9,8 +9,8 @@ import {
   Skeleton,
   Empty,
   Tooltip,
-  message,
 } from "antd";
+import { toast } from "@lib/toast";
 import {
   EditOutlined,
   InboxOutlined,
@@ -67,7 +67,7 @@ export default function ProjectsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
       setEditingProject(null);
-      message.success(t("projects.updated"));
+      toast.success(t("projects.updated"));
     },
   });
 
@@ -96,9 +96,9 @@ export default function ProjectsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
       setArchivingProject(null);
-      message.success(t("projects.archived"));
+      toast.success(t("projects.archived"));
     },
-    onError: () => message.error(t("projects.archiveFailed")),
+    onError: () => toast.error(t("projects.archiveFailed")),
   });
 
   const { data: archivedProjects, isLoading: isArchivedLoading } = useQuery({
@@ -112,9 +112,9 @@ export default function ProjectsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
       qc.invalidateQueries({ queryKey: ["projects", workspaceId, "archived"] });
-      message.success(t("projects.restored"));
+      toast.success(t("projects.restored"));
     },
-    onError: () => message.error(t("projects.restoreFailed")),
+    onError: () => toast.error(t("projects.restoreFailed")),
   });
 
   return (

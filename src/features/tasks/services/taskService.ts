@@ -28,6 +28,12 @@ export interface ReorderTaskDto {
   order: number;
 }
 
+export interface ReorderBulkTasksDto {
+  taskIds: string[];
+  status: string;
+  order: number;
+}
+
 export interface QueryTasksDto {
   page?: number;
   limit?: number;
@@ -93,6 +99,18 @@ export const taskService = {
   ): Promise<Task> => {
     const res = await api.patch<ApiResponse<Task>>(
       `${base(workspaceId, projectId)}/${taskId}/reorder`,
+      dto,
+    );
+    return res.data.data;
+  },
+
+  reorderBulk: async (
+    workspaceId: string,
+    projectId: string,
+    dto: ReorderBulkTasksDto,
+  ): Promise<{ updated: number }> => {
+    const res = await api.patch<ApiResponse<{ updated: number }>>(
+      `${base(workspaceId, projectId)}/reorder-bulk`,
       dto,
     );
     return res.data.data;

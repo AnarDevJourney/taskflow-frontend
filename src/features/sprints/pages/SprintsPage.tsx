@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Empty, Skeleton, Progress, Input, message } from "antd";
+import { Button, Empty, Skeleton, Progress, Input } from "antd";
+import { toast } from "@lib/toast";
 import { PlusOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useProject } from "@features/projects/hooks/useProjects";
@@ -91,7 +92,7 @@ export default function SprintsPage() {
       setCreateModalOpen(false);
       setSelectedSprintId(sprint._id);
     },
-    onError: () => message.error("Failed to create sprint"),
+    onError: () => toast.error("Failed to create sprint"),
   });
 
   const { mutate: updateGoal } = useMutation({
@@ -101,16 +102,16 @@ export default function SprintsPage() {
       invalidateAll();
       setEditingGoal(false);
     },
-    onError: () => message.error("Failed to update goal"),
+    onError: () => toast.error("Failed to update goal"),
   });
 
   const { mutate: startSprint, isPending: isStarting } = useMutation({
     mutationFn: () => sprintService.start(wsId, prId, selectedSprint!._id),
     onSuccess: () => {
       invalidateAll();
-      message.success("Sprint started");
+      toast.success("Sprint started");
     },
-    onError: () => message.error("Failed to start sprint"),
+    onError: () => toast.error("Failed to start sprint"),
   });
 
   const { mutate: completeSprint, isPending: isCompleting } = useMutation({
@@ -128,9 +129,9 @@ export default function SprintsPage() {
     onSuccess: () => {
       invalidateAll();
       setCompleteModalOpen(false);
-      message.success("Sprint completed");
+      toast.success("Sprint completed");
     },
-    onError: () => message.error("Failed to complete sprint"),
+    onError: () => toast.error("Failed to complete sprint"),
   });
 
   const { mutate: addTasksToSprint, isPending: isAddingTasks } = useMutation({
@@ -146,9 +147,9 @@ export default function SprintsPage() {
     onSuccess: () => {
       invalidateAll();
       setAddTasksModalOpen(false);
-      message.success("Tasks added to sprint");
+      toast.success("Tasks added to sprint");
     },
-    onError: () => message.error("Failed to add tasks"),
+    onError: () => toast.error("Failed to add tasks"),
   });
 
   if (!project) {

@@ -13,8 +13,8 @@ import {
   Skeleton,
   Switch,
   Tag,
-  message,
 } from "antd";
+import { toast } from "@lib/toast";
 import {
   ArrowLeftOutlined,
   DeleteOutlined,
@@ -165,9 +165,9 @@ export default function ProjectSettingsPage() {
       projectService.update(workspaceId ?? "", projectId ?? "", dto),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
-      message.success(t("projectSettings.updated"));
+      toast.success(t("projectSettings.updated"));
     },
-    onError: () => message.error(t("projectSettings.updateFailed")),
+    onError: () => toast.error(t("projectSettings.updateFailed")),
   });
 
   // ─── Statuses ───────────────────────────────────────────────────
@@ -180,9 +180,9 @@ export default function ProjectSettingsPage() {
       ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
-      message.success(t("projectSettings.columnsUpdated"));
+      toast.success(t("projectSettings.columnsUpdated"));
     },
-    onError: () => message.error(t("projectSettings.columnsUpdateFailed")),
+    onError: () => toast.error(t("projectSettings.columnsUpdateFailed")),
   });
 
   const handleAddColumn = () => {
@@ -256,10 +256,10 @@ export default function ProjectSettingsPage() {
       ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["project-members", projectId] });
-      message.success(t("projectSettings.memberRemoved"));
+      toast.success(t("projectSettings.memberRemoved"));
       setRemovingMember(null);
     },
-    onError: () => message.error(t("projectSettings.memberRemoveFailed")),
+    onError: () => toast.error(t("projectSettings.memberRemoveFailed")),
   });
 
   const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
@@ -285,10 +285,10 @@ export default function ProjectSettingsPage() {
       projectService.addMember(workspaceId ?? "", projectId ?? "", memberId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["project-members", projectId] });
-      message.success(t("projectSettings.memberAdded"));
+      toast.success(t("projectSettings.memberAdded"));
       closeAddMemberModal();
     },
-    onError: () => message.error(t("projectSettings.memberAddFailed")),
+    onError: () => toast.error(t("projectSettings.memberAddFailed")),
   });
 
   // ─── Danger zone ────────────────────────────────────────────────
@@ -299,10 +299,10 @@ export default function ProjectSettingsPage() {
       projectService.archive(workspaceId ?? "", projectId ?? ""),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["projects", workspaceId] });
-      message.success(t("projectSettings.archived"));
+      toast.success(t("projectSettings.archived"));
       navigate(`/workspaces/${workspaceId}/projects`);
     },
-    onError: () => message.error(t("projectSettings.archiveFailed")),
+    onError: () => toast.error(t("projectSettings.archiveFailed")),
   });
 
   if (isLoading || !project) {

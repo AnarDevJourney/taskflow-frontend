@@ -1,8 +1,8 @@
 .card {
   background: #ffffff;
   border: 1px solid #e8e8e8;
-  border-radius: 7px;
-  padding: 12px;
+  border-radius: 8px;
+  padding: 14px;
   cursor: grab;
   transition:
     box-shadow 0.15s,
@@ -19,11 +19,16 @@
   cursor: grabbing;
 }
 
+.selected {
+  border-color: #4a6cf7;
+  box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+}
+
 .cardHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .taskKey {
@@ -33,38 +38,38 @@
 }
 
 .priorityDot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .taskId {
-  font-size: 11px;
+  font-size: 12px;
   color: #8c8c8c;
   font-weight: 500;
 }
 
 .title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   color: #1a1f2e;
   line-height: 1.45;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .labels {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   display: flex;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 4px;
 }
 
 .footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .footerLeft {
@@ -74,15 +79,15 @@
 }
 
 .dueDate {
-  font-size: 11px;
+  font-size: 12px;
   display: flex;
   align-items: center;
 }
 
 .points {
-  font-size: 11px;
+  font-size: 12px;
   color: #8c8c8c;
   background: #f5f5f5;
-  padding: 1px 5px;
-  border-radius: 3px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }

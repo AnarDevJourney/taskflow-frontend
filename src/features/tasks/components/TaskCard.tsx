@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Avatar, Tag, Tooltip } from "antd";
+import { Avatar, Checkbox, Tag, Tooltip } from "antd";
 import {
   UserOutlined,
   CalendarOutlined,
@@ -13,6 +13,9 @@ import styles from "./TaskCard.module.css";
 interface Props {
   task: Task;
   onClick: (task: Task) => void;
+  selectMode?: boolean;
+  selected?: boolean;
+  onToggleSelect?: (task: Task) => void;
 }
 
 const priorityColors: Record<Priority, string> = {
@@ -22,7 +25,13 @@ const priorityColors: Record<Priority, string> = {
   [Priority.LOW]: "#8c8c8c",
 };
 
-export default function TaskCard({ task, onClick }: Props) {
+export default function TaskCard({
+  task,
+  onClick,
+  selectMode = false,
+  selected = false,
+  onToggleSelect,
+}: Props) {
   const {
     attributes,
     listeners,
@@ -47,11 +56,21 @@ export default function TaskCard({ task, onClick }: Props) {
       style={style}
       {...attributes}
       {...listeners}
-      className={styles.card}
-      onClick={() => onClick(task)}
+      className={`${styles.card} ${selected ? styles.selected : ""}`}
+      onClick={() =>
+        selectMode ? onToggleSelect?.(task) : onClick(task)
+      }
     >
       {/* Task key + priority dot */}
       <div className={styles.cardHeader}>
+        {selectMode && (
+          <Checkbox
+            checked={selected}
+            onClick={(e) => e.stopPropagation()}
+            onChange={() => onToggleSelect?.(task)}
+            style={{ marginRight: 4 }}
+          />
+        )}
         <span className={styles.taskKey}>
           <span
             className={styles.priorityDot}

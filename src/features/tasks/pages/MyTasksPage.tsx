@@ -1,77 +1,93 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Avatar, Empty, Select, Skeleton, Tag, Tooltip } from "antd";
-import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
+import { Button, Input, Select, Skeleton } from "antd";
+import {
+  ClearOutlined,
+  SearchOutlined,
+  TableOutlined,
+} from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useMyTasks } from "../hooks/useMyTasks";
-import { useProjects } from "@features/projects/hooks/useProjects";
+import { useProject, useProjects } from "@features/projects/hooks/useProjects";
 import { Task, Priority } from "@types/index";
 import TaskDetailModal from "../components/TaskDetailModal";
+import TaskListView, {
+  DEFAULT_TABLE_VIEW,
+  TABLE_VIEW_STORAGE_KEY,
+  TableViewId,
+} from "../components/TaskListViews";
+import TableViewModal from "../components/TableViewModal";
 import styles from "./MyTasksPage.module.css";
 
-const priorityColors: Record<Priority, string> = {
-  [Priority.CRITICAL]: "#f5222d",
-  [Priority.HIGH]: "#fa8c16",
-  [Priority.MEDIUM]: "#4a6cf7",
-  [Priority.LOW]: "#8c8c8c",
-};
-
-type GroupKey = "overdue" | "today" | "this_week" | "later" | "no_date";
-
-const groups: { key: GroupKey; label: string; color: string }[] = [
-  { key: "overdue", label: "Overdue", color: "#f5222d" },
-  { key: "today", label: "Today", color: "#fa8c16" },
-  { key: "this_week", label: "This Week", color: "#4a6cf7" },
-  { key: "later", label: "Later", color: "#10B981" },
-  { key: "no_date", label: "No Due Date", color: "#8c8c8c" },
-];
-
-function getGroup(task: Task): GroupKey {
-  if (!task.dueDate) return "no_date";
-  const due = dayjs(task.dueDate);
-  const today = dayjs().startOf("day");
-
-  if (due.isBefore(today)) return "overdue";
-  if (due.isSame(today, "day")) return "today";
-  if (due.isBefore(today.add(7, "day"))) return "this_week";
-  return "later";
+function loadStoredTableView(): TableViewId {
+  try {
+    const stored = localStorage.getItem(TABLE_VIEW_STORAGE_KEY);
+    return (stored as TableViewId) || DEFAULT_TABLE_VIEW;
+  } catch {
+    return DEFAULT_TABLE_VIEW;
+  }
 }
 
 export default function MyTasksPage() {
+  const { t } = useTranslation();
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<string | null>(null);
+  const [projectFilter, setProjectFilter] = useState<string | null>(null);
+  const [tableView, setTableView] = useState<TableViewId>(loadStoredTableView);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
 
   const { data: tasks = [], isLoading } = useMyTasks(workspaceId ?? "");
   const { data: projects = [] } = useProjects(workspaceId ?? "");
+  // The project list endpoint omits `statuses` (it's excluded for the
+  // lightweight projects grid) — fetch the selected task's full project
+  // separately so the detail modal gets a real status list.
+  const { data: selectedTaskProject } = useProject(
+    workspaceId ?? "",
+    selectedTask?.projectId ?? "",
+  );
+
+  const hasActiveFilters =
+    !!searchQuery || !!statusFilter || !!priorityFilter || !!projectFilter;
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter(null);
+    setPriorityFilter(null);
+    setProjectFilter(null);
+  };
+
+  const handleSelectTableView = (view: TableViewId) => {
+    setTableView(view);
+    try {
+      localStorage.setItem(TABLE_VIEW_STORAGE_KEY, view);
+    } catch {
+      // localStorage unavailable — selection just won't persist
+    }
+  };
 
   // filter tasks
+  const query = searchQuery.trim().toLowerCase();
   const filtered = tasks.filter((t) => {
+    if (
+      query &&
+      !t.title.toLowerCase().includes(query) &&
+      !`${t.taskNumber}`.includes(query)
+    ) {
+      return false;
+    }
     if (statusFilter && t.status !== statusFilter) return false;
     if (priorityFilter && t.priority !== priorityFilter) return false;
+    if (projectFilter && t.projectId !== projectFilter) return false;
     return true;
   });
-
-  // group by due date
-  const grouped = groups.reduce<Record<GroupKey, Task[]>>(
-    (acc, g) => {
-      acc[g.key] = filtered.filter((t) => getGroup(t) === g.key);
-      return acc;
-    },
-    { overdue: [], today: [], this_week: [], later: [], no_date: [] },
-  );
 
   // get project name for a task
   const getProjectName = (task: Task) => {
     const project = projects.find((p) => p._id === task.projectId);
     return project ? `${project.key} — ${project.name}` : "—";
-  };
-
-  // get project statuses for the modal
-  const getStatuses = (task: Task) => {
-    const project = projects.find((p) => p._id === task.projectId);
-    return project?.statuses.map((s) => s.name) ?? [];
   };
 
   // collect all unique statuses for filter dropdown
@@ -81,7 +97,7 @@ export default function MyTasksPage() {
     return (
       <div>
         <div className={styles.header}>
-          <h1 className={styles.title}>My Tasks</h1>
+          <h1 className={styles.title}>{t("myTasksPage.title")}</h1>
         </div>
         <Skeleton active paragraph={{ rows: 8 }} />
       </div>
@@ -91,19 +107,28 @@ export default function MyTasksPage() {
   return (
     <>
       <div className={styles.header}>
-        <h1 className={styles.title}>My Tasks</h1>
+        <h1 className={styles.title}>{t("myTasksPage.title")}</h1>
         <p className={styles.subtitle}>
-          {tasks.length} task{tasks.length !== 1 ? "s" : ""} assigned to you
+          {t("myTasksPage.subtitle", { count: tasks.length })}
         </p>
       </div>
 
       {/* Filters */}
       <div className={styles.filters}>
-        <Select
-          placeholder="All statuses"
+        <Input
           allowClear
-          style={{ width: 140 }}
-          size="small"
+          placeholder={t("myTasksPage.searchPlaceholder")}
+          prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ width: 220 }}
+        />
+
+        <Select
+          placeholder={t("myTasksPage.allStatuses")}
+          allowClear
+          value={statusFilter}
+          style={{ width: 160 }}
           onChange={(v) => setStatusFilter(v ?? null)}
         >
           {allStatuses.map((s) => (
@@ -114,111 +139,70 @@ export default function MyTasksPage() {
         </Select>
 
         <Select
-          placeholder="All priorities"
+          placeholder={t("myTasksPage.allPriorities")}
           allowClear
-          style={{ width: 140 }}
-          size="small"
+          value={priorityFilter}
+          style={{ width: 160 }}
           onChange={(v) => setPriorityFilter(v ?? null)}
         >
-          <Select.Option value={Priority.CRITICAL}>🔴 Critical</Select.Option>
-          <Select.Option value={Priority.HIGH}>🟠 High</Select.Option>
-          <Select.Option value={Priority.MEDIUM}>🔵 Medium</Select.Option>
-          <Select.Option value={Priority.LOW}>⚪ Low</Select.Option>
+          <Select.Option value={Priority.CRITICAL}>
+            {t("myTasksPage.priorityCritical")}
+          </Select.Option>
+          <Select.Option value={Priority.HIGH}>
+            {t("myTasksPage.priorityHigh")}
+          </Select.Option>
+          <Select.Option value={Priority.MEDIUM}>
+            {t("myTasksPage.priorityMedium")}
+          </Select.Option>
+          <Select.Option value={Priority.LOW}>
+            {t("myTasksPage.priorityLow")}
+          </Select.Option>
         </Select>
+
+        <Select
+          placeholder={t("myTasksPage.allProjects")}
+          allowClear
+          value={projectFilter}
+          style={{ width: 200 }}
+          onChange={(v) => setProjectFilter(v ?? null)}
+        >
+          {projects.map((p) => (
+            <Select.Option key={p._id} value={p._id}>
+              {p.key} — {p.name}
+            </Select.Option>
+          ))}
+        </Select>
+
+        {hasActiveFilters && (
+          <Button icon={<ClearOutlined />} type="text" onClick={clearFilters}>
+            {t("myTasksPage.clearFilters")}
+          </Button>
+        )}
+
+        <Button
+          icon={<TableOutlined />}
+          onClick={() => setViewModalOpen(true)}
+          style={{ marginLeft: "auto" }}
+        >
+          {t("tableViews.customizeTable")}
+        </Button>
       </div>
 
-      {filtered.length === 0 ? (
-        <div className={styles.empty}>
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description="No tasks assigned to you"
-          />
-        </div>
-      ) : (
-        groups.map((group) => {
-          const groupTasks = grouped[group.key];
-          if (groupTasks.length === 0) return null;
+      <TaskListView
+        variant={tableView}
+        tasks={filtered}
+        getProjectName={getProjectName}
+        onTaskClick={setSelectedTask}
+        emptyDescription={t("myTasksPage.emptyDescription")}
+      />
 
-          return (
-            <div key={group.key} className={styles.group}>
-              {/* Group header */}
-              <div className={styles.groupHeader}>
-                <span
-                  className={styles.groupDot}
-                  style={{ background: group.color }}
-                />
-                <span className={styles.groupTitle}>{group.label}</span>
-                <span className={styles.groupCount}>{groupTasks.length}</span>
-              </div>
-
-              {/* Table */}
-              <div className={styles.table}>
-                {/* Table header */}
-                <div className={`${styles.row} ${styles.rowHeader}`}>
-                  <span>Key</span>
-                  <span>Title</span>
-                  <span>Project</span>
-                  <span>Status</span>
-                  <span>Due Date</span>
-                  <span>Priority</span>
-                </div>
-
-                {/* Task rows */}
-                {groupTasks.map((task) => {
-                  const isOverdue =
-                    task.dueDate &&
-                    dayjs(task.dueDate).isBefore(dayjs(), "day");
-
-                  return (
-                    <div
-                      key={task._id}
-                      className={styles.row}
-                      onClick={() => setSelectedTask(task)}
-                    >
-                      <span className={styles.taskKey}>#{task.taskNumber}</span>
-
-                      <span className={styles.taskTitle}>{task.title}</span>
-
-                      <span className={styles.projectName}>
-                        {getProjectName(task)}
-                      </span>
-
-                      <span>
-                        <Tag style={{ fontSize: 11 }}>{task.status}</Tag>
-                      </span>
-
-                      <span
-                        className={`${styles.dueDate} ${isOverdue ? styles.overdue : ""}`}
-                      >
-                        {task.dueDate ? (
-                          <>
-                            <CalendarOutlined />
-                            {dayjs(task.dueDate).format("MMM D")}
-                          </>
-                        ) : (
-                          <span style={{ color: "#bfbfbf" }}>—</span>
-                        )}
-                      </span>
-
-                      <span>
-                        <span
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 500,
-                            color: priorityColors[task.priority],
-                          }}
-                        >
-                          ● {task.priority}
-                        </span>
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })
-      )}
+      {/* Table view picker */}
+      <TableViewModal
+        open={viewModalOpen}
+        value={tableView}
+        onSelect={handleSelectTableView}
+        onClose={() => setViewModalOpen(false)}
+      />
 
       {/* Task detail modal */}
       {selectedTask && (
@@ -226,7 +210,7 @@ export default function MyTasksPage() {
           task={selectedTask}
           workspaceId={workspaceId ?? ""}
           projectId={selectedTask.projectId}
-          statuses={getStatuses(selectedTask)}
+          statuses={selectedTaskProject?.statuses.map((s) => s.name) ?? []}
           open={!!selectedTask}
           onClose={() => setSelectedTask(null)}
         />

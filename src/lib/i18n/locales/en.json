@@ -262,5 +262,157 @@
     "archiveProject": "Archive project",
     "archived": "Project archived",
     "archiveFailed": "Failed to archive project"
+  },
+  "board": {
+    "sprints": "Sprints",
+    "settings": "Settings",
+    "addTask": "Add Task",
+    "addTaskTooltip": "Add task",
+    "dropTasksHere": "Drop tasks here",
+    "createTaskFailed": "Failed to create task",
+    "moveTaskFailed": "Failed to move task",
+    "select": "Select",
+    "cancelSelect": "Cancel",
+    "selectedCount": "{{count}} selected",
+    "moveTasksFailed": "Failed to move tasks",
+    "searchPlaceholder": "Search tasks…",
+    "priorityFilterPlaceholder": "Priority",
+    "assigneeFilterPlaceholder": "Assignee",
+    "assigneeMe": "Assigned to me",
+    "assigneeUnassigned": "Unassigned",
+    "dueFilterPlaceholder": "Due date",
+    "dueOverdue": "Overdue",
+    "dueThisWeek": "Due this week",
+    "dueNone": "No due date",
+    "clearFilters": "Clear filters"
+  },
+  "createTaskModal": {
+    "title": "New Task",
+    "titleLabel": "Task title",
+    "titleRequired": "Please enter a title",
+    "titlePlaceholder": "e.g. Fix login bug",
+    "statusLabel": "Status",
+    "priorityLabel": "Priority",
+    "priorityCritical": "🔴 Critical",
+    "priorityHigh": "🟠 High",
+    "priorityMedium": "🔵 Medium",
+    "priorityLow": "⚪ Low",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Add more details…",
+    "cancel": "Cancel",
+    "createTask": "Create Task"
+  },
+  "myTasksPage": {
+    "title": "My Tasks",
+    "subtitle": "{{count}} task assigned to you",
+    "subtitle_other": "{{count}} tasks assigned to you",
+    "allStatuses": "All statuses",
+    "allPriorities": "All priorities",
+    "priorityCritical": "🔴 Critical",
+    "priorityHigh": "🟠 High",
+    "priorityMedium": "🔵 Medium",
+    "priorityLow": "⚪ Low",
+    "emptyDescription": "No tasks assigned to you",
+    "groupOverdue": "Overdue",
+    "groupToday": "Today",
+    "groupThisWeek": "This Week",
+    "groupLater": "Later",
+    "groupNoDueDate": "No Due Date",
+    "columnKey": "Key",
+    "columnTitle": "Title",
+    "columnProject": "Project",
+    "columnStatus": "Status",
+    "columnDueDate": "Due Date",
+    "columnPriority": "Priority",
+    "searchPlaceholder": "Search tasks…",
+    "allProjects": "All projects",
+    "clearFilters": "Clear filters"
+  },
+  "taskDetailModal": {
+    "updateFailed": "Failed to update task",
+    "deleted": "Task deleted",
+    "deleteFailed": "Failed to delete task",
+    "addCommentFailed": "Failed to add comment",
+    "updateCommentFailed": "Failed to update comment",
+    "deleteCommentFailed": "Failed to delete comment",
+    "addChecklistItemFailed": "Failed to add checklist item",
+    "updateChecklistItemFailed": "Failed to update checklist item",
+    "save": "Save",
+    "cancel": "Cancel",
+    "description": "Description",
+    "descriptionPlaceholder": "Add a description…",
+    "checklist": "Checklist",
+    "checklistItemPlaceholder": "Checklist item…",
+    "add": "Add",
+    "addChecklistItem": "Add checklist item",
+    "comments": "Comments",
+    "edited": "(edited)",
+    "deleteCommentConfirmTitle": "Delete comment?",
+    "delete": "Delete",
+    "addCommentPlaceholder": "Add a comment…",
+    "comment": "Comment",
+    "statusLabel": "Status",
+    "priorityLabel": "Priority",
+    "priorityCritical": "🔴 Critical",
+    "priorityHigh": "🟠 High",
+    "priorityMedium": "🔵 Medium",
+    "priorityLow": "⚪ Low",
+    "priorityLabels": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "assignee": "Assignee",
+    "unassigned": "Unassigned",
+    "reporter": "Reporter",
+    "dueDate": "Due Date",
+    "storyPoints": "Story Points",
+    "labels": "Labels",
+    "created": "Created",
+    "deleteTaskConfirmTitle": "Delete this task?",
+    "deleteTaskConfirmDesc": "This action cannot be undone.",
+    "deleteTask": "Delete task"
+  },
+  "tableViews": {
+    "customizeTable": "Customize table",
+    "modalTitle": "Customize table view",
+    "modalHint": "Pick how you'd like your task list to look. Your choice is remembered for next time.",
+    "classic": {
+      "name": "Classic",
+      "desc": "The default grouped table with clean rows."
+    },
+    "compact": {
+      "name": "Compact",
+      "desc": "Dense rows to fit more tasks on screen."
+    },
+    "spreadsheet": {
+      "name": "Spreadsheet",
+      "desc": "Full grid lines and monospace, Excel-style."
+    },
+    "cards": {
+      "name": "Cards",
+      "desc": "Each task as a card in a responsive grid."
+    },
+    "minimal": {
+      "name": "Minimal",
+      "desc": "No borders, just clean hairline dividers."
+    },
+    "colorful": {
+      "name": "Colorful",
+      "desc": "Rounded rows with a priority-colored edge."
+    },
+    "avatar": {
+      "name": "Avatar focus",
+      "desc": "Taller rows with the assignee's avatar."
+    },
+    "striped": {
+      "name": "Striped",
+      "desc": "Classic zebra-striped rows."
+    },
+    "kanban": {
+      "name": "Status columns",
+      "desc": "Tasks grouped into columns by status."
+    }
   }
 }

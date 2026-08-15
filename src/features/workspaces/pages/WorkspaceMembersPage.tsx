@@ -10,8 +10,8 @@ import {
   Skeleton,
   Tag,
   Typography,
-  message,
 } from "antd";
+import { toast } from "@lib/toast";
 import { CopyOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -64,9 +64,9 @@ export default function WorkspaceMembersPage() {
       workspaceService.removeMember(workspaceId ?? "", memberId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspace-members", workspaceId] });
-      message.success(t("members.memberRemoved"));
+      toast.success(t("members.memberRemoved"));
     },
-    onError: () => message.error(t("members.removeMemberFailed")),
+    onError: () => toast.error(t("members.removeMemberFailed")),
   });
 
   const { mutate: updateRole, isPending: isUpdatingRole } = useMutation({
@@ -74,11 +74,11 @@ export default function WorkspaceMembersPage() {
       workspaceService.updateMemberRole(workspaceId ?? "", memberId, role),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspace-members", workspaceId] });
-      message.success(t("members.roleUpdated"));
+      toast.success(t("members.roleUpdated"));
     },
     onError: (error: AxiosError<any>) => {
       const msg = error?.response?.data?.error?.message;
-      message.error(
+      toast.error(
         Array.isArray(msg) ? msg[0] : msg || t("members.roleUpdateFailed"),
       );
     },
@@ -100,7 +100,7 @@ export default function WorkspaceMembersPage() {
   const copyInviteLink = async () => {
     if (!inviteLink) return;
     await navigator.clipboard.writeText(inviteLink);
-    message.success(t("members.inviteLinkCopied"));
+    toast.success(t("members.inviteLinkCopied"));
   };
 
   const myRole = members?.find(
