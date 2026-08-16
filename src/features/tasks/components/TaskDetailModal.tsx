@@ -11,7 +11,6 @@ import {
   Progress,
   Tag,
   Tooltip,
-  Popconfirm,
   Divider,
 } from "antd";
 import { toast } from "@lib/toast";
@@ -66,6 +65,7 @@ export default function TaskDetailModal({
   const { data: currentUser } = useCurrentUser();
 
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleValue, setTitleValue] = useState(task.title);
   const [editingDesc, setEditingDesc] = useState(false);
@@ -178,10 +178,13 @@ export default function TaskDetailModal({
     onError: () => toast.error(t("taskDetailModal.updateCommentFailed")),
   });
 
-  const { mutate: deleteComment } = useMutation({
+  const { mutate: deleteComment, isPending: isDeletingComment } = useMutation({
     mutationFn: (commentId: string) =>
       commentService.remove(workspaceId, projectId, task._id, commentId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["comments", task._id] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["comments", task._id] });
+      setDeleteCommentId(null);
+    },
     onError: () => toast.error(t("taskDetailModal.deleteCommentFailed")),
   });
 
@@ -490,26 +493,57 @@ export default function TaskDetailModal({
                   {comment.authorId?.name?.[0]?.toUpperCase()}
                 </Avatar>
                 <div className={styles.commentBody}>
-                  <div className={styles.commentAuthor}>
-                    {comment.authorId?.name}
-                    <span className={styles.commentDate}>
-                      {dayjs(comment.createdAt).fromNow()}
-                      {comment.editedAt && ` ${t("taskDetailModal.edited")}`}
-                    </span>
+                  <div className={styles.commentHeader}>
+                    <div className={styles.commentAuthor}>
+                      {comment.authorId?.name}
+                      <span className={styles.commentDate}>
+                        {dayjs(comment.createdAt).fromNow()}
+                        {comment.editedAt && ` · ${t("taskDetailModal.edited")}`}
+                      </span>
+                    </div>
+
+                    {editingCommentId !== comment._id &&
+                      currentUser?._id === comment.authorId?._id &&
+                      comment.deletedAt === null && (
+                        <div className={styles.commentActions}>
+                          <Tooltip title={t("taskDetailModal.edit")}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<EditOutlined />}
+                              onClick={() => {
+                                setEditingCommentId(comment._id);
+                                setEditingCommentBody(comment.body);
+                              }}
+                            />
+                          </Tooltip>
+                          <Tooltip title={t("taskDetailModal.delete")}>
+                            <Button
+                              type="text"
+                              size="small"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => setDeleteCommentId(comment._id)}
+                            />
+                          </Tooltip>
+                        </div>
+                      )}
                   </div>
 
                   {editingCommentId === comment._id ? (
                     <>
                       <Input.TextArea
+                        className={styles.commentEditInput}
                         value={editingCommentBody}
                         onChange={(e) => setEditingCommentBody(e.target.value)}
                         rows={2}
                         autoFocus
                       />
-                      <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+                      <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
                         <Button
                           size="small"
                           type="primary"
+                          disabled={!editingCommentBody.trim()}
                           onClick={() =>
                             updateComment({
                               id: comment._id,
@@ -528,42 +562,17 @@ export default function TaskDetailModal({
                       </div>
                     </>
                   ) : (
-                    <>
-                      <div className={styles.commentText}>{comment.body}</div>
-                      {currentUser?._id === comment.authorId?._id &&
-                        comment.deletedAt === null && (
-                          <div className={styles.commentActions}>
-                            <Button
-                              type="text"
-                              size="small"
-                              icon={<EditOutlined />}
-                              onClick={() => {
-                                setEditingCommentId(comment._id);
-                                setEditingCommentBody(comment.body);
-                              }}
-                            />
-                            <Popconfirm
-                              title={t(
-                                "taskDetailModal.deleteCommentConfirmTitle",
-                              )}
-                              onConfirm={() => deleteComment(comment._id)}
-                              okText={t("taskDetailModal.delete")}
-                              okType="danger"
-                            >
-                              <Button
-                                type="text"
-                                size="small"
-                                danger
-                                icon={<DeleteOutlined />}
-                              />
-                            </Popconfirm>
-                          </div>
-                        )}
-                    </>
+                    <div className={styles.commentText}>{comment.body}</div>
                   )}
                 </div>
               </div>
             ))}
+
+            {comments.length === 0 && (
+              <div className={styles.noComments}>
+                {t("taskDetailModal.noComments")}
+              </div>
+            )}
 
             {/* Add comment */}
             <div className={styles.addComment}>
@@ -823,6 +832,23 @@ export default function TaskDetailModal({
     >
       <p style={{ fontSize: 15, lineHeight: 1.6 }}>
         {t("taskDetailModal.deleteTaskConfirmDesc")}
+      </p>
+    </Modal>
+
+    {/* Delete comment confirmation */}
+    <Modal
+      title={t("taskDetailModal.deleteCommentConfirmTitle")}
+      open={!!deleteCommentId}
+      onCancel={() => setDeleteCommentId(null)}
+      centered
+      width={480}
+      okText={t("taskDetailModal.delete")}
+      cancelText={t("taskDetailModal.cancel")}
+      okButtonProps={{ danger: true, loading: isDeletingComment }}
+      onOk={() => deleteCommentId && deleteComment(deleteCommentId)}
+    >
+      <p style={{ fontSize: 15, lineHeight: 1.6 }}>
+        {t("taskDetailModal.deleteCommentConfirmDesc")}
       </p>
     </Modal>
     </>

@@ -137,14 +137,27 @@
 .comment {
   display: flex;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .commentBody {
   flex: 1;
   background: #f5f6fa;
-  border-radius: 8px;
+  border: 1px solid #eef0f5;
+  border-radius: 10px;
   padding: 10px 14px;
+  transition: border-color 0.15s;
+}
+
+.comment:hover .commentBody {
+  border-color: #e8e8e8;
+}
+
+.commentHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .commentAuthor {
@@ -158,6 +171,8 @@
   font-size: 14px;
   color: #1a1f2e;
   line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .commentDate {
@@ -169,14 +184,36 @@
 
 .commentActions {
   display: flex;
-  gap: 4px;
-  margin-top: 6px;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.comment:hover .commentActions {
+  opacity: 1;
+}
+
+.commentEditInput {
+  border-radius: 6px !important;
+}
+
+.noComments {
+  font-size: 13px;
+  color: #bfbfbf;
+  padding: 10px 0 16px;
+  text-align: center;
 }
 
 .addComment {
   display: flex;
   gap: 10px;
   margin-top: 8px;
+  align-items: flex-start;
+}
+
+.addComment :global(.ant-input) {
+  border-radius: 8px;
 }
 
 /* ─── Right panel ───────────────────────────────────────────────── */
