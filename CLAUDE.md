@@ -48,8 +48,9 @@ src/
 │   └── index.tsx               # all routes — public (login/register/forgot/reset) + protected
 ├── components/
 │   ├── layout/
-│   │   ├── AppLayout.tsx       # sidebar + topbar + <Outlet /> — wraps all protected pages
+│   │   ├── AppLayout.tsx       # sidebar + topbar + <Outlet /> — wraps all protected pages. Sidebar nav module visibility/order + collapsed/expanded state are backend-persisted per user via `sidebarSettings` (see below), applied once on load via the same `useRef` guard pattern as MyTasksPage's table settings
 │   │   ├── AppLayout.module.css
+│   │   ├── SidebarModulesModal.tsx + .module.css   # sidebar customization modal — checkbox per nav module (visible/hidden) + @dnd-kit drag handle to reorder, mirrors TableColumnsModal's pattern; saves once on modal close
 │   │   └── AuthGuard.tsx       # redirects to /login if not authenticated
 │   └── ui/                     # shared reusable UI components (avatars, badges, etc.)
 └── features/
@@ -95,6 +96,9 @@ src/
     ├── tableSettings/
     │   ├── services/tableSettingsService.ts   # getOne(key), upsert(key, dto) — talks to GET/PUT /table-settings/:key
     │   └── hooks/useTableSettings.ts          # useTableSettings(key) (useQuery, staleTime: Infinity — this tab is the only writer) + useSaveTableSettings(key) (useMutation, writes through to the query cache on success)
+    ├── sidebarSettings/
+    │   ├── services/sidebarSettingsService.ts # getOne(), upsert(dto) — talks to GET/PUT /sidebar-settings (singular, no key — one doc per user)
+    │   └── hooks/useSidebarSettings.ts        # same shape as useTableSettings/useSaveTableSettings, consumed directly by AppLayout
     ├── comments/
     │   └── services/commentService.ts   # getAll, create, update, remove
     ├── sprints/
@@ -273,7 +277,7 @@ const errorMessage = (() => {
 
 Only these things belong in Redux:
 
-- `ui.sidebarCollapsed` — sidebar open/closed
+- `ui.sidebarCollapsed` — declared on the slice but currently unused; the sidebar's actual collapsed/expanded state lives in `AppLayout`'s own component state, backend-persisted (see below), not Redux
 - `ui.activeWorkspaceId` — currently selected workspace. Persisted to `localStorage` (`taskflow.activeWorkspaceId`) inside the `setActiveWorkspace` reducer itself, so it survives a page reload — `AppLayout` reads the URL's `:workspaceId` first, falls back to this stored value on routes without one (e.g. `/workspaces`), and only then falls back to the first workspace in the list.
 - `ui.activeProjectId` — currently selected project
 - `notifications.items` — notification list pushed via WebSocket
@@ -284,7 +288,7 @@ Everything else (server data) belongs in React Query, not Redux.
 
 Purely local, per-browser UI preferences that aren't shared app state can skip Redux entirely and read/write `localStorage` directly in the component — same pattern `uiSlice.setActiveWorkspace` uses for its own persistence, just without the Redux layer since nothing else needs to react to it.
 
-Preferences that should follow the *user* rather than the browser (e.g. My Tasks' selected table view/page size/column layout) don't belong in either Redux or `localStorage` — they're saved server-side per user via the `table-settings` backend module (see `tableSettings` feature, `useTableSettings`/`useSaveTableSettings`). `MyTasksPage` applies the fetched settings exactly once (a `useRef` guard) and then saves on every change; watch that ordering if you touch it, or the initial defaults will get saved over the user's real settings before they load.
+Preferences that should follow the *user* rather than the browser (e.g. My Tasks' selected table view/page size/column layout, or the sidebar's module visibility/order/collapsed state) don't belong in either Redux or `localStorage` — they're saved server-side per user via the `table-settings`/`sidebar-settings` backend modules (see `tableSettings`/`sidebarSettings` features, `useTableSettings`/`useSaveTableSettings` and `useSidebarSettings`/`useSaveSidebarSettings`). `MyTasksPage`/`AppLayout` apply the fetched settings exactly once (a `useRef` guard) and then save on every change; watch that ordering if you touch it, or the initial defaults will get saved over the user's real settings before they load.
 
 Always use typed hooks:
 
@@ -481,7 +485,7 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Foundation: Axios, React Query, Redux store, router, theme, i18n (en/az/ru)
 - ✅ Auth pages: Login, Register, ForgotPassword, ResetPassword
 - ✅ Invite re-use flow: `RegisterPage` branches to an "accept invite" screen (already logged in as the invited user) or redirects to `Login` with `?inviteToken=` (invited email already has an account, not logged in) — see `authService.acceptInvite`
-- ✅ AppLayout: sidebar, topbar, workspace switcher (derived from URL, falling back to the persisted `ui.activeWorkspaceId`, falling back to first workspace), user menu, notifications panel, Cmd+K search overlay
+- ✅ AppLayout: sidebar, topbar, workspace switcher (derived from URL, falling back to the persisted `ui.activeWorkspaceId`, falling back to first workspace), user menu, notifications panel, Cmd+K search overlay, sidebar customization (`SidebarModulesModal` — show/hide + drag-reorder nav modules) and a collapsed/expanded toggle, both backend-persisted per user via `sidebar-settings` (default: expanded, all modules visible)
 - ✅ AuthGuard: route protection
 - ✅ Workspaces page: grid of workspace cards (member count, description), create/edit/archive/restore modals, owner-only archive/restore
 - ✅ Workspace Members page: member list, invite (email + role), remove member, per-member role update (Select, owner/admin only, can't change own role)

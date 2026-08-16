@@ -11,6 +11,17 @@
   left: 0;
   top: 0;
   bottom: 0;
+  transition: width 0.15s;
+}
+
+.siderCollapsed {
+  width: 72px;
+}
+
+.siderCollapsed .nav :global(.ant-menu-item) {
+  margin-inline: 12px;
+  padding-inline: 0 !important;
+  text-align: center;
 }
 
 .siderInner {
@@ -101,6 +112,15 @@
   color: #8c8c8c;
 }
 
+.siderControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-top: 1px solid #f0f0f0;
+}
+
 .userSection {
   padding: 14px;
   border-top: 1px solid #f0f0f0;
@@ -122,6 +142,15 @@
 
 .userBtn:hover {
   background: #f5f6fa;
+}
+
+.siderCollapsed .userBtn {
+  justify-content: center;
+}
+
+.siderCollapsed .logo {
+  justify-content: center;
+  padding-inline: 0;
 }
 
 .userInfo {
@@ -150,6 +179,11 @@
   margin-left: 240px;
   min-height: 100vh;
   background: #f5f6fa;
+  transition: margin-left 0.15s;
+}
+
+.contentCollapsed {
+  margin-left: 72px;
 }
 
 .topbar {

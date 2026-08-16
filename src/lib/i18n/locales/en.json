@@ -217,7 +217,10 @@
       "members": "Members",
       "workspaces": "Workspaces",
       "default": "TaskFlow"
-    }
+    },
+    "customizeSidebarTooltip": "Customize sidebar",
+    "collapseSidebarTooltip": "Collapse sidebar",
+    "expandSidebarTooltip": "Expand sidebar"
   },
   "projectSettings": {
     "backToBoard": "Back to board",
@@ -427,5 +430,9 @@
     "resizeColumns": "Resize columns",
     "saveWidths": "Save",
     "cancelResize": "Cancel"
+  },
+  "sidebarModules": {
+    "modalTitle": "Customize sidebar",
+    "modalHint": "Choose which sections appear in the sidebar and drag to reorder them."
   }
 }

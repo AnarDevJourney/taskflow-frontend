@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, ReactElement } from "react";
 import { Outlet, useNavigate, useLocation, useParams, Link } from "react-router-dom";
 import {
   Avatar,
@@ -21,6 +21,9 @@ import {
   PlusOutlined,
   SearchOutlined,
   TeamOutlined,
+  SettingOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -35,6 +38,32 @@ import NotificationsPanel from "@features/notifications/components/Notifications
 import { useNotificationSocket } from "@features/notifications/hooks/useNotificationSocket";
 import SearchOverlay from "@features/search/components/SearchOverlay";
 import LanguageSwitcher from "@components/ui/LanguageSwitcher";
+import SidebarModulesModal from "./SidebarModulesModal";
+import {
+  useSidebarSettings,
+  useSaveSidebarSettings,
+} from "@features/sidebarSettings/hooks/useSidebarSettings";
+import { SidebarModuleSetting } from "@features/sidebarSettings/services/sidebarSettingsService";
+
+// the sidebar's nav modules — order here is the fallback/default order,
+// mirrored by DEFAULT_SIDEBAR_MODULES below (ids must match menuItems' keys' identity)
+type SidebarModuleId = "workspaces" | "projects" | "myTasks" | "members";
+
+const DEFAULT_SIDEBAR_MODULES: SidebarModuleSetting[] = [
+  { id: "workspaces", visible: true },
+  { id: "projects", visible: true },
+  { id: "myTasks", visible: true },
+  { id: "members", visible: true },
+];
+
+// merges saved settings with the default list so newly-added modules (not
+// yet in an old saved document) still show up, appended at the end
+function normalizeSidebarModules(saved: SidebarModuleSetting[] | undefined): SidebarModuleSetting[] {
+  if (!saved || saved.length === 0) return DEFAULT_SIDEBAR_MODULES;
+  const known = new Set(saved.map((m) => m.id));
+  const missing = DEFAULT_SIDEBAR_MODULES.filter((m) => !known.has(m.id));
+  return [...saved, ...missing];
+}
 
 export default function AppLayout() {
   useNotificationSocket();
@@ -50,6 +79,38 @@ export default function AppLayout() {
   const storedWorkspaceId = useAppSelector((s) => s.ui.activeWorkspaceId);
 
   const [searchOpen, setSearchOpen] = useState(false);
+  const [modulesModalOpen, setModulesModalOpen] = useState(false);
+  const [sidebarModules, setSidebarModules] = useState<SidebarModuleSetting[]>(DEFAULT_SIDEBAR_MODULES);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const { data: savedSidebarSettings, isFetched: sidebarSettingsFetched } = useSidebarSettings();
+  const { mutate: saveSidebarSettings } = useSaveSidebarSettings();
+  const appliedSidebarSettings = useRef(false);
+
+  // apply the saved sidebar settings exactly once, when they first arrive —
+  // same guard pattern MyTasksPage uses for table-settings, so the initial
+  // defaults don't get saved over the user's real settings before they load
+  useEffect(() => {
+    if (!sidebarSettingsFetched || appliedSidebarSettings.current) return;
+    appliedSidebarSettings.current = true;
+    if (savedSidebarSettings?.modules) {
+      setSidebarModules(normalizeSidebarModules(savedSidebarSettings.modules));
+    }
+    if (savedSidebarSettings?.collapsed !== undefined) {
+      setCollapsed(savedSidebarSettings.collapsed);
+    }
+  }, [sidebarSettingsFetched, savedSidebarSettings]);
+
+  const handleCloseModulesModal = () => {
+    setModulesModalOpen(false);
+    saveSidebarSettings({ modules: sidebarModules }); // batched — one request on close, not per-toggle/drag
+  };
+
+  const handleToggleCollapsed = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    saveSidebarSettings({ collapsed: next });
+  };
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -81,28 +142,39 @@ export default function AppLayout() {
     },
   });
 
-  const menuItems = [
-    {
+  const menuItemsByModule: Record<SidebarModuleId, { key: string; icon: ReactElement; label: string }> = {
+    workspaces: {
       key: "/workspaces",
       icon: <AppstoreOutlined />,
       label: t("appLayout.nav.workspaces"),
     },
-    {
+    projects: {
       key: `/workspaces/${activeWorkspace?._id}/projects`,
       icon: <ProjectOutlined />,
       label: t("appLayout.nav.projects"),
     },
-    {
+    myTasks: {
       key: `/workspaces/${activeWorkspace?._id}/my-tasks`,
       icon: <CheckSquareOutlined />,
       label: t("appLayout.nav.myTasks"),
     },
-    {
+    members: {
       key: `/workspaces/${activeWorkspace?._id}/members`,
       icon: <TeamOutlined />,
       label: t("appLayout.nav.members"),
     },
-  ];
+  };
+
+  const moduleLabels: Record<string, string> = Object.fromEntries(
+    Object.entries(menuItemsByModule).map(([id, item]) => [id, item.label]),
+  );
+
+  // sidebarModules' order + visible flag drives both the modal's list and
+  // the actual rendered nav — array order IS the render order
+  const menuItems = sidebarModules
+    .filter((m) => m.visible)
+    .map((m) => menuItemsByModule[m.id as SidebarModuleId])
+    .filter(Boolean);
 
   const selectedKey =
     menuItems
@@ -141,7 +213,7 @@ export default function AppLayout() {
   return (
     <div className={styles.layout}>
       {/* ─── Sidebar ─────────────────────────────────────────── */}
-      <aside className={styles.sider}>
+      <aside className={`${styles.sider} ${collapsed ? styles.siderCollapsed : ""}`}>
         <div className={styles.siderInner}>
           {/* Logo */}
           <Link to="/workspaces" className={styles.logo}>
@@ -160,60 +232,86 @@ export default function AppLayout() {
                 <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
               </svg>
             </div>
-            <span className={styles.logoText}>{t("appLayout.logoText")}</span>
+            {!collapsed && <span className={styles.logoText}>{t("appLayout.logoText")}</span>}
           </Link>
 
           {/* Workspace switcher */}
-          <div className={styles.workspaceSwitcher}>
-            {workspacesLoading ? (
-              <Skeleton.Input active size="small" style={{ width: "100%" }} />
-            ) : (
-              <Dropdown
-                menu={{
-                  items: [
-                    ...(workspaces?.map((ws) => ({
-                      key: ws._id,
-                      label: ws.name,
-                      onClick: () => navigate(`/workspaces/${ws._id}/projects`),
-                    })) ?? []),
-                    { type: "divider" as const },
-                    {
-                      key: "all-workspaces",
-                      icon: <AppstoreOutlined />,
-                      label: t("appLayout.allWorkspaces"),
-                      onClick: () => navigate("/workspaces"),
-                    },
-                  ],
-                }}
-                trigger={["click"]}
-              >
-                <button className={styles.workspaceBtn}>
-                  <Avatar
-                    size={22}
-                    style={{ background: "#4a6cf7", fontSize: 12 }}
-                  >
-                    {activeWorkspace?.name?.[0]?.toUpperCase()}
-                  </Avatar>
-                  <span className={styles.workspaceName}>
-                    {activeWorkspace?.name ?? t("appLayout.selectWorkspace")}
-                  </span>
-                  <DownOutlined style={{ fontSize: 10, color: "#8c8c8c" }} />
-                </button>
-              </Dropdown>
-            )}
-          </div>
+          {!collapsed && (
+            <div className={styles.workspaceSwitcher}>
+              {workspacesLoading ? (
+                <Skeleton.Input active size="small" style={{ width: "100%" }} />
+              ) : (
+                <Dropdown
+                  menu={{
+                    items: [
+                      ...(workspaces?.map((ws) => ({
+                        key: ws._id,
+                        label: ws.name,
+                        onClick: () => navigate(`/workspaces/${ws._id}/projects`),
+                      })) ?? []),
+                      { type: "divider" as const },
+                      {
+                        key: "all-workspaces",
+                        icon: <AppstoreOutlined />,
+                        label: t("appLayout.allWorkspaces"),
+                        onClick: () => navigate("/workspaces"),
+                      },
+                    ],
+                  }}
+                  trigger={["click"]}
+                >
+                  <button className={styles.workspaceBtn}>
+                    <Avatar
+                      size={22}
+                      style={{ background: "#4a6cf7", fontSize: 12 }}
+                    >
+                      {activeWorkspace?.name?.[0]?.toUpperCase()}
+                    </Avatar>
+                    <span className={styles.workspaceName}>
+                      {activeWorkspace?.name ?? t("appLayout.selectWorkspace")}
+                    </span>
+                    <DownOutlined style={{ fontSize: 10, color: "#8c8c8c" }} />
+                  </button>
+                </Dropdown>
+              )}
+            </div>
+          )}
 
           {/* Navigation */}
           <nav className={styles.nav}>
-            <div className={styles.navSection}>{t("appLayout.navigation")}</div>
+            {!collapsed && <div className={styles.navSection}>{t("appLayout.navigation")}</div>}
             <Menu
               mode="inline"
+              inlineCollapsed={collapsed}
               selectedKeys={[selectedKey]}
               items={menuItems}
               onClick={({ key }) => navigate(key)}
               style={{ border: "none" }}
             />
           </nav>
+
+          {/* Sidebar controls: customize modules + collapse toggle */}
+          <div className={styles.siderControls}>
+            <Tooltip title={t("appLayout.customizeSidebarTooltip")} placement="right">
+              <Button
+                icon={<SettingOutlined />}
+                type="text"
+                shape="circle"
+                onClick={() => setModulesModalOpen(true)}
+              />
+            </Tooltip>
+            <Tooltip
+              title={t(collapsed ? "appLayout.expandSidebarTooltip" : "appLayout.collapseSidebarTooltip")}
+              placement="right"
+            >
+              <Button
+                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                type="text"
+                shape="circle"
+                onClick={handleToggleCollapsed}
+              />
+            </Tooltip>
+          </div>
 
           {/* User section */}
           <div className={styles.userSection}>
@@ -230,18 +328,28 @@ export default function AppLayout() {
                 >
                   {user?.name?.[0]?.toUpperCase()}
                 </Avatar>
-                <div className={styles.userInfo}>
-                  <div className={styles.userName}>{user?.name}</div>
-                  <div className={styles.userEmail}>{user?.email}</div>
-                </div>
+                {!collapsed && (
+                  <div className={styles.userInfo}>
+                    <div className={styles.userName}>{user?.name}</div>
+                    <div className={styles.userEmail}>{user?.email}</div>
+                  </div>
+                )}
               </button>
             </Dropdown>
           </div>
         </div>
       </aside>
 
+      <SidebarModulesModal
+        open={modulesModalOpen}
+        modules={sidebarModules}
+        labels={moduleLabels}
+        onChange={setSidebarModules}
+        onClose={handleCloseModulesModal}
+      />
+
       {/* ─── Main content ────────────────────────────────────── */}
-      <div className={styles.content}>
+      <div className={`${styles.content} ${collapsed ? styles.contentCollapsed : ""}`}>
         {/* Topbar */}
         <header className={styles.topbar}>
           <div className={styles.pageTitle}>{getPageTitle()}</div>

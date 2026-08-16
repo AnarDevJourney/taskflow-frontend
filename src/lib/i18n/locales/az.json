@@ -217,7 +217,10 @@
       "members": "Üzvlər",
       "workspaces": "İş sahələri",
       "default": "TaskFlow"
-    }
+    },
+    "customizeSidebarTooltip": "Sidebari fərdiləşdir",
+    "collapseSidebarTooltip": "Sidebari yığ",
+    "expandSidebarTooltip": "Sidebari genişləndir"
   },
   "projectSettings": {
     "backToBoard": "Lövhəyə qayıt",
@@ -427,5 +430,9 @@
     "resizeColumns": "Sütunların ölçüsü",
     "saveWidths": "Yadda saxla",
     "cancelResize": "Ləğv et"
+  },
+  "sidebarModules": {
+    "modalTitle": "Sidebari fərdiləşdir",
+    "modalHint": "Sidebarda hansı bölmələrin görünəcəyini seçin və sıralarını dəyişmək üçün sürükləyin."
   }
 }
