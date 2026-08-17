@@ -10,26 +10,26 @@
 .title {
   font-size: 24px;
   font-weight: 700;
-  color: #111827;
+  color: var(--text);
   letter-spacing: -0.01em;
   margin: 0;
 }
 
 .subtitle {
   font-size: 13px;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin: 4px 0 0;
 }
 
 .totalBadge {
   flex-shrink: 0;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 6px 14px;
   font-size: 13px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text);
   white-space: nowrap;
 }
 
@@ -39,8 +39,8 @@
   align-items: flex-end;
   gap: 16px;
   flex-wrap: wrap;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 20px;
@@ -55,7 +55,7 @@
 .filterLabel {
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .filters :global(.ant-select-selector),
@@ -73,7 +73,7 @@
 .pageSizeLabel {
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 /* ─── Table ─────────────────────────────────────────────────────── */
@@ -87,20 +87,20 @@
   gap: 8px;
   margin-bottom: 12px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .groupTitle {
   font-size: 15px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
 }
 
 .groupCount {
   font-size: 12px;
   font-weight: 500;
-  color: #8c8c8c;
-  background: #f5f5f5;
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
   padding: 2px 8px;
   border-radius: 10px;
 }
@@ -113,8 +113,8 @@
 }
 
 .table {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
 }
@@ -124,7 +124,7 @@
   grid-template-columns: 90px 1fr 160px 120px 120px 100px;
   align-items: center;
   padding: 14px 16px;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
   transition: background 0.12s;
   gap: 12px;
@@ -135,34 +135,34 @@
 }
 
 .row:hover {
-  background: #f9fafc;
+  background: var(--surface-secondary);
 }
 
 .rowHeader {
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  background: #f9fafb;
+  background: var(--surface-secondary);
   padding: 12px 16px;
   cursor: default;
 }
 
 .rowHeader:hover {
-  background: #f9fafb;
+  background: var(--surface-secondary);
 }
 
 .taskKey {
   font-size: 12px;
   font-weight: 500;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .taskTitle {
   font-size: 14px;
   font-weight: 500;
-  color: #1a1f2e;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -170,7 +170,7 @@
 
 .projectName {
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -184,7 +184,7 @@
 }
 
 .overdue {
-  color: #f5222d;
+  color: var(--danger);
 }
 
 .empty {

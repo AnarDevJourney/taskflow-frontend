@@ -218,11 +218,15 @@
       "members": "Участники",
       "workspaces": "Рабочие пространства",
       "default": "TaskFlow",
-      "activity": "Журнал активности"
+      "activity": "Журнал активности",
+      "settings": "Настройки"
     },
     "customizeSidebarTooltip": "Настроить боковую панель",
     "collapseSidebarTooltip": "Свернуть панель",
-    "expandSidebarTooltip": "Развернуть панель"
+    "expandSidebarTooltip": "Развернуть панель",
+    "settings": "Настройки",
+    "darkModeTooltip": "Переключить на тёмный режим",
+    "lightModeTooltip": "Переключить на светлый режим"
   },
   "projectSettings": {
     "backToBoard": "Назад к доске",
@@ -550,6 +554,16 @@
         "name": "Таблица (сетка)",
         "desc": "Полные границы сетки, моноширинный шрифт, без скруглений."
       }
+    }
+  },
+  "settingsPage": {
+    "title": "Настройки",
+    "appearance": {
+      "title": "Внешний вид",
+      "subtitle": "Выберите общий вид интерфейса.",
+      "system": "Системная",
+      "light": "Светлая",
+      "dark": "Тёмная"
     }
   }
 }

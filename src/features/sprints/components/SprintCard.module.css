@@ -1,6 +1,6 @@
 .card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
   cursor: pointer;
@@ -12,12 +12,12 @@
 
 .card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-color: #d0d0d0;
+  border-color: var(--border);
 }
 
 .selected {
-  border-color: #4a6cf7;
-  background: #f0f4ff;
+  border-color: var(--primary);
+  background: var(--info-bg);
 }
 
 .header {
@@ -30,7 +30,7 @@
 .name {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
 }
 
 .badge {
@@ -42,11 +42,11 @@
 
 .dates {
   font-size: 11px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .points {
   font-size: 11px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   margin-top: 4px;
 }

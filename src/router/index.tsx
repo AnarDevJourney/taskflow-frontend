@@ -30,6 +30,9 @@ const SprintsPage = lazy(() => import("@features/sprints/pages/SprintsPage"));
 const ActivityLogPage = lazy(
   () => import("@features/activity/pages/ActivityLogPage"),
 );
+const SettingsPage = lazy(
+  () => import("@features/settings/pages/SettingsPage"),
+);
 
 const PageLoader = () => (
   <div
@@ -89,6 +92,7 @@ export const router = createBrowserRouter([
         path: "workspaces/:workspaceId/activity",
         element: s(ActivityLogPage),
       },
+      { path: "settings", element: s(SettingsPage) },
     ],
   },
 

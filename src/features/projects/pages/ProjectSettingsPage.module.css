@@ -8,30 +8,30 @@
 .backButton {
   align-self: flex-start;
   padding-left: 0;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .section {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 8px;
 }
 
 .sectionHeader {
   padding: 16px 20px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--border);
 }
 
 .sectionTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
   margin-bottom: 4px;
 }
 
 .sectionDesc {
   font-size: 14px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .sectionBody {
@@ -48,14 +48,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .dragHandle {
   display: flex;
   align-items: center;
   cursor: grab;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   flex-shrink: 0;
   touch-action: none;
 }
@@ -95,28 +95,28 @@
 .memberName {
   font-size: 14px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
 }
 
 .memberEmail {
   font-size: 13px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .dangerSection {
-  background: #fff5f5;
-  border: 1px solid #ffd6d6;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
   border-radius: 8px;
 }
 
 .dangerHeader {
   padding: 16px 20px;
-  border-bottom: 1px solid #ffd6d6;
+  border-bottom: 1px solid var(--danger);
 }
 
 .dangerTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #f5222d;
+  color: var(--danger-text);
   margin-bottom: 4px;
 }

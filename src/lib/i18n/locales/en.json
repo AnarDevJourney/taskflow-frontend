@@ -218,11 +218,15 @@
       "members": "Members",
       "workspaces": "Workspaces",
       "default": "TaskFlow",
-      "activity": "Activity Log"
+      "activity": "Activity Log",
+      "settings": "Settings"
     },
     "customizeSidebarTooltip": "Customize sidebar",
     "collapseSidebarTooltip": "Collapse sidebar",
-    "expandSidebarTooltip": "Expand sidebar"
+    "expandSidebarTooltip": "Expand sidebar",
+    "settings": "Settings",
+    "darkModeTooltip": "Switch to dark mode",
+    "lightModeTooltip": "Switch to light mode"
   },
   "projectSettings": {
     "backToBoard": "Back to board",
@@ -550,6 +554,16 @@
         "name": "Spreadsheet",
         "desc": "Full grid borders, monospace font, no rounding."
       }
+    }
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "subtitle": "Choose the overall look of the interface.",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
     }
   }
 }

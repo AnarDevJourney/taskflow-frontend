@@ -30,14 +30,14 @@
 .projectKey {
   font-size: 13px;
   font-weight: 600;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   letter-spacing: 0.05em;
 }
 
 .projectName {
   font-size: 20px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
 }
 
 .multiDragOverlay {
@@ -48,8 +48,8 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  background: #4a6cf7;
-  color: #fff;
+  background: var(--primary);
+  color: var(--surface);
   font-size: 12px;
   font-weight: 600;
   min-width: 22px;

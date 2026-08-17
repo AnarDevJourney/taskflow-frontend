@@ -218,11 +218,15 @@
       "members": "Üzvlər",
       "workspaces": "İş sahələri",
       "default": "TaskFlow",
-      "activity": "Fəaliyyət Jurnalı"
+      "activity": "Fəaliyyət Jurnalı",
+      "settings": "Ayarlar"
     },
     "customizeSidebarTooltip": "Sidebari fərdiləşdir",
     "collapseSidebarTooltip": "Sidebari yığ",
-    "expandSidebarTooltip": "Sidebari genişləndir"
+    "expandSidebarTooltip": "Sidebari genişləndir",
+    "settings": "Ayarlar",
+    "darkModeTooltip": "Qaranlıq rejimə keç",
+    "lightModeTooltip": "İşıqlı rejimə keç"
   },
   "projectSettings": {
     "backToBoard": "Lövhəyə qayıt",
@@ -550,6 +554,16 @@
         "name": "Cədvəl (grid)",
         "desc": "Tam grid sərhədləri, monospace şrift, künclər kəskin."
       }
+    }
+  },
+  "settingsPage": {
+    "title": "Ayarlar",
+    "appearance": {
+      "title": "Görünüş",
+      "subtitle": "İnterfeysin ümumi görünüşünü seçin.",
+      "system": "Sistem",
+      "light": "İşıqlı",
+      "dark": "Qaranlıq"
     }
   }
 }

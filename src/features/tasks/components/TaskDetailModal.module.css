@@ -19,7 +19,7 @@
   padding: 32px 32px 28px;
   overflow-y: auto;
   max-height: 80vh;
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid var(--border);
 }
 
 .taskMeta {
@@ -32,7 +32,7 @@
 .taskKey {
   font-size: 13px;
   font-weight: 600;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   letter-spacing: 0.04em;
 }
 
@@ -46,7 +46,7 @@
 .title {
   font-size: 20px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
   line-height: 1.4;
   margin-bottom: 22px;
   cursor: pointer;
@@ -57,13 +57,13 @@
 }
 
 .title:hover {
-  background: #f5f6fa;
+  background: var(--bg);
 }
 
 .titleInput {
   font-size: 20px !important;
   font-weight: 600 !important;
-  color: #1a1f2e !important;
+  color: var(--text) !important;
   margin-bottom: 22px;
   border-radius: 6px;
 }
@@ -76,7 +76,7 @@
 .sectionTitle {
   font-size: 12px;
   font-weight: 600;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 12px;
@@ -84,7 +84,7 @@
 
 .description {
   font-size: 14px;
-  color: #1a1f2e;
+  color: var(--text);
   line-height: 1.6;
   cursor: pointer;
   padding: 10px;
@@ -97,12 +97,12 @@
 }
 
 .description:hover {
-  background: #f5f6fa;
-  border-color: #e8e8e8;
+  background: var(--bg);
+  border-color: var(--border);
 }
 
 .descPlaceholder {
-  color: #bfbfbf;
+  color: var(--text-secondary);
 }
 
 /* ─── Checklist ─────────────────────────────────────────────────── */
@@ -120,13 +120,13 @@
 
 .checklistItemText {
   font-size: 14px;
-  color: #1a1f2e;
+  color: var(--text);
   flex: 1;
 }
 
 .checklistItemText.done {
   text-decoration: line-through;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .addChecklistBtn {
@@ -142,15 +142,15 @@
 
 .commentBody {
   flex: 1;
-  background: #f5f6fa;
-  border: 1px solid #eef0f5;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 14px;
   transition: border-color 0.15s;
 }
 
 .comment:hover .commentBody {
-  border-color: #e8e8e8;
+  border-color: var(--border);
 }
 
 .commentHeader {
@@ -163,13 +163,13 @@
 .commentAuthor {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
   margin-bottom: 4px;
 }
 
 .commentText {
   font-size: 14px;
-  color: #1a1f2e;
+  color: var(--text);
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
@@ -177,7 +177,7 @@
 
 .commentDate {
   font-size: 12px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   margin-left: 8px;
   font-weight: 400;
 }
@@ -200,7 +200,7 @@
 
 .noComments {
   font-size: 13px;
-  color: #bfbfbf;
+  color: var(--text-secondary);
   padding: 10px 0 16px;
   text-align: center;
 }
@@ -219,7 +219,7 @@
 /* ─── Right panel ───────────────────────────────────────────────── */
 .right {
   padding: 28px 22px;
-  background: #fafafa;
+  background: var(--surface-secondary);
   overflow-y: auto;
   max-height: 80vh;
 }
@@ -237,7 +237,7 @@
 .metaLabel {
   font-size: 12px;
   font-weight: 600;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 6px;
@@ -245,11 +245,11 @@
 
 .metaValue {
   font-size: 14px;
-  color: #1a1f2e;
+  color: var(--text);
 }
 
 .deleteBtn {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border);
 }

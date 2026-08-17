@@ -8,7 +8,7 @@
 .title {
   font-size: 20px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
   margin: 0;
 }
 
@@ -19,8 +19,8 @@
 }
 
 .card {
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 24px;
   cursor: pointer;
@@ -33,7 +33,7 @@
 
 .card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: #d0d0d0;
+  border-color: var(--border);
 }
 
 .cardTop {
@@ -53,7 +53,7 @@
 .cardKey {
   font-size: 11px;
   font-weight: 600;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   letter-spacing: 0.05em;
 }
 
@@ -72,7 +72,7 @@
 .cardName {
   font-size: 16px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
   margin-bottom: 6px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -81,7 +81,7 @@
 
 .cardDesc {
   font-size: 14px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   margin-bottom: 18px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -107,7 +107,7 @@
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .sprintBadge {
@@ -115,8 +115,8 @@
   font-weight: 500;
   padding: 2px 8px;
   border-radius: 4px;
-  background: #f0f4ff;
-  color: #4a6cf7;
+  background: var(--info-bg);
+  color: var(--primary);
 }
 
 .empty {

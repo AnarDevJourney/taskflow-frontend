@@ -25,6 +25,8 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   HistoryOutlined,
+  SunOutlined,
+  MoonOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -39,6 +41,7 @@ import NotificationsPanel from "@features/notifications/components/Notifications
 import { useNotificationSocket } from "@features/notifications/hooks/useNotificationSocket";
 import SearchOverlay from "@features/search/components/SearchOverlay";
 import LanguageSwitcher from "@components/ui/LanguageSwitcher";
+import { useTheme } from "@lib/theme/ThemeProvider";
 import SidebarModulesModal from "./SidebarModulesModal";
 import {
   useSidebarSettings,
@@ -70,6 +73,11 @@ function normalizeSidebarModules(saved: SidebarModuleSetting[] | undefined): Sid
 export default function AppLayout() {
   useNotificationSocket();
   const { t } = useTranslation();
+  const { resolvedTheme, setTheme } = useTheme();
+
+  // quick light↔dark toggle — an explicit choice, distinct from "System" on
+  // the Settings page (this always sets a concrete theme, never "system")
+  const toggleTheme = () => setTheme(resolvedTheme === "dark" ? "light" : "dark");
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -190,6 +198,13 @@ export default function AppLayout() {
 
   const userMenuItems = [
     {
+      key: "settings",
+      icon: <SettingOutlined />,
+      label: t("appLayout.settings"),
+      onClick: () => navigate("/settings"),
+    },
+    { type: "divider" as const },
+    {
       key: "logout",
       icon: <LogoutOutlined />,
       label: t("appLayout.signOut"),
@@ -199,6 +214,7 @@ export default function AppLayout() {
   ];
 
   const getPageTitle = () => {
+    if (location.pathname === "/settings") return t("appLayout.pageTitle.settings");
     if (location.pathname.includes("/settings"))
       return t("appLayout.pageTitle.projectSettings");
     if (
@@ -363,6 +379,16 @@ export default function AppLayout() {
         <header className={styles.topbar}>
           <div className={styles.pageTitle}>{getPageTitle()}</div>
           <div className={styles.topbarActions}>
+            <Tooltip
+              title={t(resolvedTheme === "dark" ? "appLayout.lightModeTooltip" : "appLayout.darkModeTooltip")}
+            >
+              <Button
+                icon={resolvedTheme === "dark" ? <SunOutlined /> : <MoonOutlined />}
+                type="text"
+                shape="circle"
+                onClick={toggleTheme}
+              />
+            </Tooltip>
             <LanguageSwitcher size="small" />
             <Tooltip title={t("appLayout.searchTooltip")}>
               <Button

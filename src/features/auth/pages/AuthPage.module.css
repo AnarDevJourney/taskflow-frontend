@@ -5,14 +5,14 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background-color: #f5f6fa;
+  background-color: var(--bg);
 }
 
 .card {
   width: 100%;
   max-width: 500px;
-  background: #ffffff;
-  border: 1px solid #e8e8e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 48px 52px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -38,7 +38,7 @@
   width: 52px;
   height: 52px;
   border-radius: 12px;
-  background: #4a6cf7;
+  background: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +49,7 @@
   margin: 0 !important;
   font-size: 24px !important;
   font-weight: 600 !important;
-  color: #1a1f2e !important;
+  color: var(--text) !important;
 }
 
 .subtitle {
@@ -59,22 +59,22 @@
 .footer {
   margin-top: 28px;
   padding-top: 22px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border);
   text-align: center;
 }
 
 .backLink {
   font-size: 14px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
 }
 
 .backLink:hover {
-  color: #4a6cf7;
+  color: var(--primary);
 }
 
 .forgotLink {
   font-size: 13px;
-  color: #4a6cf7;
+  color: var(--primary);
   float: right;
   margin-top: 2px;
 }

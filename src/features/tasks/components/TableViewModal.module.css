@@ -1,5 +1,5 @@
 .hint {
-  color: #8c8c8c;
+  color: var(--text-secondary);
   font-size: 13px;
   margin: -8px 0 16px;
 }
@@ -12,37 +12,37 @@
 
 .card {
   position: relative;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
   cursor: pointer;
   transition:
     border-color 0.12s,
     box-shadow 0.12s;
-  background: #fff;
+  background: var(--surface);
 }
 
 .card:hover {
-  border-color: #4a6cf7;
+  border-color: var(--primary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .cardSelected {
-  border-color: #4a6cf7;
-  box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.15);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
 .selectedIcon {
   position: absolute;
   top: 10px;
   right: 10px;
-  color: #4a6cf7;
+  color: var(--primary);
   font-size: 16px;
 }
 
 .preview {
   height: 74px;
-  background: #f5f6fa;
+  background: var(--bg);
   border-radius: 6px;
   padding: 8px;
   margin-bottom: 8px;
@@ -54,13 +54,13 @@
 .cardLabel {
   font-size: 13px;
   font-weight: 600;
-  color: #1a1f2e;
+  color: var(--text);
   margin-bottom: 2px;
 }
 
 .cardDesc {
   font-size: 12px;
-  color: #8c8c8c;
+  color: var(--text-secondary);
   line-height: 1.4;
 }
 
@@ -74,8 +74,8 @@
 
 .mockRow {
   height: 10px;
-  background: #fff;
-  border: 1px solid #e8e8e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 3px;
 }
 
@@ -84,7 +84,7 @@
 }
 
 .mockRowStriped {
-  background: #eef1fa;
+  background: var(--info-bg);
 }
 
 .mockColorRow {
@@ -102,15 +102,15 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #4a6cf7;
+  background: var(--primary);
   flex-shrink: 0;
 }
 
 .mockRowInner {
   flex: 1;
   height: 10px;
-  background: #fff;
-  border: 1px solid #e8e8e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 3px;
 }
 
@@ -129,8 +129,8 @@
 
 .mockGridCell {
   height: 9px;
-  background: #fff;
-  border: 1px solid #d9d9d9;
+  background: var(--surface);
+  border: 1px solid var(--border);
 }
 
 .mockCardsGrid {
@@ -142,8 +142,8 @@
 }
 
 .mockMiniCard {
-  background: #fff;
-  border: 1px solid #e8e8e8;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -157,7 +157,7 @@
 
 .mockLine {
   height: 1px;
-  background: #d9d9d9;
+  background: var(--border);
 }
 
 .mockKanban {
@@ -169,7 +169,7 @@
 
 .mockKanbanCol {
   flex: 1;
-  background: #eceef4;
+  background: var(--surface-secondary);
   border-radius: 4px;
   padding: 3px;
   display: flex;

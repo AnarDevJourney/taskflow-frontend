@@ -7,13 +7,16 @@ import "react-toastify/dist/ReactToastify.css";
 import { store } from "@store/index";
 import { queryClient } from "@lib/queryClient";
 import { router } from "@router/index";
-import { lightTheme } from "@styles/theme";
+import { lightTheme, darkTheme } from "@styles/theme";
+import { useTheme } from "@lib/theme/ThemeProvider";
 
 export default function App() {
+  const { resolvedTheme } = useTheme();
+
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ConfigProvider theme={lightTheme}>
+        <ConfigProvider theme={resolvedTheme === "dark" ? darkTheme : lightTheme}>
           <RouterProvider router={router} />
           <ToastContainer
             position="top-right"
@@ -22,7 +25,7 @@ export default function App() {
             newestOnTop
             closeOnClick
             pauseOnHover
-            theme="light"
+            theme={resolvedTheme}
           />
         </ConfigProvider>
       </QueryClientProvider>

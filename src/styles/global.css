@@ -1,3 +1,63 @@
+/* ─── Theme tokens (see src/lib/theme/) ─────────────────────────────
+   `data-theme` is set on <html> by index.html's inline script (before
+   first paint) and kept in sync by ThemeProvider afterwards. Every color
+   in the app should reference one of these variables — never a hardcoded
+   hex — so both light and dark stay a single source of truth. */
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-secondary: #f9fafb;
+
+  --text: #111827;
+  --text-secondary: #6b7280;
+
+  --border: #e5e7eb;
+
+  --primary: #2563eb;
+
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+
+  /* soft background + matching text for status badges/tags — derived from
+     the semantic colors above, kept as their own tokens so components
+     don't have to compute a tint themselves */
+  --success-bg: #ecfdf3;
+  --success-text: #027a48;
+  --warning-bg: #fff7e6;
+  --warning-text: #b54708;
+  --danger-bg: #fef3f2;
+  --danger-text: #b42318;
+  --info-bg: #eff4ff;
+  --info-text: #3538cd;
+}
+
+[data-theme="dark"] {
+  --bg: #0b1220;
+  --surface: #111827;
+  --surface-secondary: #1f2937;
+
+  --text: #f3f4f6;
+  --text-secondary: #9ca3af;
+
+  --border: #374151;
+
+  --primary: #3b82f6;
+
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --success-bg: #12271d;
+  --success-text: #4ade80;
+  --warning-bg: #2e230c;
+  --warning-text: #fbbf24;
+  --danger-bg: #2c1616;
+  --danger-text: #f87171;
+  --info-bg: #16213b;
+  --info-text: #93a9fb;
+}
+
 *,
 *::before,
 *::after {
@@ -14,8 +74,20 @@ body,
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: #f5f6fa;
+  background-color: var(--bg);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
+}
+
+/* theme switches re-color the page instantly, never re-layout it — only
+   color-ish properties transition, and only for 200ms */
+*,
+*::before,
+*::after {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
 }
 
 ::-webkit-scrollbar {
@@ -23,14 +95,14 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f0f0f0;
+  background: var(--surface-secondary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #d9d9d9;
+  background: var(--border);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #4a6cf7;
+  background: var(--primary);
 }
 
 /* ─── Toasts (react-toastify) ──────────────────────────────────── */
@@ -40,7 +112,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
   font-size: 14px !important;
   line-height: 1.5 !important;
-  color: #1a1f2e !important;
+  color: var(--text) !important;
+  background: var(--surface) !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
   min-height: 0 !important;
 }
@@ -56,15 +129,15 @@ body {
 }
 
 .Toastify__toast--success {
-  border-left: 3px solid #10b981 !important;
+  border-left: 3px solid var(--success) !important;
 }
 
 .Toastify__toast--error {
-  border-left: 3px solid #f85149 !important;
+  border-left: 3px solid var(--danger) !important;
 }
 
 .Toastify__close-button {
-  color: #8c8c8c !important;
+  color: var(--text-secondary) !important;
   opacity: 0.7 !important;
   align-self: center !important;
 }

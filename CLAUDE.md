@@ -36,7 +36,10 @@ src/
 │   └── index.ts                # ALL shared TypeScript types and enums — mirrors backend exactly
 ├── lib/
 │   ├── axios.ts                # Axios instance with withCredentials + 401 refresh interceptor
-│   └── queryClient.ts          # React Query client with retry and stale time config
+│   ├── queryClient.ts          # React Query client with retry and stale time config
+│   └── theme/                  # System/Light/Dark theme — see Design System's Theme system section
+│       ├── constants.ts        # Theme type, THEME_STORAGE_KEY, resolveTheme()
+│       └── ThemeProvider.tsx   # context + useTheme() hook, syncs <html data-theme> and localStorage
 ├── store/
 │   ├── index.ts                # Redux store + useAppDispatch + useAppSelector typed hooks
 │   ├── uiSlice.ts              # sidebarCollapsed, activeWorkspaceId, activeProjectId
@@ -117,6 +120,9 @@ src/
     ├── notifications/
     │   └── hooks/useNotifications.ts
     ├── search/
+    ├── settings/
+    │   └── pages/
+    │       └── SettingsPage.tsx + .module.css   # user-level app settings — currently just the Appearance card (theme picker); route `/settings`, reached via the user-avatar dropdown, not workspace-scoped
     └── activity/
         ├── services/activityService.ts    # getWorkspaceActivity(workspaceId, query) — GET /workspaces/:id/activity (userId/module/action/dateFrom/dateTo/page/limit)
         ├── hooks/useWorkspaceActivity.ts   # useQuery wrapper, placeholderData so filters don't flash empty while refetching
@@ -134,30 +140,41 @@ src/
 
 ## Design System
 
-### Colors (from src/styles/theme.ts tokens)
+### Theme system (System / Light / Dark)
 
-```typescript
-primary:  '#4a6cf7'   // blue — buttons, links, selected states
-success:  '#10B981'   // green
-warning:  '#F59E0B'   // amber
-error:    '#f85149'   // red
+The app has a real theme architecture, not just a light palette — `src/lib/theme/`:
 
-bg:       '#F5F6FA'   // page background
-card:     '#FFFFFF'   // card/panel background
-border:   '#E8E8E8'   // borders
-text:     '#1a1f2e'   // primary text
-muted:    '#8c8c8c'   // secondary text, icons
+- `constants.ts` — `Theme = "system" | "light" | "dark"` (the only three valid values, exported type, no magic strings elsewhere), `THEME_STORAGE_KEY = "taskflow-theme"`, `resolveTheme(theme, prefersDark)` → `"light" | "dark"`
+- `ThemeProvider.tsx` — React context + `useTheme()` hook returning `{ theme, resolvedTheme, setTheme }`. Reads `localStorage` on init, listens to `matchMedia("(prefers-color-scheme: dark)")` while `theme === "system"`, and writes `data-theme="light"|"dark"` onto `<html>` via `useLayoutEffect` (so it lands before paint on every change, not just initial load)
+- `index.html` has a small inline `<script>` in `<head>` that resolves and sets `data-theme` **before React even mounts** — this is what prevents a light-mode flash on load; it duplicates `ThemeProvider`'s resolution logic on purpose (nothing else can run that early) and must be kept in sync if the storage key/fallback ever changes
+- `main.tsx` wraps `<App/>` in `<ThemeProvider>`; `App.tsx` reads `resolvedTheme` via `useTheme()` and picks `lightTheme`/`darkTheme` (from `src/styles/theme.ts`) for AntD's `<ConfigProvider theme={...}>` — this is what makes every AntD component (buttons, inputs, selects, date pickers, modals, drawers, dropdowns, pagination) follow the theme for free, no per-component dark styling needed
+- Settings page (`features/settings/pages/SettingsPage.tsx`, reachable via the user-avatar dropdown → "Settings", route `/settings`) has the Appearance card with System/Light/Dark cards (`DesktopOutlined`/`SunOutlined`/`MoonOutlined`)
+- No page reload on theme change — it's a pure context update + a `data-theme` attribute swap
 
-priority colors:
-  critical: '#f5222d'
-  high:     '#fa8c16'
-  medium:   '#4a6cf7'
-  low:      '#8c8c8c'
+### Colors — CSS custom properties (src/styles/global.css)
+
+Every color in the app should reference one of these tokens — never a hardcoded hex. `:root` holds the light values, `[data-theme="dark"]` overrides them; nothing else needs a media query since `data-theme` is always explicitly set (see above).
+
+```css
+--bg, --surface, --surface-secondary
+--text, --text-secondary
+--border
+--primary
+--success, --warning, --danger
+--success-bg, --success-text   /* soft-tint badge pairs, same idea for warning/danger/info */
+--warning-bg, --warning-text
+--danger-bg, --danger-text
+--info-bg, --info-text
 ```
+
+`src/styles/theme.ts` keeps `tokens`/`darkTokens` as plain hex (AntD's `ConfigProvider` needs real color values to derive shades from, not `var()`) — these are the same colors as the CSS variables above, just duplicated in JS form for AntD's `lightTheme`/`darkTheme` configs. Keep both in sync if a color changes.
+
+**Rollout status**: the token system, `AppLayout` (sidebar/topbar), My Tasks, and the Activity Log page (table + `ActivityDetailDrawer`) are fully converted to `var(--token)`. Other pages (Board, Sprints, Task Detail Modal, etc.) still have some hardcoded hex in their `.module.css` files from before the theme system existed — they inherit correct AntD-component theming automatically (buttons/inputs/modals/etc.), but their custom CSS classes won't fully dark-mode until migrated the same way (swap literal hex for the matching `var(--token)`).
+
+Priority colors (task priority tags, unrelated to light/dark) stay as their own fixed hue per priority — see `features/tasks/utils/taskGrouping.ts`'s `priorityColors` — not part of the light/dark token set.
 
 ### Design principles — KEEP IT SIMPLE
 
-- Light mode only — no dark mode, no theme switching
 - No heavy animations or gradients — subtle box-shadows and transitions only
 - Use Ant Design components as-is — do not over-customize
 - Cards: `background: #fff`, `border: 1px solid #E8E8E8`, `border-radius: 8px`, `box-shadow: 0 2px 8px rgba(0,0,0,0.06)`
@@ -337,6 +354,7 @@ Protected routes (wrapped in `AuthGuard`):
 - `/workspaces/:workspaceId/members` — member list, invite, remove, role update
 - `/workspaces/:workspaceId/my-tasks`
 - `/workspaces/:workspaceId/activity`
+- `/settings` — not workspace-scoped (a user-level preference page)
 
 `AuthGuard` checks `useCurrentUser()` — if loading shows spinner, if error/no user redirects to `/login`.
 
@@ -510,6 +528,7 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
 - ✅ Notifications panel — bell icon dropdown with real-time updates (WebSocket)
 - ✅ Search overlay — Cmd+K global search
+- ✅ System/Light/Dark theme (`src/lib/theme/`) — `useTheme()` hook, `localStorage`-persisted, follows OS theme live when set to "system", no reload on change. Settings page (Appearance card) to pick it. AntD components theme automatically via `ConfigProvider`; custom CSS uses `var(--token)` from `global.css` — fully rolled out on `AppLayout`, My Tasks, and Activity Log; other pages still have some pre-theme-system hardcoded colors (see Design System's Rollout status note)
 
 - ✅ Activity Log page (`ActivityLogPage`) — workspace-wide activity table with User/Module/Action/date-range filters, server-side pagination (page-size selector, `SimplePagination`), table view customization (6 variants with mockup previews, like My Tasks), column show/hide/reorder/resize, eye-icon-per-row opening `ActivityDetailDrawer` (actor, project/task context, changed-field before→after, `meta`, collapsed system-info section). All four preferences (page size, table view, columns incl. widths) persist to backend `table-settings` (`key: "activityLog"`) — same treatment as My Tasks now, nothing left in `localStorage`
 

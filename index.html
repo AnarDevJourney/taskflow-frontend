@@ -5,6 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>taskflow-frontend</title>
+    <script>
+      // Applies the resolved theme to <html> before first paint, so there's
+      // no light-mode flash before React mounts and ThemeProvider runs.
+      // Mirrors ThemeProvider's own resolution logic exactly — keep both in
+      // sync if the storage key or fallback logic ever changes.
+      (function () {
+        try {
+          var stored = localStorage.getItem("taskflow-theme");
+          var theme = stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+          var resolved =
+            theme === "system"
+              ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+              : theme;
+          document.documentElement.setAttribute("data-theme", resolved);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
