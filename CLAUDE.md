@@ -53,6 +53,8 @@ src/
 │   │   ├── SidebarModulesModal.tsx + .module.css   # sidebar customization modal — checkbox per nav module (visible/hidden) + @dnd-kit drag handle to reorder, mirrors TableColumnsModal's pattern; saves once on modal close
 │   │   └── AuthGuard.tsx       # redirects to /login if not authenticated
 │   └── ui/                     # shared reusable UI components (avatars, badges, etc.)
+│       ├── SimplePagination.tsx + .module.css   # first/prev/[page-1, page, page+1]/next/last pagination control (not antd's Pagination). Cross-feature — used by MyTasksPage and ActivityLogPage; moved here from features/tasks/components/ once a second feature needed it
+│       └── ColumnsModal.tsx + .module.css       # generic checkbox + @dnd-kit drag-reorder list — `<ColumnsModal<T extends {id,visible,width?}>>` takes a `labels` record instead of baking in i18n keys, so any table's column set can reuse it. Used by ActivityLogPage; My Tasks still has its own TaskListViews-coupled TableColumnsModal (not yet migrated to this shared one)
 └── features/
     ├── auth/
     │   ├── services/authService.ts       # login, logout, me, register, forgotPassword, resetPassword, validateInvite
@@ -89,10 +91,9 @@ src/
     │   │   ├── TaskListViews.tsx + .module.css   # renders My Tasks' task list in 9 selectable UI variants (classic/compact/spreadsheet/cards/minimal/colorful/avatar/striped/kanban) — same data, different layout/CSS per `TableViewId`. Also owns column customization: `ColumnId`/`ColumnSetting` (`{id, visible, width?}`)/`DEFAULT_COLUMNS`/`COLUMN_LABEL_KEYS`/`normalizeColumns`, and `isRowTableVariant()` — true only for the 7 row-table variants (not `cards`/`kanban`), gating whether the Columns/Resize buttons show. `TaskListView`'s `resizable`/`onColumnResize` props (threaded into `RowsTable`) wrap each header cell in `react-resizable`'s `<Resizable>` (axis "e", handle is `.resizeHandle`) when resize mode is on; `columnWidthCss()` picks a column's saved pixel width over its `COLUMN_WIDTHS` default (`title` stays fluid `1fr` until explicitly resized)
     │   │   ├── TableViewModal.tsx + .module.css  # "Customize table" picker modal — 3x3 grid of mini CSS-mockup previews, one per TableViewId
     │   │   ├── TableColumnsModal.tsx + .module.css   # "Columns" picker modal — checkbox per column (visible/hidden) + @dnd-kit drag handle to reorder; array order = display order
-    │   │   └── SimplePagination.tsx + .module.css    # first/prev/[page-1, page, page+1]/next/last pagination control (not antd's Pagination — see MyTasksPage)
     │   └── pages/
     │       ├── BoardPage.tsx + BoardPage.module.css
-    │       └── MyTasksPage.tsx + MyTasksPage.module.css   # search/status/priority/project filters (server-side, debounced) + per-page size selector + SimplePagination + TaskListView + TableViewModal/TableColumnsModal triggers — table view/page size/columns are loaded from and saved to `useTableSettings`/`useSaveTableSettings` (backend-persisted, see tableSettings feature), not localStorage. Column *resizing* is a separate mode from the Columns modal: a "Resize columns" toggle swaps in a `draftColumns` working copy that absorbs every drag live (via `TaskListView`'s `onColumnResize`) without saving anything; only the "Save" button that replaces the toggle while active commits `draftColumns` → `columns` + `saveSettings({ columns: draftColumns })` in one request, "Cancel" just discards the draft
+    │       └── MyTasksPage.tsx + MyTasksPage.module.css   # search/status/priority/project filters (server-side, debounced) + per-page size selector + SimplePagination + TaskListView + TableViewModal/TableColumnsModal triggers — table view/page size/columns are loaded from and saved to `useTableSettings`/`useSaveTableSettings` (backend-persisted, see tableSettings feature), not localStorage. Column *resizing* is a separate mode from the Columns modal: a "Resize columns" toggle swaps in a `draftColumns` working copy that absorbs every drag live (via `TaskListView`'s `onColumnResize`) without saving anything; only the "Save" button that replaces the toggle while active commits `draftColumns` → `columns` + `saveSettings({ columns: draftColumns })` in one request, "Cancel" just discards the draft. Page layout matches ActivityLogPage's visual language (title + total-count badge header, filters + table-customization buttons together in one white card, `SimplePagination` centered below the table) — the two pages intentionally look like the same design system
     ├── tableSettings/
     │   ├── services/tableSettingsService.ts   # getOne(key), upsert(key, dto) — talks to GET/PUT /table-settings/:key
     │   └── hooks/useTableSettings.ts          # useTableSettings(key) (useQuery, staleTime: Infinity — this tab is the only writer) + useSaveTableSettings(key) (useMutation, writes through to the query cache on success)
@@ -115,7 +116,18 @@ src/
     │       ├── SprintsPage.tsx + SprintsPage.module.css
     ├── notifications/
     │   └── hooks/useNotifications.ts
-    └── search/
+    ├── search/
+    └── activity/
+        ├── services/activityService.ts    # getWorkspaceActivity(workspaceId, query) — GET /workspaces/:id/activity (userId/module/action/dateFrom/dateTo/page/limit)
+        ├── hooks/useWorkspaceActivity.ts   # useQuery wrapper, placeholderData so filters don't flash empty while refetching
+        ├── utils/activityMeta.ts           # mirrors backend's action→module grouping (`ACTIVITY_MODULES`/`getActivityModule`/`getActionsForModule`) plus a frontend-only action→category (create/update/delete/restore/login) → color/icon mapping (`getActionCategory`, `ACTION_CATEGORY_COLORS`, `ACTION_CATEGORY_ICONS`) — keep the module grouping in sync with the backend's `activity-module.util.ts` when adding a new `ActivityAction`
+        ├── utils/activityColumns.ts        # column customization model (ColumnId: user/module/action/context/date, ColumnSetting, DEFAULT_COLUMNS, DEFAULT_COLUMN_WIDTH_PX, normalizeColumns) — same shape as TaskListViews' but this table's own columns. The trailing eye-icon column is a fixed action column, not part of this
+        ├── utils/activityViews.ts          # 6 table view variants (classic/compact/striped/minimal/colorful/spreadsheet) — smaller catalog than My Tasks' 9 since this table's columns are generic, not task-specific
+        ├── components/
+        │   ├── ActivityDetailDrawer.tsx + .module.css   # right-drawer with actor, project/task context, changed-field before→after Tags, any `meta` text, and a default-collapsed "System information" section (`log.ip`/`browser`/`os`/`device` — real values from the backend, falls back to "Not available" per-field if null)
+        │   └── ActivityViewModal.tsx + .module.css      # "Customize table" picker — same pattern as My Tasks' TableViewModal (grid of cards with tiny CSS-only mockup previews per variant), just a 6-variant catalog instead of 9
+        └── pages/
+            └── ActivityLogPage.tsx + .module.css   # workspace-wide activity table — User/Module/Action/date-range filters (Module narrows the Action options), server-side paginated (page-size selector: 10/25/50/100) with `SimplePagination`, an eye icon per row opens ActivityDetailDrawer. page size, "Customize table" (ActivityViewModal), "Customize columns" (shared `ColumnsModal`), and a column-resize mode (`react-resizable`, explicit Save/Cancel — same DOM-measurement approach as My Tasks' resize mode, see that page's `handleEnterResizeMode` comment) are all backend-persisted via `table-settings` with `key: "activityLog"` — same collection and mechanism as My Tasks, just a different key (see Table Settings notes below), not `localStorage`
 ```
 
 ---
@@ -324,6 +336,7 @@ Protected routes (wrapped in `AuthGuard`):
 - `/workspaces/:workspaceId/projects/:projectId/board`
 - `/workspaces/:workspaceId/members` — member list, invite, remove, role update
 - `/workspaces/:workspaceId/my-tasks`
+- `/workspaces/:workspaceId/activity`
 
 `AuthGuard` checks `useCurrentUser()` — if loading shows spinner, if error/no user redirects to `/login`.
 
@@ -498,9 +511,11 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Notifications panel — bell icon dropdown with real-time updates (WebSocket)
 - ✅ Search overlay — Cmd+K global search
 
+- ✅ Activity Log page (`ActivityLogPage`) — workspace-wide activity table with User/Module/Action/date-range filters, server-side pagination (page-size selector, `SimplePagination`), table view customization (6 variants with mockup previews, like My Tasks), column show/hide/reorder/resize, eye-icon-per-row opening `ActivityDetailDrawer` (actor, project/task context, changed-field before→after, `meta`, collapsed system-info section). All four preferences (page size, table view, columns incl. widths) persist to backend `table-settings` (`key: "activityLog"`) — same treatment as My Tasks now, nothing left in `localStorage`
+
 ## In Progress / Remaining
 
-- ⬜ Activity log — inside task detail modal
+- ⬜ Activity log inside the task detail modal (a per-task view, distinct from the new workspace-wide Activity Log page)
 
 ---
 

@@ -1,0 +1,424 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Page header ───────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.pageSubtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0 0;
+}
+
+.totalBadge {
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+/* ─── Filter panel ──────────────────────────────────────────────── */
+.filterCard {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.pageSizeField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filterLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.filterControl {
+  width: 200px;
+  height: 36px;
+}
+
+.filterControl :global(.ant-select-selector) {
+  border-radius: 8px !important;
+}
+
+.filterCard :global(.ant-picker) {
+  border-radius: 8px;
+}
+
+.filterCard :global(.ant-select-focused .ant-select-selector),
+.filterCard :global(.ant-picker-focused) {
+  border-color: #4a6cf7 !important;
+  box-shadow: none !important;
+}
+
+.clearBtn {
+  height: 36px;
+  border-radius: 10px;
+}
+
+/* ─── Table ─────────────────────────────────────────────────────── */
+.tableScroll {
+  overflow-x: auto;
+  transition: opacity 0.15s;
+}
+
+.table {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 220px 140px 220px 1fr 170px 56px;
+  align-items: center;
+  padding: 0 20px;
+  min-height: 64px;
+  border-bottom: 1px solid #f1f2f4;
+  gap: 12px;
+  width: max-content;
+  min-width: 100%;
+  cursor: pointer;
+  transition: background 150ms;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: #f8fafc;
+}
+
+.row:hover .viewBtn {
+  opacity: 1;
+}
+
+.rowHeader {
+  min-height: 44px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: #f9fafb;
+  cursor: default;
+}
+
+.rowHeader:hover {
+  background: #f9fafb;
+}
+
+/* ─── compact view: denser rows, no card radius ───────────────────── */
+.table_compact {
+  composes: table;
+  border-radius: 6px;
+}
+
+.row_compact {
+  composes: row;
+  min-height: 44px;
+  padding: 0 16px;
+  gap: 8px;
+  font-size: 13px;
+}
+
+/* ─── striped view: zebra rows ─────────────────────────────────────── */
+.table_striped {
+  composes: table;
+}
+
+.row_striped {
+  composes: row;
+}
+
+.rowStriped {
+  background: #fafbfd;
+}
+
+.rowStriped:hover {
+  background: #f0f4fb;
+}
+
+/* ─── minimal view: no card chrome, plain hairline dividers ────────── */
+.table_minimal {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.row_minimal {
+  composes: row;
+  border-bottom: 1px solid #ececec;
+  min-height: 52px;
+}
+
+.row_minimal:hover {
+  background: transparent;
+  opacity: 0.7;
+}
+
+/* ─── colorful view: action-category-colored left bar ──────────────── */
+.table_colorful {
+  composes: table;
+}
+
+.row_colorful {
+  composes: row;
+}
+
+/* ─── spreadsheet view: full grid borders, monospace, no rounding ──── */
+.table_spreadsheet {
+  border: 1px solid #d9d9d9;
+  border-radius: 0;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.row_spreadsheet {
+  composes: row;
+  border: 1px solid #e8e8e8;
+  min-height: 52px;
+  font-size: 12px;
+}
+
+.row_spreadsheet:hover {
+  background: #f0f5ff;
+}
+
+/* ─── column resize mode ────────────────────────────────────────────── */
+.resizableHeaderCell {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  padding-right: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  touch-action: none;
+}
+
+.resizeHandle::after {
+  content: "";
+  width: 2px;
+  height: 60%;
+  background: #d9d9d9;
+  border-radius: 1px;
+  transition: background 0.12s;
+}
+
+.resizeHandle:hover::after {
+  background: #4a6cf7;
+}
+
+.rowResizing {
+  cursor: default;
+}
+
+.rowResizing:hover {
+  background: inherit;
+}
+
+/* ─── User cell ─────────────────────────────────────────────────── */
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.userText {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.userName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userRole {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* ─── Module badge ──────────────────────────────────────────────── */
+.moduleTag {
+  border: none;
+  background: #f1f2f4;
+  color: #374151;
+  font-weight: 500;
+  font-size: 12px;
+  border-radius: 999px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0 12px;
+  margin: 0;
+}
+
+/* ─── Action badge ──────────────────────────────────────────────── */
+.actionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.actionBadge_create {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.actionBadge_update {
+  background: #fff7e6;
+  color: #b54708;
+}
+
+.actionBadge_delete {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.actionBadge_restore {
+  background: #eff4ff;
+  color: #3538cd;
+}
+
+.actionBadge_login {
+  background: #f2f4f7;
+  color: #475467;
+}
+
+/* ─── Context cell ──────────────────────────────────────────────── */
+.contextCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.contextPrimary {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contextSecondary {
+  font-size: 12px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Date cell ──────────────────────────────────────────────────── */
+.dateCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dateRelative {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.dateAbsolute {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* ─── View button ───────────────────────────────────────────────── */
+.viewCell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.viewBtn {
+  opacity: 0.45;
+  transition: opacity 150ms;
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  justify-content: center;
+}

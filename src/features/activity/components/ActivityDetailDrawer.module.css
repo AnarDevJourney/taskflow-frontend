@@ -1,0 +1,256 @@
+.header {
+  position: relative;
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 150ms;
+}
+
+.closeBtn:hover {
+  background: #f1f2f4;
+  color: #111827;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.logId {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.section {
+  padding: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─── Operation summary ─────────────────────────────────────────── */
+.summaryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.timestamp {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ─── Actor block ───────────────────────────────────────────────── */
+.actorRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.actorName {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.actorRole {
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a6cf7;
+  margin-top: 1px;
+}
+
+.actorEmail {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* ─── Context card ──────────────────────────────────────────────── */
+.contextCard {
+  margin-top: 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 4px 16px;
+}
+
+.contextItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eef0f3;
+}
+
+.contextItem:last-child {
+  border-bottom: none;
+}
+
+.contextLabel {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.contextValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  max-width: 65%;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Diff card — the drawer's main visual element ─────────────── */
+.diffCard {
+  margin-top: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.diffCardTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.diffCardRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.diffArrow {
+  color: #9ca3af;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.oldTag,
+.newTag {
+  border: none;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.oldTag {
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.newTag {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.noChange {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #6b7280;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+/* ─── Meta card ──────────────────────────────────────────────────── */
+.metaCard {
+  margin-top: 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.metaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.metaText {
+  font-size: 13px;
+  color: #111827;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+/* ─── System info (collapsed) ───────────────────────────────────── */
+.systemCollapse {
+  background: transparent;
+}
+
+.systemCollapse :global(.ant-collapse-item) {
+  border: none;
+}
+
+.systemCollapse :global(.ant-collapse-header) {
+  padding: 0 !important;
+}
+
+.systemCollapse :global(.ant-collapse-content-box) {
+  padding: 12px 0 0 !important;
+}
+
+.systemGrid {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 4px 16px;
+}
+
+.systemItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eef0f3;
+}
+
+.systemItem:last-child {
+  border-bottom: none;
+}

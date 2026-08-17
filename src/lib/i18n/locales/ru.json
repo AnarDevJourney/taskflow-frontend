@@ -204,7 +204,8 @@
       "workspaces": "Рабочие пространства",
       "projects": "Проекты",
       "myTasks": "Мои задачи",
-      "members": "Участники"
+      "members": "Участники",
+      "activity": "Активность"
     },
     "signOut": "Выйти",
     "searchTooltip": "Поиск (Ctrl+K)",
@@ -216,7 +217,8 @@
       "myTasks": "Мои задачи",
       "members": "Участники",
       "workspaces": "Рабочие пространства",
-      "default": "TaskFlow"
+      "default": "TaskFlow",
+      "activity": "Журнал активности"
     },
     "customizeSidebarTooltip": "Настроить боковую панель",
     "collapseSidebarTooltip": "Свернуть панель",
@@ -330,7 +332,8 @@
     "searchPlaceholder": "Поиск задач…",
     "allProjects": "Все проекты",
     "clearFilters": "Очистить фильтры",
-    "perPage": "На странице:"
+    "perPage": "На странице:",
+    "totalBadge": "{{count}} задач"
   },
   "taskDetailModal": {
     "updateFailed": "Не удалось обновить задачу",
@@ -434,5 +437,119 @@
   "sidebarModules": {
     "modalTitle": "Настроить боковую панель",
     "modalHint": "Выберите разделы, которые отображаются на панели, и перетащите, чтобы изменить их порядок."
+  },
+  "activityLogPage": {
+    "filterUser": "Пользователь",
+    "filterModule": "Модуль",
+    "filterAction": "Действие",
+    "clearFilters": "Очистить фильтры",
+    "column": {
+      "user": "Пользователь",
+      "module": "Модуль",
+      "action": "Действие",
+      "context": "Контекст",
+      "date": "Дата"
+    },
+    "empty": "Активности пока нет",
+    "viewDetails": "Подробнее",
+    "detailTitle": "Детали активности",
+    "detailUser": "Пользователь",
+    "detailContext": "Контекст",
+    "detailProject": "Проект",
+    "detailTask": "Задача",
+    "detailChangedFields": "Изменённое поле",
+    "detailNoFieldChange": "Это действие не изменило ни одно поле.",
+    "detailMeta": "Подробности",
+    "module": {
+      "task": "Задача",
+      "comments": "Комментарии",
+      "attachments": "Вложения",
+      "sprint": "Спринт",
+      "checklist": "Чек-лист",
+      "watchers": "Наблюдатели"
+    },
+    "action": {
+      "task_created": "Задача создана",
+      "task_updated": "Задача обновлена",
+      "task_deleted": "Задача удалена",
+      "task_archived": "Задача заархивирована",
+      "status_changed": "Статус изменён",
+      "priority_changed": "Приоритет изменён",
+      "assignee_changed": "Исполнитель изменён",
+      "due_date_changed": "Срок изменён",
+      "title_changed": "Заголовок изменён",
+      "description_changed": "Описание изменено",
+      "labels_changed": "Метки изменены",
+      "story_points_changed": "Story points изменены",
+      "comment_added": "Комментарий добавлен",
+      "comment_edited": "Комментарий отредактирован",
+      "comment_deleted": "Комментарий удалён",
+      "attachment_added": "Файл добавлен",
+      "attachment_removed": "Файл удалён",
+      "added_to_sprint": "Добавлено в спринт",
+      "removed_from_sprint": "Удалено из спринта",
+      "checklist_item_added": "Пункт чек-листа добавлен",
+      "checklist_item_completed": "Пункт чек-листа выполнен",
+      "checklist_item_reopened": "Пункт чек-листа переоткрыт",
+      "watcher_added": "Наблюдатель добавлен",
+      "watcher_removed": "Наблюдатель удалён"
+    },
+    "field": {
+      "status": "Статус",
+      "priority": "Приоритет",
+      "assignee": "Исполнитель",
+      "dueDate": "Срок",
+      "title": "Заголовок",
+      "description": "Описание",
+      "labels": "Метки",
+      "storyPoints": "Story points",
+      "sprint": "Спринт",
+      "commentBody": "Текст комментария"
+    },
+    "title": "Журнал активности",
+    "subtitle": "История аудита всех операций в системе",
+    "totalCount": "{{count}} записей",
+    "filterDateRange": "Диапазон дат",
+    "detailCreatedNote": "Это действие создало новую запись.",
+    "detailDeletedNote": "Запись была удалена из системы.",
+    "detailSystemInfo": "Системная информация",
+    "detailNotAvailable": "Недоступно",
+    "detailMetaLabel": "Текст комментария",
+    "perPage": "На странице",
+    "customizeTable": "Настроить таблицу",
+    "customizeColumns": "Настроить столбцы",
+    "resizeColumns": "Изменить размер столбцов",
+    "saveWidths": "Сохранить",
+    "cancelResize": "Отмена",
+    "viewModalTitle": "Настроить таблицу",
+    "viewModalHint": "Выберите вид таблицы активности.",
+    "columnsModalTitle": "Настроить столбцы",
+    "columnsModalHint": "Выберите отображаемые столбцы и перетащите, чтобы изменить их порядок.",
+    "view": {
+      "classic": {
+        "name": "Классический",
+        "desc": "Комфортные отступы, вид по умолчанию."
+      },
+      "compact": {
+        "name": "Компактный",
+        "desc": "Более плотные строки — больше данных на экране."
+      },
+      "striped": {
+        "name": "Полосатый",
+        "desc": "Чередующийся фон строк для удобного чтения."
+      },
+      "minimal": {
+        "name": "Минимальный",
+        "desc": "Без оформления карточек, простые тонкие разделители."
+      },
+      "colorful": {
+        "name": "Цветной",
+        "desc": "Цветная полоса слева, показывающая тип действия."
+      },
+      "spreadsheet": {
+        "name": "Таблица (сетка)",
+        "desc": "Полные границы сетки, моноширинный шрифт, без скруглений."
+      }
+    }
   }
 }

@@ -1,46 +1,82 @@
-.header {
-  margin-bottom: 24px;
+/* ─── Page header ───────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1a1f2e;
-  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01em;
+  margin: 0;
 }
 
 .subtitle {
-  font-size: 14px;
-  color: #8c8c8c;
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0 0;
 }
 
+.totalBadge {
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+/* ─── Filter + table-customization card ────────────────────────────── */
 .filters {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  gap: 16px;
   flex-wrap: wrap;
-  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
   margin-bottom: 20px;
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filterLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.filters :global(.ant-select-selector),
+.filters :global(.ant-input) {
+  border-radius: 8px !important;
 }
 
 .filtersRight {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-end;
+  gap: 10px;
   margin-left: auto;
 }
 
 .pageSizeLabel {
-  font-size: 13px;
-  color: #8c8c8c;
-  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
 }
 
-.pagination {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
+/* ─── Table ─────────────────────────────────────────────────────── */
 .group {
   margin-bottom: 28px;
 }
@@ -78,8 +114,8 @@
 
 .table {
   background: #ffffff;
-  border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   overflow: hidden;
 }
 
@@ -105,16 +141,16 @@
 .rowHeader {
   font-size: 12px;
   font-weight: 600;
-  color: #8c8c8c;
+  color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  background: #fafafa;
+  letter-spacing: 0.06em;
+  background: #f9fafb;
   padding: 12px 16px;
   cursor: default;
 }
 
 .rowHeader:hover {
-  background: #fafafa;
+  background: #f9fafb;
 }
 
 .taskKey {
@@ -154,4 +190,11 @@
 .empty {
   padding: 60px 24px;
   text-align: center;
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }

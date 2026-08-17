@@ -204,7 +204,8 @@
       "workspaces": "Workspaces",
       "projects": "Projects",
       "myTasks": "My Tasks",
-      "members": "Members"
+      "members": "Members",
+      "activity": "Activity"
     },
     "signOut": "Sign out",
     "searchTooltip": "Search (Ctrl+K)",
@@ -216,7 +217,8 @@
       "myTasks": "My Tasks",
       "members": "Members",
       "workspaces": "Workspaces",
-      "default": "TaskFlow"
+      "default": "TaskFlow",
+      "activity": "Activity Log"
     },
     "customizeSidebarTooltip": "Customize sidebar",
     "collapseSidebarTooltip": "Collapse sidebar",
@@ -330,7 +332,8 @@
     "searchPlaceholder": "Search tasks…",
     "allProjects": "All projects",
     "clearFilters": "Clear filters",
-    "perPage": "Per page:"
+    "perPage": "Per page:",
+    "totalBadge": "{{count}} tasks"
   },
   "taskDetailModal": {
     "updateFailed": "Failed to update task",
@@ -434,5 +437,119 @@
   "sidebarModules": {
     "modalTitle": "Customize sidebar",
     "modalHint": "Choose which sections appear in the sidebar and drag to reorder them."
+  },
+  "activityLogPage": {
+    "filterUser": "User",
+    "filterModule": "Module",
+    "filterAction": "Action",
+    "clearFilters": "Clear filters",
+    "column": {
+      "user": "User",
+      "module": "Module",
+      "action": "Action",
+      "context": "Context",
+      "date": "Date"
+    },
+    "empty": "No activity yet",
+    "viewDetails": "View details",
+    "detailTitle": "Activity details",
+    "detailUser": "User",
+    "detailContext": "Context",
+    "detailProject": "Project",
+    "detailTask": "Task",
+    "detailChangedFields": "Changed field",
+    "detailNoFieldChange": "No field was changed by this action.",
+    "detailMeta": "Details",
+    "module": {
+      "task": "Task",
+      "comments": "Comments",
+      "attachments": "Attachments",
+      "sprint": "Sprint",
+      "checklist": "Checklist",
+      "watchers": "Watchers"
+    },
+    "action": {
+      "task_created": "Task created",
+      "task_updated": "Task updated",
+      "task_deleted": "Task deleted",
+      "task_archived": "Task archived",
+      "status_changed": "Status changed",
+      "priority_changed": "Priority changed",
+      "assignee_changed": "Assignee changed",
+      "due_date_changed": "Due date changed",
+      "title_changed": "Title changed",
+      "description_changed": "Description changed",
+      "labels_changed": "Labels changed",
+      "story_points_changed": "Story points changed",
+      "comment_added": "Comment added",
+      "comment_edited": "Comment edited",
+      "comment_deleted": "Comment deleted",
+      "attachment_added": "Attachment added",
+      "attachment_removed": "Attachment removed",
+      "added_to_sprint": "Added to sprint",
+      "removed_from_sprint": "Removed from sprint",
+      "checklist_item_added": "Checklist item added",
+      "checklist_item_completed": "Checklist item completed",
+      "checklist_item_reopened": "Checklist item reopened",
+      "watcher_added": "Watcher added",
+      "watcher_removed": "Watcher removed"
+    },
+    "field": {
+      "status": "Status",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "dueDate": "Due date",
+      "title": "Title",
+      "description": "Description",
+      "labels": "Labels",
+      "storyPoints": "Story points",
+      "sprint": "Sprint",
+      "commentBody": "Comment text"
+    },
+    "title": "Activity Log",
+    "subtitle": "Audit history of everything that happens in the system",
+    "totalCount": "{{count}} records",
+    "filterDateRange": "Date range",
+    "detailCreatedNote": "This action created a new record.",
+    "detailDeletedNote": "This record was deleted from the system.",
+    "detailSystemInfo": "System information",
+    "detailNotAvailable": "Not available",
+    "detailMetaLabel": "Comment text",
+    "perPage": "Per page",
+    "customizeTable": "Customize table",
+    "customizeColumns": "Customize columns",
+    "resizeColumns": "Resize columns",
+    "saveWidths": "Save",
+    "cancelResize": "Cancel",
+    "viewModalTitle": "Customize table",
+    "viewModalHint": "Choose how the activity table is laid out.",
+    "columnsModalTitle": "Customize columns",
+    "columnsModalHint": "Choose which columns are shown and drag to reorder them.",
+    "view": {
+      "classic": {
+        "name": "Classic",
+        "desc": "Comfortable spacing, the default look."
+      },
+      "compact": {
+        "name": "Compact",
+        "desc": "Denser rows to fit more on screen."
+      },
+      "striped": {
+        "name": "Striped",
+        "desc": "Zebra-striped rows for easier scanning."
+      },
+      "minimal": {
+        "name": "Minimal",
+        "desc": "No card chrome, plain hairline dividers."
+      },
+      "colorful": {
+        "name": "Colorful",
+        "desc": "A left color bar showing the action type at a glance."
+      },
+      "spreadsheet": {
+        "name": "Spreadsheet",
+        "desc": "Full grid borders, monospace font, no rounding."
+      }
+    }
   }
 }

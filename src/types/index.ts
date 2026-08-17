@@ -230,14 +230,19 @@ export interface Notification {
 
 export interface ActivityLog {
   _id: string;
-  taskId: string;
-  projectId: string;
+  taskId: { _id: string; title: string } | string;
+  projectId: { _id: string; name: string } | string;
   workspaceId: string;
   actorId: User;
   action: string;
+  module: string;
   field: string | null;
   oldValue: any;
   newValue: any;
   meta: string | null;
+  ip: string | null;
+  browser: string | null;
+  os: string | null;
+  device: string | null;
   createdAt: string;
 }

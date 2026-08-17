@@ -24,6 +24,7 @@ import {
   SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -47,13 +48,14 @@ import { SidebarModuleSetting } from "@features/sidebarSettings/services/sidebar
 
 // the sidebar's nav modules — order here is the fallback/default order,
 // mirrored by DEFAULT_SIDEBAR_MODULES below (ids must match menuItems' keys' identity)
-type SidebarModuleId = "workspaces" | "projects" | "myTasks" | "members";
+type SidebarModuleId = "workspaces" | "projects" | "myTasks" | "members" | "activity";
 
 const DEFAULT_SIDEBAR_MODULES: SidebarModuleSetting[] = [
   { id: "workspaces", visible: true },
   { id: "projects", visible: true },
   { id: "myTasks", visible: true },
   { id: "members", visible: true },
+  { id: "activity", visible: true },
 ];
 
 // merges saved settings with the default list so newly-added modules (not
@@ -163,6 +165,11 @@ export default function AppLayout() {
       icon: <TeamOutlined />,
       label: t("appLayout.nav.members"),
     },
+    activity: {
+      key: `/workspaces/${activeWorkspace?._id}/activity`,
+      icon: <HistoryOutlined />,
+      label: t("appLayout.nav.activity"),
+    },
   };
 
   const moduleLabels: Record<string, string> = Object.fromEntries(
@@ -205,6 +212,8 @@ export default function AppLayout() {
       return t("appLayout.pageTitle.myTasks");
     if (location.pathname.includes("/members"))
       return t("appLayout.pageTitle.members");
+    if (location.pathname.includes("/activity"))
+      return t("appLayout.pageTitle.activity");
     if (location.pathname === "/workspaces")
       return t("appLayout.pageTitle.workspaces");
     return t("appLayout.pageTitle.default");

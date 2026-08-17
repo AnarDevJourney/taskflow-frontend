@@ -27,6 +27,9 @@ const ProjectSettingsPage = lazy(
 );
 const MyTasksPage = lazy(() => import("@features/tasks/pages/MyTasksPage"));
 const SprintsPage = lazy(() => import("@features/sprints/pages/SprintsPage"));
+const ActivityLogPage = lazy(
+  () => import("@features/activity/pages/ActivityLogPage"),
+);
 
 const PageLoader = () => (
   <div
@@ -81,6 +84,10 @@ export const router = createBrowserRouter([
       {
         path: "workspaces/:workspaceId/my-tasks",
         element: s(MyTasksPage),
+      },
+      {
+        path: "workspaces/:workspaceId/activity",
+        element: s(ActivityLogPage),
       },
     ],
   },

@@ -204,7 +204,8 @@
       "workspaces": "İş sahələri",
       "projects": "Layihələr",
       "myTasks": "Tapşırıqlarım",
-      "members": "Üzvlər"
+      "members": "Üzvlər",
+      "activity": "Fəaliyyət"
     },
     "signOut": "Çıxış",
     "searchTooltip": "Axtarış (Ctrl+K)",
@@ -216,7 +217,8 @@
       "myTasks": "Tapşırıqlarım",
       "members": "Üzvlər",
       "workspaces": "İş sahələri",
-      "default": "TaskFlow"
+      "default": "TaskFlow",
+      "activity": "Fəaliyyət Jurnalı"
     },
     "customizeSidebarTooltip": "Sidebari fərdiləşdir",
     "collapseSidebarTooltip": "Sidebari yığ",
@@ -330,7 +332,8 @@
     "searchPlaceholder": "Tapşırıq axtar…",
     "allProjects": "Bütün layihələr",
     "clearFilters": "Filtrləri təmizlə",
-    "perPage": "Səhifədə:"
+    "perPage": "Səhifədə:",
+    "totalBadge": "{{count}} tapşırıq"
   },
   "taskDetailModal": {
     "updateFailed": "Tapşırığı yeniləmək alınmadı",
@@ -434,5 +437,119 @@
   "sidebarModules": {
     "modalTitle": "Sidebari fərdiləşdir",
     "modalHint": "Sidebarda hansı bölmələrin görünəcəyini seçin və sıralarını dəyişmək üçün sürükləyin."
+  },
+  "activityLogPage": {
+    "filterUser": "İstifadəçi",
+    "filterModule": "Modul",
+    "filterAction": "Əməliyyat",
+    "clearFilters": "Filterləri təmizlə",
+    "column": {
+      "user": "İstifadəçi",
+      "module": "Modul",
+      "action": "Əməliyyat",
+      "context": "Kontekst",
+      "date": "Tarix"
+    },
+    "empty": "Hələ heç bir fəaliyyət yoxdur",
+    "viewDetails": "Detallara bax",
+    "detailTitle": "Fəaliyyət detalları",
+    "detailUser": "İstifadəçi",
+    "detailContext": "Kontekst",
+    "detailProject": "Layihə",
+    "detailTask": "Tapşırıq",
+    "detailChangedFields": "Dəyişən sahə",
+    "detailNoFieldChange": "Bu əməliyyatla heç bir sahə dəyişməyib.",
+    "detailMeta": "Ətraflı",
+    "module": {
+      "task": "Tapşırıq",
+      "comments": "Şərhlər",
+      "attachments": "Fayllar",
+      "sprint": "Sprint",
+      "checklist": "Checklist",
+      "watchers": "İzləyicilər"
+    },
+    "action": {
+      "task_created": "Tapşırıq yaradıldı",
+      "task_updated": "Tapşırıq yeniləndi",
+      "task_deleted": "Tapşırıq silindi",
+      "task_archived": "Tapşırıq arxivləndi",
+      "status_changed": "Status dəyişdi",
+      "priority_changed": "Prioritet dəyişdi",
+      "assignee_changed": "İcraçı dəyişdi",
+      "due_date_changed": "Son tarix dəyişdi",
+      "title_changed": "Başlıq dəyişdi",
+      "description_changed": "Təsvir dəyişdi",
+      "labels_changed": "Etiketlər dəyişdi",
+      "story_points_changed": "Story point dəyişdi",
+      "comment_added": "Şərh əlavə olundu",
+      "comment_edited": "Şərh redaktə olundu",
+      "comment_deleted": "Şərh silindi",
+      "attachment_added": "Fayl əlavə olundu",
+      "attachment_removed": "Fayl silindi",
+      "added_to_sprint": "Sprintə əlavə olundu",
+      "removed_from_sprint": "Sprintdən çıxarıldı",
+      "checklist_item_added": "Checklist bəndi əlavə olundu",
+      "checklist_item_completed": "Checklist bəndi tamamlandı",
+      "checklist_item_reopened": "Checklist bəndi yenidən açıldı",
+      "watcher_added": "İzləyici əlavə olundu",
+      "watcher_removed": "İzləyici silindi"
+    },
+    "field": {
+      "status": "Status",
+      "priority": "Prioritet",
+      "assignee": "İcraçı",
+      "dueDate": "Son tarix",
+      "title": "Başlıq",
+      "description": "Təsvir",
+      "labels": "Etiketlər",
+      "storyPoints": "Story points",
+      "sprint": "Sprint",
+      "commentBody": "Şərh mətni"
+    },
+    "title": "Fəaliyyət Jurnalı",
+    "subtitle": "Sistemdə baş verən bütün əməliyyatların audit tarixçəsi",
+    "totalCount": "{{count}} qeyd",
+    "filterDateRange": "Tarix aralığı",
+    "detailCreatedNote": "Bu əməliyyat yeni qeyd yaratmışdır.",
+    "detailDeletedNote": "Qeyd sistemdən silinmişdir.",
+    "detailSystemInfo": "Sistem məlumatı",
+    "detailNotAvailable": "Mövcud deyil",
+    "detailMetaLabel": "Şərh mətni",
+    "perPage": "Səhifə başına",
+    "customizeTable": "Cədvəli fərdiləşdir",
+    "customizeColumns": "Sütunları fərdiləşdir",
+    "resizeColumns": "Sütunların ölçüsü",
+    "saveWidths": "Yadda saxla",
+    "cancelResize": "Ləğv et",
+    "viewModalTitle": "Cədvəli fərdiləşdir",
+    "viewModalHint": "Activity cədvəlinin görünüşünü seçin.",
+    "columnsModalTitle": "Sütunları fərdiləşdir",
+    "columnsModalHint": "Hansı sütunların görünəcəyini seçin və sıralarını dəyişmək üçün sürükləyin.",
+    "view": {
+      "classic": {
+        "name": "Klassik",
+        "desc": "Rahat boşluqlar, standart görünüş."
+      },
+      "compact": {
+        "name": "Kompakt",
+        "desc": "Daha sıx sətirlər, ekrana daha çox məlumat sığsın."
+      },
+      "striped": {
+        "name": "Zolaqlı",
+        "desc": "Növbəli fonlu sətirlər, oxumaq daha rahat olsun."
+      },
+      "minimal": {
+        "name": "Minimal",
+        "desc": "Kart çərçivəsi yoxdur, sadə nazik xətlər."
+      },
+      "colorful": {
+        "name": "Rəngli",
+        "desc": "Sol tərəfdə əməliyyat növünü göstərən rəngli zolaq."
+      },
+      "spreadsheet": {
+        "name": "Cədvəl (grid)",
+        "desc": "Tam grid sərhədləri, monospace şrift, künclər kəskin."
+      }
+    }
   }
 }

@@ -31,7 +31,7 @@ import TaskListView, {
 } from "../components/TaskListViews";
 import TableViewModal from "../components/TableViewModal";
 import TableColumnsModal from "../components/TableColumnsModal";
-import SimplePagination from "../components/SimplePagination";
+import SimplePagination from "@components/ui/SimplePagination";
 import styles from "./MyTasksPage.module.css";
 
 const TABLE_SETTINGS_KEY = "myTasks";
@@ -232,7 +232,7 @@ export default function MyTasksPage() {
   if (isLoading) {
     return (
       <div>
-        <div className={styles.header}>
+        <div className={styles.pageHeader}>
           <h1 className={styles.title}>{t("myTasksPage.title")}</h1>
         </div>
         <Skeleton active paragraph={{ rows: 8 }} />
@@ -242,82 +242,103 @@ export default function MyTasksPage() {
 
   return (
     <>
-      <div className={styles.header}>
-        <h1 className={styles.title}>{t("myTasksPage.title")}</h1>
-        <p className={styles.subtitle}>
-          {t("myTasksPage.subtitle", { count: meta?.total ?? 0 })}
-        </p>
+      <div className={styles.pageHeader}>
+        <div>
+          <h1 className={styles.title}>{t("myTasksPage.title")}</h1>
+          <p className={styles.subtitle}>
+            {t("myTasksPage.subtitle", { count: meta?.total ?? 0 })}
+          </p>
+        </div>
+        {meta && (
+          <span className={styles.totalBadge}>
+            {t("myTasksPage.totalBadge", { count: meta.total })}
+          </span>
+        )}
       </div>
 
-      {/* Filters */}
+      {/* Filters + table customization */}
       <div className={styles.filters}>
-        <Input
-          allowClear
-          placeholder={t("myTasksPage.searchPlaceholder")}
-          prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{ width: 220 }}
-        />
+        <div className={styles.filterField}>
+          <span className={styles.filterLabel}>{t("myTasksPage.searchPlaceholder")}</span>
+          <Input
+            allowClear
+            placeholder={t("myTasksPage.searchPlaceholder")}
+            prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: 220 }}
+          />
+        </div>
 
-        <Input
-          allowClear
-          placeholder={t("myTasksPage.allStatuses")}
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ width: 160 }}
-        />
+        <div className={styles.filterField}>
+          <span className={styles.filterLabel}>{t("myTasksPage.allStatuses")}</span>
+          <Input
+            allowClear
+            placeholder={t("myTasksPage.allStatuses")}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={{ width: 160 }}
+          />
+        </div>
 
-        <Select
-          placeholder={t("myTasksPage.allPriorities")}
-          allowClear
-          value={priorityFilter}
-          style={{ width: 160 }}
-          onChange={(v) => setPriorityFilter(v ?? null)}
-        >
-          <Select.Option value={Priority.CRITICAL}>
-            {t("myTasksPage.priorityCritical")}
-          </Select.Option>
-          <Select.Option value={Priority.HIGH}>
-            {t("myTasksPage.priorityHigh")}
-          </Select.Option>
-          <Select.Option value={Priority.MEDIUM}>
-            {t("myTasksPage.priorityMedium")}
-          </Select.Option>
-          <Select.Option value={Priority.LOW}>
-            {t("myTasksPage.priorityLow")}
-          </Select.Option>
-        </Select>
-
-        <Select
-          placeholder={t("myTasksPage.allProjects")}
-          allowClear
-          value={projectFilter}
-          style={{ width: 200 }}
-          onChange={(v) => setProjectFilter(v ?? null)}
-        >
-          {projects.map((p) => (
-            <Select.Option key={p._id} value={p._id}>
-              {p.key} — {p.name}
+        <div className={styles.filterField}>
+          <span className={styles.filterLabel}>{t("myTasksPage.allPriorities")}</span>
+          <Select
+            placeholder={t("myTasksPage.allPriorities")}
+            allowClear
+            value={priorityFilter}
+            style={{ width: 160 }}
+            onChange={(v) => setPriorityFilter(v ?? null)}
+          >
+            <Select.Option value={Priority.CRITICAL}>
+              {t("myTasksPage.priorityCritical")}
             </Select.Option>
-          ))}
-        </Select>
+            <Select.Option value={Priority.HIGH}>
+              {t("myTasksPage.priorityHigh")}
+            </Select.Option>
+            <Select.Option value={Priority.MEDIUM}>
+              {t("myTasksPage.priorityMedium")}
+            </Select.Option>
+            <Select.Option value={Priority.LOW}>
+              {t("myTasksPage.priorityLow")}
+            </Select.Option>
+          </Select>
+        </div>
+
+        <div className={styles.filterField}>
+          <span className={styles.filterLabel}>{t("myTasksPage.allProjects")}</span>
+          <Select
+            placeholder={t("myTasksPage.allProjects")}
+            allowClear
+            value={projectFilter}
+            style={{ width: 200 }}
+            onChange={(v) => setProjectFilter(v ?? null)}
+          >
+            {projects.map((p) => (
+              <Select.Option key={p._id} value={p._id}>
+                {p.key} — {p.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
 
         {hasActiveFilters && (
-          <Button icon={<ClearOutlined />} type="text" onClick={clearFilters}>
+          <Button icon={<ClearOutlined />} onClick={clearFilters}>
             {t("myTasksPage.clearFilters")}
           </Button>
         )}
 
         <div className={styles.filtersRight}>
-          <span className={styles.pageSizeLabel}>{t("myTasksPage.perPage")}</span>
-          <Select value={pageSize} style={{ width: 90 }} onChange={setPageSize}>
-            {PAGE_SIZE_OPTIONS.map((size) => (
-              <Select.Option key={size} value={size}>
-                {size}
-              </Select.Option>
-            ))}
-          </Select>
+          <div className={styles.filterField}>
+            <span className={styles.pageSizeLabel}>{t("myTasksPage.perPage")}</span>
+            <Select value={pageSize} style={{ width: 90 }} onChange={setPageSize}>
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <Select.Option key={size} value={size}>
+                  {size}
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
 
           <Button icon={<TableOutlined />} onClick={() => setViewModalOpen(true)}>
             {t("tableViews.customizeTable")}
