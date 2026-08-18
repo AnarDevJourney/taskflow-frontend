@@ -17,7 +17,9 @@ export const useNotifications = () => {
   const unreadQuery = useQuery({
     queryKey: ["notifications-unread-count"],
     queryFn: notificationService.getUnreadCount,
-    refetchInterval: 30_000, // poll every 30s as fallback
+    // the websocket is the primary channel — this poll only covers the
+    // window where the socket is down (sleep/wake, redeploy)
+    refetchInterval: 60_000,
   });
 
   // sync unread count to Redux so bell badge updates

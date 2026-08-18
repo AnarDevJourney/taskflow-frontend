@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import {
   DndContext,
   DragEndEvent,
@@ -54,7 +54,31 @@ export default function BoardPage() {
   const [dragCount, setDragCount] = useState(1);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [defaultStatus, setDefaultStatus] = useState("To Do");
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  // `?task=<id>` is the single source of truth for which task's detail modal
+  // is open — that makes the notification deep links (and the browser's back
+  // button) work without a second copy of the state to keep in sync
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedTaskId = searchParams.get("task");
+
+  const openTaskDetail = useCallback(
+    (taskId: string) => {
+      setSearchParams((params) => {
+        params.set("task", taskId);
+        return params;
+      });
+    },
+    [setSearchParams],
+  );
+
+  const closeTaskDetail = useCallback(() => {
+    setSearchParams(
+      (params) => {
+        params.delete("task");
+        return params;
+      },
+      { replace: true },
+    );
+  }, [setSearchParams]);
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
@@ -649,7 +673,7 @@ export default function BoardPage() {
                 status={status}
                 tasks={tasksByStatus[status.name] ?? []}
                 onAddTask={handleAddTask}
-                onTaskClick={(task) => setSelectedTaskId(task._id)}
+                onTaskClick={(task) => openTaskDetail(task._id)}
                 selectMode={selectMode}
                 selectedIds={selectedIds}
                 onToggleSelect={toggleSelectTask}
@@ -690,7 +714,7 @@ export default function BoardPage() {
           projectId={projectId ?? ""}
           statuses={project.statuses.map((s) => s.name)}
           open={!!selectedTask}
-          onClose={() => setSelectedTaskId(null)}
+          onClose={closeTaskDetail}
         />
       )}
     </>

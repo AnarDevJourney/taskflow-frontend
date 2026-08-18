@@ -145,3 +145,16 @@ body {
 .Toastify__close-button:hover {
   opacity: 1 !important;
 }
+
+/* ─── Real-time notification toast (AntD notification, placement: top) ───
+   The card's whole body is our own NotificationToast component, so AntD's
+   default message typography and spacing only get in the way. */
+.ant-notification-notice-title {
+  margin-bottom: 0 !important;
+  padding-inline-end: 24px;
+}
+
+.ant-notification-notice-close {
+  inset-inline-end: 12px;
+  top: 12px;
+}

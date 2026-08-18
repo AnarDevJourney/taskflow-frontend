@@ -205,7 +205,8 @@
       "projects": "Проекты",
       "myTasks": "Мои задачи",
       "members": "Участники",
-      "activity": "Активность"
+      "activity": "Активность",
+      "notifications": "Уведомления"
     },
     "signOut": "Выйти",
     "searchTooltip": "Поиск (Ctrl+K)",
@@ -219,7 +220,8 @@
       "workspaces": "Рабочие пространства",
       "default": "TaskFlow",
       "activity": "Журнал активности",
-      "settings": "Настройки"
+      "settings": "Настройки",
+      "notifications": "Уведомления"
     },
     "customizeSidebarTooltip": "Настроить боковую панель",
     "collapseSidebarTooltip": "Свернуть панель",
@@ -227,6 +229,56 @@
     "settings": "Настройки",
     "darkModeTooltip": "Переключить на тёмный режим",
     "lightModeTooltip": "Переключить на светлый режим"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "markAllRead": "Отметить все как прочитанные",
+    "empty": "Пока нет уведомлений",
+    "toastAction": "Нажмите, чтобы открыть",
+    "messages": {
+      "taskAssigned": {
+        "title": "{{actorName}} назначил(а) вам задачу",
+        "body": "{{taskKey}} — {{taskTitle}}"
+      },
+      "taskAssignedSelf": {
+        "title": "Вы назначили задачу себе",
+        "body": "{{taskKey}} — {{taskTitle}}"
+      },
+      "taskStatusChanged": {
+        "title": "{{actorName}} переместил(а) {{taskKey}} в {{newStatus}}",
+        "body": "{{taskTitle}} — {{oldStatus}} → {{newStatus}}"
+      },
+      "commentMention": {
+        "title": "{{actorName}} упомянул(а) вас",
+        "body": "В {{taskKey}}: «{{commentSnippet}}»"
+      },
+      "commentAdded": {
+        "title": "{{actorName}} прокомментировал(а) {{taskKey}}",
+        "body": "{{commentSnippet}}"
+      },
+      "sprintStarted": {
+        "title": "Спринт начат: {{sprintName}}",
+        "body": "{{actorName}} начал(а) спринт в {{projectName}}"
+      },
+      "sprintCompleted": {
+        "title": "Спринт завершён: {{sprintName}}",
+        "body": "{{completedPoints}}/{{totalPoints}} story points завершено в {{projectName}}"
+      },
+      "workspaceInvite": {
+        "title": "{{actorName}} пригласил(а) вас в {{workspaceName}}",
+        "body": "Вы были приглашены как {{role}}"
+      },
+      "taskDueSoon": {
+        "title": "{{taskKey}} истекает через {{hours}} ч."
+      },
+      "taskOverdue": {
+        "title": "{{taskKey}} просрочена"
+      },
+      "taskDueOrOverdueBody": {
+        "body": "{{taskTitle}}"
+      }
+    },
+    "viewAll": "Все уведомления"
   },
   "projectSettings": {
     "backToBoard": "Назад к доске",
@@ -564,6 +616,80 @@
       "system": "Системная",
       "light": "Светлая",
       "dark": "Тёмная"
+    }
+  },
+  "notificationsPage": {
+    "title": "Уведомления",
+    "subtitle": "Все уведомления, отправленные вам",
+    "totalCount": "{{count}} записей",
+    "filterStatus": "Статус",
+    "filterType": "Тип",
+    "filterDateRange": "Диапазон дат",
+    "clearFilters": "Сбросить фильтры",
+    "perPage": "На странице",
+    "read": "Прочитано",
+    "unread": "Не прочитано",
+    "systemActor": "Система",
+    "empty": "Уведомлений пока нет",
+    "viewDetails": "Посмотреть детали",
+    "customizeTable": "Настроить таблицу",
+    "customizeColumns": "Настроить столбцы",
+    "resizeColumns": "Изменить размер столбцов",
+    "saveWidths": "Сохранить",
+    "cancelResize": "Отмена",
+    "viewModalTitle": "Настроить таблицу",
+    "viewModalHint": "Выберите, как отображать таблицу уведомлений.",
+    "columnsModalTitle": "Настроить столбцы",
+    "columnsModalHint": "Выберите, какие столбцы показывать, и перетащите для изменения порядка.",
+    "column": {
+      "status": "Статус",
+      "type": "Тип",
+      "message": "Сообщение",
+      "actor": "От кого",
+      "date": "Дата"
+    },
+    "type": {
+      "task_assigned": "Задача назначена",
+      "task_due_soon": "Срок задачи скоро истекает",
+      "task_overdue": "Задача просрочена",
+      "task_status_changed": "Статус изменён",
+      "comment_added": "Добавлен комментарий",
+      "comment_mention": "Вас упомянули",
+      "sprint_started": "Спринт начат",
+      "sprint_completed": "Спринт завершён",
+      "workspace_invite": "Приглашение в рабочее пространство"
+    },
+    "detailTitle": "Детали уведомления",
+    "detailMessage": "Сообщение",
+    "detailActor": "От кого",
+    "detailStatus": "Статус",
+    "detailReadAt": "Прочитано",
+    "detailOpenLink": "Открыть связанный элемент",
+    "view": {
+      "classic": {
+        "name": "Классический",
+        "desc": "Комфортные отступы, вид по умолчанию."
+      },
+      "compact": {
+        "name": "Компактный",
+        "desc": "Более плотные строки, чтобы поместить больше на экран."
+      },
+      "striped": {
+        "name": "Полосатый",
+        "desc": "Чередующиеся строки для удобного сканирования."
+      },
+      "minimal": {
+        "name": "Минимальный",
+        "desc": "Без оформления карточек, только тонкие разделители."
+      },
+      "colorful": {
+        "name": "Цветной",
+        "desc": "Цветная полоса слева, показывающая тип уведомления."
+      },
+      "spreadsheet": {
+        "name": "Таблица",
+        "desc": "Полные границы сетки, моноширинный шрифт, без скруглений."
+      }
     }
   }
 }

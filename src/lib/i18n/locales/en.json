@@ -205,7 +205,8 @@
       "projects": "Projects",
       "myTasks": "My Tasks",
       "members": "Members",
-      "activity": "Activity"
+      "activity": "Activity",
+      "notifications": "Notifications"
     },
     "signOut": "Sign out",
     "searchTooltip": "Search (Ctrl+K)",
@@ -219,7 +220,8 @@
       "workspaces": "Workspaces",
       "default": "TaskFlow",
       "activity": "Activity Log",
-      "settings": "Settings"
+      "settings": "Settings",
+      "notifications": "Notifications"
     },
     "customizeSidebarTooltip": "Customize sidebar",
     "collapseSidebarTooltip": "Collapse sidebar",
@@ -227,6 +229,56 @@
     "settings": "Settings",
     "darkModeTooltip": "Switch to dark mode",
     "lightModeTooltip": "Switch to light mode"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet",
+    "toastAction": "Click to open",
+    "messages": {
+      "taskAssigned": {
+        "title": "{{actorName}} assigned you a task",
+        "body": "{{taskKey}} — {{taskTitle}}"
+      },
+      "taskAssignedSelf": {
+        "title": "You assigned yourself a task",
+        "body": "{{taskKey}} — {{taskTitle}}"
+      },
+      "taskStatusChanged": {
+        "title": "{{actorName}} moved {{taskKey}} to {{newStatus}}",
+        "body": "{{taskTitle}} — {{oldStatus}} → {{newStatus}}"
+      },
+      "commentMention": {
+        "title": "{{actorName}} mentioned you",
+        "body": "In {{taskKey}}: \"{{commentSnippet}}\""
+      },
+      "commentAdded": {
+        "title": "{{actorName}} commented on {{taskKey}}",
+        "body": "{{commentSnippet}}"
+      },
+      "sprintStarted": {
+        "title": "Sprint started: {{sprintName}}",
+        "body": "{{actorName}} started the sprint in {{projectName}}"
+      },
+      "sprintCompleted": {
+        "title": "Sprint completed: {{sprintName}}",
+        "body": "{{completedPoints}}/{{totalPoints}} story points completed in {{projectName}}"
+      },
+      "workspaceInvite": {
+        "title": "{{actorName}} invited you to {{workspaceName}}",
+        "body": "You have been invited as {{role}}"
+      },
+      "taskDueSoon": {
+        "title": "{{taskKey}} is due within {{hours}} hours"
+      },
+      "taskOverdue": {
+        "title": "{{taskKey}} is overdue"
+      },
+      "taskDueOrOverdueBody": {
+        "body": "{{taskTitle}}"
+      }
+    },
+    "viewAll": "View all"
   },
   "projectSettings": {
     "backToBoard": "Back to board",
@@ -564,6 +616,80 @@
       "system": "System",
       "light": "Light",
       "dark": "Dark"
+    }
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "subtitle": "All notifications sent to you",
+    "totalCount": "{{count}} records",
+    "filterStatus": "Status",
+    "filterType": "Type",
+    "filterDateRange": "Date range",
+    "clearFilters": "Clear filters",
+    "perPage": "Per page",
+    "read": "Read",
+    "unread": "Unread",
+    "systemActor": "System",
+    "empty": "No notifications yet",
+    "viewDetails": "View details",
+    "customizeTable": "Customize table",
+    "customizeColumns": "Customize columns",
+    "resizeColumns": "Resize columns",
+    "saveWidths": "Save",
+    "cancelResize": "Cancel",
+    "viewModalTitle": "Customize table",
+    "viewModalHint": "Choose how the notifications table is laid out.",
+    "columnsModalTitle": "Customize columns",
+    "columnsModalHint": "Choose which columns are shown and drag to reorder them.",
+    "column": {
+      "status": "Status",
+      "type": "Type",
+      "message": "Message",
+      "actor": "From",
+      "date": "Date"
+    },
+    "type": {
+      "task_assigned": "Task assigned",
+      "task_due_soon": "Task due soon",
+      "task_overdue": "Task overdue",
+      "task_status_changed": "Status changed",
+      "comment_added": "Comment added",
+      "comment_mention": "Mentioned",
+      "sprint_started": "Sprint started",
+      "sprint_completed": "Sprint completed",
+      "workspace_invite": "Workspace invite"
+    },
+    "detailTitle": "Notification details",
+    "detailMessage": "Message",
+    "detailActor": "From",
+    "detailStatus": "Status",
+    "detailReadAt": "Read at",
+    "detailOpenLink": "Open related item",
+    "view": {
+      "classic": {
+        "name": "Classic",
+        "desc": "Comfortable spacing, the default look."
+      },
+      "compact": {
+        "name": "Compact",
+        "desc": "Denser rows to fit more on screen."
+      },
+      "striped": {
+        "name": "Striped",
+        "desc": "Zebra-striped rows for easier scanning."
+      },
+      "minimal": {
+        "name": "Minimal",
+        "desc": "No card chrome, plain hairline dividers."
+      },
+      "colorful": {
+        "name": "Colorful",
+        "desc": "A left color bar showing the notification type at a glance."
+      },
+      "spreadsheet": {
+        "name": "Spreadsheet",
+        "desc": "Full grid borders, monospace font, no rounding."
+      }
     }
   }
 }

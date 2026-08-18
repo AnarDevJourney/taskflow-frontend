@@ -20,11 +20,18 @@ const notificationsSlice = createSlice({
     setNotifications(state, action: PayloadAction<Notification[]>) {
       state.items = action.payload;
     },
-    addNotification(state, action: PayloadAction<Notification>) {
-      state.items.unshift(action.payload);
-      if (!action.payload.isRead) {
-        state.unreadCount += 1;
+    // a notification that arrived over the websocket. The server sends the
+    // unread count with it, so the badge is never derived from local state
+    // (which would drift as soon as one tab marks something read).
+    receiveNotification(
+      state,
+      action: PayloadAction<{ notification: Notification; unreadCount: number }>,
+    ) {
+      const { notification, unreadCount } = action.payload;
+      if (!state.items.some((n) => n._id === notification._id)) {
+        state.items.unshift(notification);
       }
+      state.unreadCount = unreadCount;
     },
     setUnreadCount(state, action: PayloadAction<number>) {
       state.unreadCount = action.payload;
@@ -53,7 +60,7 @@ const notificationsSlice = createSlice({
 
 export const {
   setNotifications,
-  addNotification,
+  receiveNotification,
   setUnreadCount,
   markOneRead,
   markAllRead,

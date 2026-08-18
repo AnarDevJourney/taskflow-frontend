@@ -1,4 +1,4 @@
-import { ConfigProvider } from "antd";
+import { App as AntApp, ConfigProvider } from "antd";
 import { RouterProvider } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
@@ -17,7 +17,24 @@ export default function App() {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <ConfigProvider theme={resolvedTheme === "dark" ? darkTheme : lightTheme}>
-          <RouterProvider router={router} />
+          {/* AntD's App provider — gives hooks access to a theme-aware
+              `notification` API (the static antd.notification renders
+              outside ConfigProvider and ignores dark mode). Real-time
+              notification toasts are opened through it, see
+              useNotificationToast. */}
+          <AntApp
+            notification={{
+              placement: "top",
+              duration: 3,
+              // three cards at once is plenty; older ones roll off
+              maxCount: 3,
+              // v6 collapses queued cards into a stack by default, which
+              // clips the ones underneath — list them instead
+              stack: false,
+            }}
+          >
+            <RouterProvider router={router} />
+          </AntApp>
           <ToastContainer
             position="top-right"
             autoClose={3500}

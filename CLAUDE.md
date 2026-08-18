@@ -118,7 +118,24 @@ src/
     │   └── pages/
     │       ├── SprintsPage.tsx + SprintsPage.module.css
     ├── notifications/
-    │   └── hooks/useNotifications.ts
+    │   ├── components/
+    │   │   ├── NotificationsPanel.tsx + .module.css        # bell dropdown list — header has a "View all" link to /notifications alongside "Mark all as read"
+    │   │   ├── NotificationToast.tsx + .module.css         # body of the pop-up card
+    │   │   ├── NotificationDetailDrawer.tsx + .module.css  # right-drawer for one notification — type badge, full title/body, actor (if any), read/unread + read-at, an "open related item" button when `link` is set. Same visual language as Activity Log's ActivityDetailDrawer (shared CSS module copied over, not imported cross-feature)
+    │   │   └── NotificationViewModal.tsx + .module.css     # "Customize table" picker — same pattern as ActivityViewModal (6-variant catalog with mockup previews), CSS module copied from that component
+    │   ├── hooks/
+    │   │   ├── useNotifications.ts         # REST list/mark-read (+60s fallback poll) — used by the bell panel
+    │   │   ├── useNotificationsTable.ts    # filter-driven, server-side paginated (`notificationService.query`), placeholderData like useWorkspaceActivity — used by NotificationsPage, not the bell panel
+    │   │   ├── useNotificationSocket.ts    # the websocket connection, mounted once in AppLayout
+    │   │   └── useNotificationToast.tsx    # opens the AntD top toast
+    │   ├── services/notificationService.ts   # `getAll(page, limit)` for the bell panel + `query(dto)` (isRead/type/dateFrom/dateTo/page/limit) for the table page
+    │   ├── utils/
+    │   │   ├── notificationIcon.tsx      # icon + colour per NotificationType
+    │   │   ├── notificationText.ts       # renderNotificationText — titleKey/bodyKey + params → translated title/body, shared by the bell panel, toast, table, and drawer
+    │   │   ├── notificationColumns.ts    # column customization model (ColumnId: status/type/message/actor/date, same shape as activityColumns.ts) — NotificationsPage's own columns
+    │   │   └── notificationViews.ts      # 6 table view variants (classic/compact/striped/minimal/colorful/spreadsheet), mirrors activityViews.ts
+    │   └── pages/
+    │       └── NotificationsPage.tsx + .module.css   # `/notifications` (top-level, not workspace-scoped — notifications aren't per-workspace) — same layout/mechanics as ActivityLogPage: Status(read/unread)/Type/date-range filters, server-side pagination, "Customize table"/"Customize columns"/column-resize all persisted via `table-settings` (`key: "notifications"`), trailing eye-icon column opens NotificationDetailDrawer and marks that notification read. Reached from the user-avatar dropdown ("Notifications", above Settings) and the bell panel's "View all" link
     ├── search/
     ├── settings/
     │   └── pages/
@@ -302,6 +319,21 @@ const errorMessage = (() => {
 
 ---
 
+## Real-time notifications
+
+`useNotificationSocket()` is mounted **once**, in `AppLayout`, and owns the whole live channel:
+
+- Connects to `${VITE_WS_URL}/notifications` with `withCredentials: true` — auth is the HttpOnly `access_token` cookie the browser attaches to the handshake, there is no token to pass in JS.
+- `notification:new` → `{ notification, unreadCount }`: pushes into Redux, opens the toast, invalidates the notification queries.
+- `notification:count` → `{ unreadCount }`: sent on connect and whenever anything is marked read, including from another tab.
+- `unauthorized` → refreshes the access token via `POST /auth/refresh` and reconnects (max 3 attempts). The server closes the socket itself, so socket.io will not auto-reconnect on its own here.
+
+The toast is AntD's `notification` API reached through `App.useApp()` (`useNotificationToast`), never the static `notification.*` import — the static one renders outside `ConfigProvider` and ignores dark mode. `<AntApp>` in `App.tsx` sets the shared config: `placement: "top"`, `duration: 3`, `maxCount: 3`, `stack: false`.
+
+`notification.link` is a relative SPA path (e.g. `/workspaces/:wsId/projects/:pId/board?task=:taskId`), so clicking a toast or a panel row is a `navigate()`, not a page load. `BoardPage` reads `?task=` and opens that task's detail modal.
+
+---
+
 ## Redux Store Rules
 
 Only these things belong in Redux:
@@ -310,7 +342,7 @@ Only these things belong in Redux:
 - `ui.activeWorkspaceId` — currently selected workspace. Persisted to `localStorage` (`taskflow.activeWorkspaceId`) inside the `setActiveWorkspace` reducer itself, so it survives a page reload — `AppLayout` reads the URL's `:workspaceId` first, falls back to this stored value on routes without one (e.g. `/workspaces`), and only then falls back to the first workspace in the list.
 - `ui.activeProjectId` — currently selected project
 - `notifications.items` — notification list pushed via WebSocket
-- `notifications.unreadCount` — badge count
+- `notifications.unreadCount` — badge count. **Always set from the server's number** (the socket sends it with every event); never incremented locally, or it drifts as soon as a second tab marks something read.
 - `notifications.isOpen` — notification panel open/closed
 
 Everything else (server data) belongs in React Query, not Redux.
@@ -355,6 +387,7 @@ Protected routes (wrapped in `AuthGuard`):
 - `/workspaces/:workspaceId/my-tasks`
 - `/workspaces/:workspaceId/activity`
 - `/settings` — not workspace-scoped (a user-level preference page)
+- `/notifications` — not workspace-scoped (notifications are per-user, not per-workspace) — the Notifications table page
 
 `AuthGuard` checks `useCurrentUser()` — if loading shows spinner, if error/no user redirects to `/login`.
 
@@ -526,11 +559,12 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), comments (add/edit/delete)
 - ✅ My Tasks page — cross-project task list, server-side paginated (page-size selector: 10/25/50/100) with `SimplePagination`, search + status/priority/project filters (server-side, debounced), "Customize table" modal offering 9 alternate UI layouts for the same data (`TaskListViews.tsx`), a "Columns" modal to show/hide and drag-reorder individual columns, and a column-resize mode (`react-resizable` drag handles, explicit Save/Cancel) — all row-table variants only (`cards`/`kanban` don't have literal columns). All four preferences (table view, page size, columns incl. widths) are saved per-user on the backend via `table-settings` — see Redux Store Rules
 - ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
-- ✅ Notifications panel — bell icon dropdown with real-time updates (WebSocket)
+- ✅ Notifications — bell dropdown + live badge + a toast that slides in from the top and auto-dismisses after 3s. See "Real-time notifications" below.
 - ✅ Search overlay — Cmd+K global search
 - ✅ System/Light/Dark theme (`src/lib/theme/`) — `useTheme()` hook, `localStorage`-persisted, follows OS theme live when set to "system", no reload on change. Settings page (Appearance card) to pick it. AntD components theme automatically via `ConfigProvider`; custom CSS uses `var(--token)` from `global.css` — fully rolled out on `AppLayout`, My Tasks, and Activity Log; other pages still have some pre-theme-system hardcoded colors (see Design System's Rollout status note)
 
 - ✅ Activity Log page (`ActivityLogPage`) — workspace-wide activity table with User/Module/Action/date-range filters, server-side pagination (page-size selector, `SimplePagination`), table view customization (6 variants with mockup previews, like My Tasks), column show/hide/reorder/resize, eye-icon-per-row opening `ActivityDetailDrawer` (actor, project/task context, changed-field before→after, `meta`, collapsed system-info section). All four preferences (page size, table view, columns incl. widths) persist to backend `table-settings` (`key: "activityLog"`) — same treatment as My Tasks now, nothing left in `localStorage`
+- ✅ Notifications table page (`NotificationsPage`, route `/notifications`) — same structure/mechanics as `ActivityLogPage` (Status/Type/date-range filters, server-side pagination, 6-variant table view customization, column show/hide/reorder/resize, all persisted to `table-settings` with `key: "notifications"`), applied to the user's own notification history instead of the workspace audit log. Eye-icon-per-row (and clicking the row) opens `NotificationDetailDrawer` and marks that notification read via the existing `markAsRead` mutation. Backend's `GET /notifications` gained `isRead`/`type`/`dateFrom`/`dateTo` filters to power it, alongside the bell panel's existing `page`/`limit`/`unreadOnly` usage
 
 ## In Progress / Remaining
 

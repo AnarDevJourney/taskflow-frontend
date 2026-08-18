@@ -1,64 +1,65 @@
 import { Empty, Spin } from "antd";
-import {
-  BellOutlined,
-  CheckOutlined,
-  UserAddOutlined,
-  MessageOutlined,
-  ClockCircleOutlined,
-} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Notification, NotificationType } from "@types/index";
+import { Notification } from "@types/index";
+import { useAppSelector } from "@store/index";
 import { useNotifications } from "../hooks/useNotifications";
+import { notificationIcon } from "../utils/notificationIcon";
+import { renderNotificationText } from "../utils/notificationText";
 import styles from "./NotificationsPanel.module.css";
 
 dayjs.extend(relativeTime);
 
-const typeIcon: Record<string, React.ReactNode> = {
-  [NotificationType.TASK_ASSIGNED]: (
-    <UserAddOutlined style={{ color: "#4a6cf7" }} />
-  ),
-  [NotificationType.COMMENT_ADDED]: (
-    <MessageOutlined style={{ color: "#10B981" }} />
-  ),
-  [NotificationType.COMMENT_MENTION]: (
-    <MessageOutlined style={{ color: "#fa8c16" }} />
-  ),
-  [NotificationType.TASK_DUE_SOON]: (
-    <ClockCircleOutlined style={{ color: "#fa8c16" }} />
-  ),
-  [NotificationType.TASK_OVERDUE]: (
-    <ClockCircleOutlined style={{ color: "#f5222d" }} />
-  ),
-  [NotificationType.TASK_STATUS_CHANGED]: (
-    <CheckOutlined style={{ color: "#10B981" }} />
-  ),
-  [NotificationType.WORKSPACE_INVITE]: (
-    <UserAddOutlined style={{ color: "#4a6cf7" }} />
-  ),
-};
+interface Props {
+  // lets the bell's popover close itself when a notification navigates away
+  onNavigate?: () => void;
+}
 
-export default function NotificationsPanel() {
+export default function NotificationsPanel({ onNavigate }: Props) {
   const { notifications, isLoading, markAsRead, markAllAsRead } =
     useNotifications();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  console.log("notifications", notifications);
+  // the badge count comes from the server (socket / unread-count endpoint),
+  // not from this page of results — page 1 does not know about older unread
+  // notifications further down the list
+  const unreadCount = useAppSelector((s) => s.notifications.unreadCount);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const handleClick = (notification: Notification) => {
+    if (!notification.isRead) markAsRead(notification._id);
+    if (notification.link) {
+      navigate(notification.link);
+      onNavigate?.();
+    }
+  };
 
   return (
     <div className={styles.panel}>
       {/* Header */}
       <div className={styles.header}>
         <span className={styles.headerTitle}>
-          Notifications
+          {t("notifications.title")}
           {unreadCount > 0 && ` (${unreadCount})`}
         </span>
-        {unreadCount > 0 && (
-          <button className={styles.markAllBtn} onClick={() => markAllAsRead()}>
-            Mark all as read
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button
+            className={styles.markAllBtn}
+            onClick={() => {
+              navigate("/notifications");
+              onNavigate?.();
+            }}
+          >
+            {t("notifications.viewAll")}
           </button>
-        )}
+          {unreadCount > 0 && (
+            <button className={styles.markAllBtn} onClick={() => markAllAsRead()}>
+              {t("notifications.markAllRead")}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* List */}
@@ -71,33 +72,34 @@ export default function NotificationsPanel() {
           <div className={styles.empty}>
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="No notifications yet"
+              description={t("notifications.empty")}
             />
           </div>
         ) : (
-          notifications.map((notification: Notification) => (
-            <div
-              key={notification._id}
-              className={`${styles.item} ${!notification.isRead ? styles.unread : ""}`}
-              onClick={() => {
-                if (!notification.isRead) markAsRead(notification._id);
-              }}
-            >
-              <div className={styles.icon}>
-                {typeIcon[notification.type] ?? (
-                  <BellOutlined style={{ color: "#8c8c8c" }} />
-                )}
-              </div>
-              <div className={styles.content}>
-                <div className={styles.title}>{notification.title}</div>
-                <div className={styles.body}>{notification.body}</div>
-                <div className={styles.time}>
-                  {dayjs(notification.createdAt).fromNow()}
+          notifications.map((notification: Notification) => {
+            const { icon, color } = notificationIcon(notification.type);
+            const { title, body } = renderNotificationText(notification, t);
+
+            return (
+              <div
+                key={notification._id}
+                className={`${styles.item} ${!notification.isRead ? styles.unread : ""}`}
+                onClick={() => handleClick(notification)}
+              >
+                <div className={styles.icon} style={{ color }}>
+                  {icon}
                 </div>
+                <div className={styles.content}>
+                  <div className={styles.title}>{title}</div>
+                  <div className={styles.body}>{body}</div>
+                  <div className={styles.time}>
+                    {dayjs(notification.createdAt).fromNow()}
+                  </div>
+                </div>
+                {!notification.isRead && <span className={styles.unreadDot} />}
               </div>
-              {!notification.isRead && <span className={styles.unreadDot} />}
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

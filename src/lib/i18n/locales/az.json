@@ -205,7 +205,8 @@
       "projects": "Layihələr",
       "myTasks": "Tapşırıqlarım",
       "members": "Üzvlər",
-      "activity": "Fəaliyyət"
+      "activity": "Fəaliyyət",
+      "notifications": "Bildirişlər"
     },
     "signOut": "Çıxış",
     "searchTooltip": "Axtarış (Ctrl+K)",
@@ -219,7 +220,8 @@
       "workspaces": "İş sahələri",
       "default": "TaskFlow",
       "activity": "Fəaliyyət Jurnalı",
-      "settings": "Ayarlar"
+      "settings": "Ayarlar",
+      "notifications": "Bildirişlər"
     },
     "customizeSidebarTooltip": "Sidebari fərdiləşdir",
     "collapseSidebarTooltip": "Sidebari yığ",
@@ -227,6 +229,56 @@
     "settings": "Ayarlar",
     "darkModeTooltip": "Qaranlıq rejimə keç",
     "lightModeTooltip": "İşıqlı rejimə keç"
+  },
+  "notifications": {
+    "title": "Bildirişlər",
+    "markAllRead": "Hamısını oxunmuş kimi işarələ",
+    "empty": "Hələ bildiriş yoxdur",
+    "toastAction": "Açmaq üçün klikləyin",
+    "messages": {
+      "taskAssigned": {
+        "title": "{{actorName}} sizə tapşırıq təyin etdi",
+        "body": "{{taskKey}} — {{taskTitle}}"
+      },
+      "taskAssignedSelf": {
+        "title": "Özünüzə tapşırıq təyin etdiniz",
+        "body": "{{taskKey}} — {{taskTitle}}"
+      },
+      "taskStatusChanged": {
+        "title": "{{actorName}} {{taskKey}} tapşırığını {{newStatus}} statusuna keçirdi",
+        "body": "{{taskTitle}} — {{oldStatus}} → {{newStatus}}"
+      },
+      "commentMention": {
+        "title": "{{actorName}} sizi qeyd etdi",
+        "body": "{{taskKey}} tapşırığında: \"{{commentSnippet}}\""
+      },
+      "commentAdded": {
+        "title": "{{actorName}} {{taskKey}} üzərinə şərh yazdı",
+        "body": "{{commentSnippet}}"
+      },
+      "sprintStarted": {
+        "title": "Sprint başladı: {{sprintName}}",
+        "body": "{{actorName}} sprinti {{projectName}} layihəsində başlatdı"
+      },
+      "sprintCompleted": {
+        "title": "Sprint tamamlandı: {{sprintName}}",
+        "body": "{{completedPoints}}/{{totalPoints}} story point {{projectName}} layihəsində tamamlandı"
+      },
+      "workspaceInvite": {
+        "title": "{{actorName}} sizi {{workspaceName}} sahəsinə dəvət etdi",
+        "body": "Siz {{role}} rolu ilə dəvət edildiniz"
+      },
+      "taskDueSoon": {
+        "title": "{{taskKey}} {{hours}} saat ərzində vaxtı bitir"
+      },
+      "taskOverdue": {
+        "title": "{{taskKey}} tapşırığının vaxtı keçib"
+      },
+      "taskDueOrOverdueBody": {
+        "body": "{{taskTitle}}"
+      }
+    },
+    "viewAll": "Hamısına bax"
   },
   "projectSettings": {
     "backToBoard": "Lövhəyə qayıt",
@@ -564,6 +616,80 @@
       "system": "Sistem",
       "light": "İşıqlı",
       "dark": "Qaranlıq"
+    }
+  },
+  "notificationsPage": {
+    "title": "Bildirişlər",
+    "subtitle": "Sizə göndərilən bütün bildirişlər",
+    "totalCount": "{{count}} qeyd",
+    "filterStatus": "Status",
+    "filterType": "Növ",
+    "filterDateRange": "Tarix aralığı",
+    "clearFilters": "Filtrləri təmizlə",
+    "perPage": "Səhifədə",
+    "read": "Oxunub",
+    "unread": "Oxunmayıb",
+    "systemActor": "Sistem",
+    "empty": "Hələ bildiriş yoxdur",
+    "viewDetails": "Detallara bax",
+    "customizeTable": "Cədvəli fərdiləşdir",
+    "customizeColumns": "Sütunları fərdiləşdir",
+    "resizeColumns": "Sütunları ölçüləndir",
+    "saveWidths": "Yadda saxla",
+    "cancelResize": "Ləğv et",
+    "viewModalTitle": "Cədvəli fərdiləşdir",
+    "viewModalHint": "Bildirişlər cədvəlinin necə görünəcəyini seçin.",
+    "columnsModalTitle": "Sütunları fərdiləşdir",
+    "columnsModalHint": "Hansı sütunların göstəriləcəyini seçin və sıralamaq üçün sürüşdürün.",
+    "column": {
+      "status": "Status",
+      "type": "Növ",
+      "message": "Mesaj",
+      "actor": "Göndərən",
+      "date": "Tarix"
+    },
+    "type": {
+      "task_assigned": "Tapşırıq təyin edildi",
+      "task_due_soon": "Tapşırığın vaxtı yaxınlaşır",
+      "task_overdue": "Tapşırığın vaxtı keçib",
+      "task_status_changed": "Status dəyişdi",
+      "comment_added": "Şərh əlavə edildi",
+      "comment_mention": "Qeyd edildiniz",
+      "sprint_started": "Sprint başladı",
+      "sprint_completed": "Sprint tamamlandı",
+      "workspace_invite": "İş sahəsi dəvəti"
+    },
+    "detailTitle": "Bildiriş detalları",
+    "detailMessage": "Mesaj",
+    "detailActor": "Göndərən",
+    "detailStatus": "Status",
+    "detailReadAt": "Oxunma tarixi",
+    "detailOpenLink": "Əlaqəli elementi aç",
+    "view": {
+      "classic": {
+        "name": "Klassik",
+        "desc": "Rahat boşluqlar, standart görünüş."
+      },
+      "compact": {
+        "name": "Kompakt",
+        "desc": "Ekranda daha çoxunun sığması üçün sıx sətirlər."
+      },
+      "striped": {
+        "name": "Zolaqlı",
+        "desc": "Asan oxumaq üçün zebra üslublu sətirlər."
+      },
+      "minimal": {
+        "name": "Minimal",
+        "desc": "Kart çərçivəsi olmadan, sadə ayırıcı xətlər."
+      },
+      "colorful": {
+        "name": "Rəngli",
+        "desc": "Bildiriş növünü bir baxışda göstərən sol rəng zolağı."
+      },
+      "spreadsheet": {
+        "name": "Cədvəl",
+        "desc": "Tam grid xətləri, monospace şrift, künclər düz."
+      }
     }
   }
 }

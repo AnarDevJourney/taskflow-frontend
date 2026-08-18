@@ -217,8 +217,13 @@ export interface Notification {
   recipientId: string;
   actorId: User | null;
   type: NotificationType;
-  title: string;
-  body: string;
+  // i18n message keys + interpolation params — see `notifications.messages.*`
+  // in the locale files, and `renderNotificationText` for how these are
+  // translated into the current UI language
+  titleKey: string;
+  titleParams: Record<string, string | number>;
+  bodyKey: string;
+  bodyParams: Record<string, string | number>;
   link: string | null;
   taskId: string | null;
   projectId: string | null;

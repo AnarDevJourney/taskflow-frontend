@@ -33,6 +33,9 @@ const ActivityLogPage = lazy(
 const SettingsPage = lazy(
   () => import("@features/settings/pages/SettingsPage"),
 );
+const NotificationsPage = lazy(
+  () => import("@features/notifications/pages/NotificationsPage"),
+);
 
 const PageLoader = () => (
   <div
@@ -93,6 +96,7 @@ export const router = createBrowserRouter([
         element: s(ActivityLogPage),
       },
       { path: "settings", element: s(SettingsPage) },
+      { path: "notifications", element: s(NotificationsPage) },
     ],
   },
 

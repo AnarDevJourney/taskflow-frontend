@@ -51,7 +51,7 @@ import { SidebarModuleSetting } from "@features/sidebarSettings/services/sidebar
 
 // the sidebar's nav modules — order here is the fallback/default order,
 // mirrored by DEFAULT_SIDEBAR_MODULES below (ids must match menuItems' keys' identity)
-type SidebarModuleId = "workspaces" | "projects" | "myTasks" | "members" | "activity";
+type SidebarModuleId = "workspaces" | "projects" | "myTasks" | "members" | "activity" | "notifications";
 
 const DEFAULT_SIDEBAR_MODULES: SidebarModuleSetting[] = [
   { id: "workspaces", visible: true },
@@ -59,6 +59,7 @@ const DEFAULT_SIDEBAR_MODULES: SidebarModuleSetting[] = [
   { id: "myTasks", visible: true },
   { id: "members", visible: true },
   { id: "activity", visible: true },
+  { id: "notifications", visible: true },
 ];
 
 // merges saved settings with the default list so newly-added modules (not
@@ -89,6 +90,8 @@ export default function AppLayout() {
   const storedWorkspaceId = useAppSelector((s) => s.ui.activeWorkspaceId);
 
   const [searchOpen, setSearchOpen] = useState(false);
+  // controlled so clicking a notification can both navigate and close the bell
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [modulesModalOpen, setModulesModalOpen] = useState(false);
   const [sidebarModules, setSidebarModules] = useState<SidebarModuleSetting[]>(DEFAULT_SIDEBAR_MODULES);
   const [collapsed, setCollapsed] = useState(false);
@@ -178,6 +181,11 @@ export default function AppLayout() {
       icon: <HistoryOutlined />,
       label: t("appLayout.nav.activity"),
     },
+    notifications: {
+      key: "/notifications",
+      icon: <BellOutlined />,
+      label: t("appLayout.nav.notifications"),
+    },
   };
 
   const moduleLabels: Record<string, string> = Object.fromEntries(
@@ -214,6 +222,7 @@ export default function AppLayout() {
   ];
 
   const getPageTitle = () => {
+    if (location.pathname === "/notifications") return t("appLayout.pageTitle.notifications");
     if (location.pathname === "/settings") return t("appLayout.pageTitle.settings");
     if (location.pathname.includes("/settings"))
       return t("appLayout.pageTitle.projectSettings");
@@ -400,10 +409,16 @@ export default function AppLayout() {
             </Tooltip>
             <Tooltip title={t("appLayout.notificationsTooltip")}>
               <Popover
-                content={<NotificationsPanel />}
+                content={
+                  <NotificationsPanel
+                    onNavigate={() => setNotificationsOpen(false)}
+                  />
+                }
                 trigger="click"
                 placement="bottomRight"
                 arrow={false}
+                open={notificationsOpen}
+                onOpenChange={setNotificationsOpen}
                 styles={{ body: { padding: 0 } }}
               >
                 <Badge count={unreadCount} size="small">
