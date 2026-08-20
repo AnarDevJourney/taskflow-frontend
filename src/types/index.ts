@@ -144,7 +144,10 @@ export interface ChecklistItem {
 }
 
 export interface Attachment {
+  // subdocument id — the handle used by GET /files/signed-url and DELETE /files/:id
+  id: string;
   filename: string;
+  originalName: string;
   key: string;
   mimeType: string;
   size: number;

@@ -103,6 +103,16 @@ src/
     ├── sidebarSettings/
     │   ├── services/sidebarSettingsService.ts # getOne(), upsert(dto) — talks to GET/PUT /sidebar-settings (singular, no key — one doc per user)
     │   └── hooks/useSidebarSettings.ts        # same shape as useTableSettings/useSaveTableSettings, consumed directly by AppLayout
+    ├── files/
+    │   ├── services/fileService.ts      # upload (task attachment), getSignedUrl, remove, uploadAvatar/removeAvatar, uploadWorkspaceLogo/removeWorkspaceLogo — all multipart, all with upload-progress callbacks
+    │   ├── hooks/useAttachments.ts      # useAttachmentUploads (sequential per-file upload queue with progress), useOpenAttachment (presigned URL → open/download), useDeleteAttachment
+    │   ├── utils/fileMeta.ts            # ALLOWED_ATTACHMENT_MIME_TYPES / ALLOWED_IMAGE_MIME_TYPES / MAX_*_MB (mirror the backend's), formatBytes, per-MIME icon + colour
+    │   ├── utils/validateFile.ts        # client-side MIME + size pre-check (UX only — the backend is the real gatekeeper)
+    │   ├── utils/uploadError.ts         # extractApiError — pulls the message out of the API's error envelope
+    │   └── components/
+    │       ├── FileDropZone.tsx + .module.css       # click-or-drop picker. NOT AntD's Upload — that component wants to own the request, and uploads must go through @lib/axios to inherit cookie auth + the 401-refresh interceptor
+    │       ├── TaskAttachments.tsx + .module.css    # attachment list (icon/size/date, preview, download, delete-with-confirm) + drop zone + per-file progress rows. Rendered by TaskDetailModal
+    │       └── ImageUploadField.tsx + .module.css   # avatar/workspace-logo picker (preview + drop zone + Remove) — one image that replaces the previous one; used by SettingsPage and WorkspacesPage's edit modal
     ├── comments/
     │   └── services/commentService.ts   # getAll, create, update, remove
     ├── sprints/
@@ -139,7 +149,7 @@ src/
     ├── search/
     ├── settings/
     │   └── pages/
-    │       └── SettingsPage.tsx + .module.css   # user-level app settings — currently just the Appearance card (theme picker); route `/settings`, reached via the user-avatar dropdown, not workspace-scoped
+    │       └── SettingsPage.tsx + .module.css   # user-level app settings — a Profile picture card (`ImageUploadField` → POST/DELETE /users/me/avatar) and the Appearance card (theme picker); route `/settings`, reached via the user-avatar dropdown, not workspace-scoped
     └── activity/
         ├── services/activityService.ts    # getWorkspaceActivity(workspaceId, query) — GET /workspaces/:id/activity (userId/module/action/dateFrom/dateTo/page/limit)
         ├── hooks/useWorkspaceActivity.ts   # useQuery wrapper, placeholderData so filters don't flash empty while refetching
@@ -152,6 +162,33 @@ src/
         └── pages/
             └── ActivityLogPage.tsx + .module.css   # workspace-wide activity table — User/Module/Action/date-range filters (Module narrows the Action options), server-side paginated (page-size selector: 10/25/50/100) with `SimplePagination`, an eye icon per row opens ActivityDetailDrawer. page size, "Customize table" (ActivityViewModal), "Customize columns" (shared `ColumnsModal`), and a column-resize mode (`react-resizable`, explicit Save/Cancel — same DOM-measurement approach as My Tasks' resize mode, see that page's `handleEnterResizeMode` comment) are all backend-persisted via `table-settings` with `key: "activityLog"` — same collection and mechanism as My Tasks, just a different key (see Table Settings notes below), not `localStorage`
 ```
+
+---
+
+## File Uploads
+
+Everything that uploads a file goes through `features/files`. Three targets exist, one component each:
+
+| Where | Component | Endpoint |
+|---|---|---|
+| Task detail modal → "Qoşmalar / Attachments" | `TaskAttachments` | `POST /files/upload`, `GET /files/signed-url`, `DELETE /files/:attachmentId` |
+| Settings → Profile picture | `ImageUploadField` | `POST/DELETE /users/me/avatar` |
+| Workspaces → edit modal → Logo | `ImageUploadField` | `POST/DELETE /workspaces/:workspaceId/logo` |
+
+### Rules
+
+- **`Content-Type: null` is mandatory on every multipart request** — `MULTIPART_CONFIG` in `fileService.ts`. The shared axios instance sets `Content-Type: application/json` as an instance default, and axios's default `transformRequest` reacts to that by running FormData through `formDataToJSON`: a `File` serializes to `{}` and the server receives a JSON body with no file at all. Nulling the header skips that conversion *and* stops axios from sending a Content-Type, which is what lets the browser add the multipart boundary. This was a real bug — the symptom is a 400 `No file provided in the "file" field`.
+- **Text fields go into the FormData before the file.** The backend streams the multipart body straight into MinIO, so it parses parts in wire order — fields appended after the file part do not exist yet when the upload is validated. `buildAttachmentForm` already does this; keep it that way.
+- **Never use AntD's `Upload`.** It owns its own request, which would bypass `@lib/axios` and therefore cookie auth and the 401-refresh interceptor. `FileDropZone` is the click-or-drop picker to reuse.
+- **The file input is cleared when the picker opens, not in `onChange`.** Clearing it in `onChange` resets the input while an upload may still be reading its `File`; clearing on open still lets the same file be picked twice in a row.
+- **Attachments are addressed by `attachment.id`**, the subdocument's ObjectId. The backend exposes it via the `id` virtual on the `Attachment` subdocument schema, so it is present both on `task.attachments[]` and in the upload response.
+- Downloads never go through the API: `useOpenAttachment` fetches a presigned URL and points the browser straight at MinIO. Avatars and logos are plain public URLs (bucket `public/` prefix) and go directly into `<img src>`.
+- Uploads are **sequential**, not parallel — each one holds an open stream for its whole duration and the endpoint is rate-limited (20/hour).
+- `fileMeta.ts` mirrors the backend's MIME allow-lists and size ceilings. They are duplicated on purpose (instant feedback), but the backend is the gatekeeper — keep both in sync when the backend's list changes.
+
+### i18n
+
+Two new top-level namespaces in all three locales: `attachments.*` and `imageUpload.*`, plus `settingsPage.profile.*` and `workspaces.logoLabel` / `workspaces.logoUploadLabel`.
 
 ---
 
@@ -556,11 +593,12 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Projects page: project grid, create project modal
 - ✅ Project Settings page: edit project, manage columns and members
 - ✅ Board page: kanban columns, task cards, drag and drop (cross-column + same-column reorder), create task modal
-- ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), comments (add/edit/delete)
+- ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), attachments (drag-and-drop or click upload with per-file progress, presigned download/preview, delete-with-confirm), comments (add/edit/delete)
 - ✅ My Tasks page — cross-project task list, server-side paginated (page-size selector: 10/25/50/100) with `SimplePagination`, search + status/priority/project filters (server-side, debounced), "Customize table" modal offering 9 alternate UI layouts for the same data (`TaskListViews.tsx`), a "Columns" modal to show/hide and drag-reorder individual columns, and a column-resize mode (`react-resizable` drag handles, explicit Save/Cancel) — all row-table variants only (`cards`/`kanban` don't have literal columns). All four preferences (table view, page size, columns incl. widths) are saved per-user on the backend via `table-settings` — see Redux Store Rules
 - ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
 - ✅ Notifications — bell dropdown + live badge + a toast that slides in from the top and auto-dismisses after 3s. See "Real-time notifications" below.
 - ✅ Search overlay — Cmd+K global search
+- ✅ File uploads (`features/files`) — task attachments in the task detail modal, profile picture on the Settings page, workspace logo in the Workspaces edit modal. See the "File Uploads" section above; the axios `Content-Type: null` rule there is not optional
 - ✅ System/Light/Dark theme (`src/lib/theme/`) — `useTheme()` hook, `localStorage`-persisted, follows OS theme live when set to "system", no reload on change. Settings page (Appearance card) to pick it. AntD components theme automatically via `ConfigProvider`; custom CSS uses `var(--token)` from `global.css` — fully rolled out on `AppLayout`, My Tasks, and Activity Log; other pages still have some pre-theme-system hardcoded colors (see Design System's Rollout status note)
 
 - ✅ Activity Log page (`ActivityLogPage`) — workspace-wide activity table with User/Module/Action/date-range filters, server-side pagination (page-size selector, `SimplePagination`), table view customization (6 variants with mockup previews, like My Tasks), column show/hide/reorder/resize, eye-icon-per-row opening `ActivityDetailDrawer` (actor, project/task context, changed-field before→after, `meta`, collapsed system-info section). All four preferences (page size, table view, columns incl. widths) persist to backend `table-settings` (`key: "activityLog"`) — same treatment as My Tasks now, nothing left in `localStorage`

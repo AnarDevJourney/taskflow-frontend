@@ -32,6 +32,7 @@ import { taskService, UpdateTaskDto } from "../services/taskService";
 import { commentService } from "@features/comments/services/commentService";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { workspaceService } from "@features/workspaces/services/workspaceService";
+import TaskAttachments from "@features/files/components/TaskAttachments";
 import styles from "./TaskDetailModal.module.css";
 
 dayjs.extend(relativeTime);
@@ -477,6 +478,23 @@ export default function TaskDetailModal({
           )}
 
           <Divider style={{ margin: "4px 0 20px" }} />
+
+          {/* Attachments */}
+          <div className={styles.section}>
+            <div className={styles.sectionTitle}>
+              {t("attachments.title")} ({task.attachments?.length ?? 0})
+            </div>
+            <TaskAttachments
+              attachments={task.attachments ?? []}
+              workspaceId={workspaceId}
+              projectId={projectId}
+              taskId={task._id}
+              onChanged={invalidateTasks}
+              currentUserId={currentUser?._id}
+            />
+          </div>
+
+          <Divider style={{ margin: "20px 0" }} />
 
           {/* Comments */}
           <div className={styles.section}>

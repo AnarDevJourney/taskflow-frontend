@@ -11,6 +11,8 @@ import {
   Tooltip,
 } from "antd";
 import { toast } from "@lib/toast";
+import ImageUploadField from "@features/files/components/ImageUploadField";
+import { fileService } from "@features/files/services/fileService";
 import {
   EditOutlined,
   InboxOutlined,
@@ -51,7 +53,10 @@ export default function WorkspacesPage() {
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingWorkspace, setEditingWorkspace] = useState<Workspace | null>(
+  // Only the id is held in state — the workspace itself is derived from the
+  // live query cache below, so the modal reflects a logo upload immediately
+  // instead of showing the snapshot taken when it opened.
+  const [editingWorkspaceId, setEditingWorkspaceId] = useState<string | null>(
     null,
   );
   const [archivingWorkspace, setArchivingWorkspace] = useState<Workspace | null>(
@@ -60,6 +65,10 @@ export default function WorkspacesPage() {
   const [archivedModalOpen, setArchivedModalOpen] = useState(false);
 
   const { data: workspaces, isLoading } = useWorkspaces();
+
+  const editingWorkspace = editingWorkspaceId
+    ? (workspaces?.find((ws) => ws._id === editingWorkspaceId) ?? null)
+    : null;
 
   const {
     mutate: createWorkspace,
@@ -98,7 +107,7 @@ export default function WorkspacesPage() {
       workspaceService.update(id, dto),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["workspaces"] });
-      setEditingWorkspace(null);
+      setEditingWorkspaceId(null);
       toast.success(t("workspaces.updated"));
     },
   });
@@ -109,13 +118,18 @@ export default function WorkspacesPage() {
     return Array.isArray(msg) ? msg[0] : msg || t("workspaces.updateFailed");
   })();
 
+  // The modal renders from the ["workspaces"] cache, so refetching it is what
+  // swaps the preview to the newly uploaded logo.
+  const refreshWorkspaces = () =>
+    qc.invalidateQueries({ queryKey: ["workspaces"] });
+
   const openEditModal = (ws: Workspace) => {
     editForm.setFieldsValue({ name: ws.name, description: ws.description ?? "" });
-    setEditingWorkspace(ws);
+    setEditingWorkspaceId(ws._id);
   };
 
   const closeEditModal = () => {
-    setEditingWorkspace(null);
+    setEditingWorkspaceId(null);
     resetUpdateError();
     editForm.resetFields();
   };
@@ -217,7 +231,12 @@ export default function WorkspacesPage() {
               onClick={() => navigate(`/workspaces/${ws._id}/projects`)}
             >
               <div className={styles.cardTop}>
-                <Avatar size={32} style={{ background: "#4a6cf7" }}>
+                <Avatar
+                  size={32}
+                  shape="square"
+                  src={ws.logoUrl ?? undefined}
+                  style={{ background: "#4a6cf7" }}
+                >
                   {ws.name?.[0]?.toUpperCase()}
                 </Avatar>
                 <span className={styles.cardName}>{ws.name}</span>
@@ -326,7 +345,7 @@ export default function WorkspacesPage() {
 
       <Modal
         title={t("workspaces.editTitle")}
-        open={!!editingWorkspace}
+        open={!!editingWorkspaceId}
         onCancel={closeEditModal}
         footer={null}
         width={480}
@@ -358,6 +377,31 @@ export default function WorkspacesPage() {
               rows={3}
               placeholder={t("workspaces.descriptionPlaceholder")}
             />
+          </Form.Item>
+          {/* Outside the Form's value flow on purpose — the logo uploads on
+              pick and is already persisted by the time Save is pressed. */}
+          <Form.Item label={t("workspaces.logoLabel")}>
+            {editingWorkspace && (
+              <ImageUploadField
+                value={editingWorkspace.logoUrl ?? null}
+                fallbackLetter={editingWorkspace.name?.[0]}
+                shape="square"
+                size={64}
+                label={t("workspaces.logoUploadLabel")}
+                upload={async (file, onProgress) => {
+                  await fileService.uploadWorkspaceLogo(
+                    editingWorkspace._id,
+                    file,
+                    onProgress,
+                  );
+                  await refreshWorkspaces();
+                }}
+                remove={async () => {
+                  await fileService.removeWorkspaceLogo(editingWorkspace._id);
+                  await refreshWorkspaces();
+                }}
+              />
+            )}
           </Form.Item>
           <Form.Item style={{ marginBottom: 0, marginTop: 8 }}>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>

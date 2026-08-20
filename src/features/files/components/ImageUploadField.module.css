@@ -1,0 +1,48 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.preview {
+  flex-shrink: 0;
+  background: var(--primary);
+  font-size: 24px;
+}
+
+.controls {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.zoneInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.zoneIcon {
+  font-size: 18px;
+  color: var(--primary);
+}
+
+.zoneLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.zoneHint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.removeBtn {
+  align-self: flex-start;
+  padding-left: 0;
+}

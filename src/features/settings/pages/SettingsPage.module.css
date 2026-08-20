@@ -17,6 +17,10 @@
   padding: 20px;
 }
 
+.card + .card {
+  margin-top: 16px;
+}
+
 .sectionTitle {
   font-size: 15px;
   font-weight: 600;

@@ -151,7 +151,9 @@
     "archivedEmpty": "No archived workspaces",
     "restore": "Restore",
     "restored": "Workspace restored",
-    "restoreFailed": "Failed to restore workspace"
+    "restoreFailed": "Failed to restore workspace",
+    "logoLabel": "Logo",
+    "logoUploadLabel": "Upload a logo"
   },
   "projects": {
     "title": "Projects",
@@ -616,6 +618,11 @@
       "system": "System",
       "light": "Light",
       "dark": "Dark"
+    },
+    "profile": {
+      "title": "Profile picture",
+      "subtitle": "Shown next to your name across the app.",
+      "uploadLabel": "Upload a new picture"
     }
   },
   "notificationsPage": {
@@ -691,5 +698,32 @@
         "desc": "Full grid borders, monospace font, no rounding."
       }
     }
+  },
+  "attachments": {
+    "title": "Attachments",
+    "dropLabel": "Drop files here or click to browse",
+    "dropHint": "PDF, Office, images, text or ZIP · up to {{max}} MB each",
+    "preview": "Preview",
+    "download": "Download",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "deleted": "Attachment deleted",
+    "deleteFailed": "Failed to delete attachment",
+    "uploadFailed": "Upload failed",
+    "openFailed": "Could not open this file",
+    "errorType": "{{name}} — this file type is not allowed",
+    "errorSize": "{{name}} — larger than {{max}} MB",
+    "deleteConfirmTitle": "Delete attachment?",
+    "deleteConfirmDesc": "\"{{name}}\" will be permanently deleted. This action cannot be undone."
+  },
+  "imageUpload": {
+    "hint": "JPG, PNG or WebP · up to {{max}} MB",
+    "errorType": "Only JPG, PNG and WebP images are allowed",
+    "errorSize": "Image must be smaller than {{max}} MB",
+    "uploaded": "Image updated",
+    "uploadFailed": "Failed to upload image",
+    "removed": "Image removed",
+    "removeFailed": "Failed to remove image",
+    "remove": "Remove"
   }
 }

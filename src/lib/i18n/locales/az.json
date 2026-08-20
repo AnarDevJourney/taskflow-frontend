@@ -151,7 +151,9 @@
     "archivedEmpty": "Arxivlənmiş iş sahəsi yoxdur",
     "restore": "Geri qaytar",
     "restored": "İş sahəsi geri qaytarıldı",
-    "restoreFailed": "İş sahəsini geri qaytarmaq alınmadı"
+    "restoreFailed": "İş sahəsini geri qaytarmaq alınmadı",
+    "logoLabel": "Loqo",
+    "logoUploadLabel": "Loqo yüklə"
   },
   "projects": {
     "title": "Layihələr",
@@ -616,6 +618,11 @@
       "system": "Sistem",
       "light": "İşıqlı",
       "dark": "Qaranlıq"
+    },
+    "profile": {
+      "title": "Profil şəkli",
+      "subtitle": "Tətbiq boyu adınızın yanında görünür.",
+      "uploadLabel": "Yeni şəkil yüklə"
     }
   },
   "notificationsPage": {
@@ -691,5 +698,32 @@
         "desc": "Tam grid xətləri, monospace şrift, künclər düz."
       }
     }
+  },
+  "attachments": {
+    "title": "Fayllar",
+    "dropLabel": "Faylları bura atın və ya seçmək üçün klikləyin",
+    "dropHint": "PDF, Office, şəkil, mətn və ya ZIP · hərəsi ən çox {{max}} MB",
+    "preview": "Bax",
+    "download": "Yüklə",
+    "delete": "Sil",
+    "cancel": "Ləğv et",
+    "deleted": "Fayl silindi",
+    "deleteFailed": "Faylı silmək alınmadı",
+    "uploadFailed": "Yükləmə alınmadı",
+    "openFailed": "Bu faylı açmaq alınmadı",
+    "errorType": "{{name}} — bu fayl tipinə icazə verilmir",
+    "errorSize": "{{name}} — {{max}} MB-dan böyükdür",
+    "deleteConfirmTitle": "Fayl silinsin?",
+    "deleteConfirmDesc": "\"{{name}}\" birdəfəlik silinəcək. Bu əməliyyat geri qaytarıla bilməz."
+  },
+  "imageUpload": {
+    "hint": "JPG, PNG və ya WebP · ən çox {{max}} MB",
+    "errorType": "Yalnız JPG, PNG və WebP şəkillərinə icazə verilir",
+    "errorSize": "Şəkil {{max}} MB-dan kiçik olmalıdır",
+    "uploaded": "Şəkil yeniləndi",
+    "uploadFailed": "Şəkli yükləmək alınmadı",
+    "removed": "Şəkil silindi",
+    "removeFailed": "Şəkli silmək alınmadı",
+    "remove": "Sil"
   }
 }
