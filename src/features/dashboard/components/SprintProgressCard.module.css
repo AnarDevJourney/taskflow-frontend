@@ -1,0 +1,121 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.sprintName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.daysLeft::before {
+  content: "·";
+  margin-right: 8px;
+}
+
+.percent {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.percentSign {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+
+/* The track is the unfilled remainder; segments sit on top of it left to
+   right. `gap` puts 2px of card surface between touching segments — the
+   separator is negative space, never a border. */
+.track {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--surface-secondary);
+  overflow: hidden;
+}
+
+.segment {
+  height: 100%;
+  transition: width 300ms ease;
+}
+
+.segment:first-child {
+  border-radius: 999px 0 0 999px;
+}
+
+.segment:last-child {
+  border-radius: 0 999px 999px 0;
+}
+
+.segment:only-child {
+  border-radius: 999px;
+}
+
+.breakdown {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.breakdownItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.breakdownLabel {
+  color: var(--text-secondary);
+}
+
+.breakdownValue {
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}

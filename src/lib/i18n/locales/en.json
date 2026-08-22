@@ -208,7 +208,8 @@
       "myTasks": "My Tasks",
       "members": "Members",
       "activity": "Activity",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "dashboard": "Dashboard"
     },
     "signOut": "Sign out",
     "searchTooltip": "Search (Ctrl+K)",
@@ -223,7 +224,8 @@
       "default": "TaskFlow",
       "activity": "Activity Log",
       "settings": "Settings",
-      "notifications": "Notifications"
+      "notifications": "Notifications",
+      "dashboard": "Dashboard"
     },
     "customizeSidebarTooltip": "Customize sidebar",
     "collapseSidebarTooltip": "Collapse sidebar",
@@ -725,5 +727,88 @@
     "removed": "Image removed",
     "removeFailed": "Failed to remove image",
     "remove": "Remove"
+  },
+  "dashboardPage": {
+    "title": "Dashboard",
+    "subtitle": "How this workspace is doing right now",
+    "loadFailed": "Dashboard could not be loaded",
+    "kpi": {
+      "activeTasks": "Active tasks",
+      "overdueTasks": "Overdue tasks",
+      "completedThisMonth": "Completed this month",
+      "unreadNotifications": "Unread notifications",
+      "vsLastWeek": "vs last week",
+      "vsLastMonth": "vs last month"
+    },
+    "charts": {
+      "statusTitle": "Task status distribution",
+      "priorityTitle": "Priority distribution",
+      "totalTasks": "total",
+      "openTasks": "open",
+      "empty": "No data yet"
+    },
+    "status": {
+      "todo": "To Do",
+      "in_progress": "In Progress",
+      "done": "Done"
+    },
+    "priority": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "myTasks": {
+      "title": "My tasks today",
+      "remaining": "{{value}} left",
+      "empty": "Nothing due today",
+      "completeAria": "Mark \"{{title}}\" as done",
+      "noDoneColumn": "This project has no done column",
+      "completeFailed": "Task could not be completed"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "empty": "No activity yet",
+      "unknownUser": "Unknown user"
+    },
+    "deadlines": {
+      "title": "Upcoming deadlines",
+      "empty": "No deadlines in the next 7 days"
+    },
+    "sprint": {
+      "title": "Sprint progress",
+      "empty": "No active sprint in this workspace",
+      "daysLeft": "{{days}} days left"
+    },
+    "due": {
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "inDays": "in {{days}} days",
+      "overdue": "{{days}} days overdue"
+    },
+    "trend": {
+      "title": "Productivity trend",
+      "subtitle": "Tasks completed in the last 7 days",
+      "totalLabel": "completed",
+      "average": "avg {{value}}"
+    },
+    "workload": {
+      "title": "Workload by assignee",
+      "subtitle": "Open tasks per person, busiest first",
+      "totalLabel": "assigned",
+      "tooltipLabel": "open tasks",
+      "empty": "No open tasks are assigned yet"
+    },
+    "heatmap": {
+      "title": "Activity heatmap",
+      "subtitle": "Workspace activity per day over the last year",
+      "totalLabel": "actions",
+      "tooltipLabel": "actions",
+      "less": "Less",
+      "more": "More",
+      "empty": "No activity recorded yet",
+      "ariaEmpty": "No activity on {{date}}",
+      "ariaCount": "{{value}} actions on {{date}}"
+    }
   }
 }

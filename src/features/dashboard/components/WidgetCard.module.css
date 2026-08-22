@@ -1,0 +1,56 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  min-height: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.badge {
+  flex-shrink: 0;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* rows separate with a hairline rather than a gap, so five short rows still
+   read as one list instead of five floating strips */
+.list > li + li {
+  border-top: 1px solid var(--border);
+}
+
+.empty {
+  padding: 16px 0 20px;
+}

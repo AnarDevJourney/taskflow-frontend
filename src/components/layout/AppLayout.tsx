@@ -27,6 +27,7 @@ import {
   HistoryOutlined,
   SunOutlined,
   MoonOutlined,
+  DashboardOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -51,10 +52,11 @@ import { SidebarModuleSetting } from "@features/sidebarSettings/services/sidebar
 
 // the sidebar's nav modules — order here is the fallback/default order,
 // mirrored by DEFAULT_SIDEBAR_MODULES below (ids must match menuItems' keys' identity)
-type SidebarModuleId = "workspaces" | "projects" | "myTasks" | "members" | "activity" | "notifications";
+type SidebarModuleId = "workspaces" | "dashboard" | "projects" | "myTasks" | "members" | "activity" | "notifications";
 
 const DEFAULT_SIDEBAR_MODULES: SidebarModuleSetting[] = [
   { id: "workspaces", visible: true },
+  { id: "dashboard", visible: true },
   { id: "projects", visible: true },
   { id: "myTasks", visible: true },
   { id: "members", visible: true },
@@ -161,6 +163,11 @@ export default function AppLayout() {
       icon: <AppstoreOutlined />,
       label: t("appLayout.nav.workspaces"),
     },
+    dashboard: {
+      key: `/workspaces/${activeWorkspace?._id}/dashboard`,
+      icon: <DashboardOutlined />,
+      label: t("appLayout.nav.dashboard"),
+    },
     projects: {
       key: `/workspaces/${activeWorkspace?._id}/projects`,
       icon: <ProjectOutlined />,
@@ -233,6 +240,8 @@ export default function AppLayout() {
       return t("appLayout.pageTitle.board");
     if (location.pathname.includes("/projects"))
       return t("appLayout.pageTitle.projects");
+    if (location.pathname.includes("/dashboard"))
+      return t("appLayout.pageTitle.dashboard");
     if (location.pathname.includes("/my-tasks"))
       return t("appLayout.pageTitle.myTasks");
     if (location.pathname.includes("/members"))

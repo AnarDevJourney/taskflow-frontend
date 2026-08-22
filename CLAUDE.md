@@ -103,6 +103,25 @@ src/
     ├── sidebarSettings/
     │   ├── services/sidebarSettingsService.ts # getOne(), upsert(dto) — talks to GET/PUT /sidebar-settings (singular, no key — one doc per user)
     │   └── hooks/useSidebarSettings.ts        # same shape as useTableSettings/useSaveTableSettings, consumed directly by AppLayout
+    ├── dashboard/
+    │   ├── services/dashboardService.ts   # getOverview(workspaceId) — GET /workspaces/:id/dashboard/overview, the page's only request
+    │   ├── hooks/useDashboardOverview.ts  # the single useQuery every widget reads from (60s staleTime, placeholderData so a refetch dims instead of collapsing)
+    │   ├── utils/
+    │   │   ├── chartPalette.ts            # the donuts' colors, per theme — NOT the `var(--token)` UI colors (see Dashboard notes below)
+    │   │   └── dueBadge.ts                # due date → "Today"/"Tomorrow"/"in 3 days"/"2 days overdue" + a tone, shared by My Tasks and Upcoming Deadlines
+    │   ├── components/
+    │   │   ├── DashboardDonutChart.tsx + .module.css  # THE reusable donut — both charts are this component with different props. Custom tooltip + custom legend (the legend doubles as the chart's table view: every slice's count and share is readable without hovering). memo'd
+    │   │   ├── ActivityHeatmap.tsx + .module.css     # GitHub-style contribution grid (53 week-columns x 7 day-rows) — plain CSS grid, not Recharts. Full width, last card on the page. memo'd
+    │   │   ├── WorkloadByAssigneeChart.tsx + .module.css # Recharts horizontal BarChart — open tasks per person, busiest first, one color for every bar. Shares the last row with SprintProgressCard. memo'd
+    │   │   ├── ProductivityTrendChart.tsx + .module.css # full-width Recharts LineChart — tasks completed per day over the last 7 days, with a dashed daily-average reference line and a direct label on the endpoint. memo'd
+    │   │   ├── KpiCard.tsx + .module.css             # stat tile: icon, value, label, optional comparison chip (hidden when changePercent is null). memo'd
+    │   │   ├── WidgetCard.tsx + .module.css          # the shell the three list widgets share (header + badge + empty state + hairline-separated rows)
+    │   │   ├── MyTasksWidget.tsx + .module.css       # checkbox completes a task for real, via the ordinary taskService.update + the backend-resolved `project.doneStatus`
+    │   │   ├── RecentActivityWidget.tsx + .module.css # reuses activity's `activityMeta` + `activityLogPage.action.*` translations rather than a second copy
+    │   │   ├── UpcomingDeadlinesWidget.tsx + .module.css
+    │   │   └── SprintProgressCard.tsx + .module.css  # stacked meter in the same three status colors as the donut above it. memo'd
+    │   └── pages/
+    │       └── DashboardPage.tsx + .module.css       # `/workspaces/:workspaceId/dashboard` — KPI row, two donuts, three widgets, sprint progress
     ├── files/
     │   ├── services/fileService.ts      # upload (task attachment), getSignedUrl, remove, uploadAvatar/removeAvatar, uploadWorkspaceLogo/removeWorkspaceLogo — all multipart, all with upload-progress callbacks
     │   ├── hooks/useAttachments.ts      # useAttachmentUploads (sequential per-file upload queue with progress), useOpenAttachment (presigned URL → open/download), useDeleteAttachment
@@ -189,6 +208,148 @@ Everything that uploads a file goes through `features/files`. Three targets exis
 ### i18n
 
 Two new top-level namespaces in all three locales: `attachments.*` and `imageUpload.*`, plus `settingsPage.profile.*` and `workspaces.logoLabel` / `workspaces.logoUploadLabel`.
+
+---
+
+## Dashboard
+
+The whole page is one request (`useDashboardOverview` → `GET /workspaces/:id/dashboard/overview`).
+Do not add a second query for a new widget — extend the backend's `$facet` and the
+`DashboardOverview` type instead, or the widgets can start disagreeing with each other.
+
+### Chart colors are not UI tokens
+
+`features/dashboard/utils/chartPalette.ts` holds hex values per theme, deliberately
+separate from `global.css`'s `var(--token)` set, for two reasons:
+
+- Recharts writes colors into SVG `fill` attributes and interpolates them while
+  animating, so it needs literal values, not `var()` references.
+- A chart fill answers to different constraints than a border or a surface: a
+  lightness band, a chroma floor, and colorblind-separation floors measured against
+  the surface it sits on. Both palettes were run through a palette validator against
+  this app's real surfaces (`#ffffff` light, `#111827` dark) before being adopted.
+
+The two donuts use a categorical palette — a distinct hue per slice, not a ramp:
+
+- **Status** (`todo`/`in_progress`/`done`) — three independent workflow states,
+  each with its own hue, assigned in a fixed order that never changes with the
+  data. A bucket that empties keeps its color.
+- **Priority** (`critical`/`high`/`medium`/`low`) — four distinct hues
+  (magenta/yellow/blue/green), not four shades of one color. Severity order is
+  carried by the legend's labels, so color's only job here is identity. Red and
+  orange (the "obvious" critical/high pair) do not survive together — checking
+  every 4-hue subset of the app's validated 8-hue set against both surfaces
+  leaves exactly two passing combinations, both without red or orange; magenta
+  was picked for `critical` as the most alarming hue on offer.
+
+The productivity-trend line and the workload bars are each a single series, so
+they just take the first categorical slot (blue) and need no legend — the card's
+title says what is plotted. Every workload bar is the **same** color on purpose:
+the bar length already says who is busy, and since the rows are sorted by count,
+a hue per person would repaint everyone the moment a number changed, so nobody
+could ever learn "the green one is Ramin". The viewer's own row is marked by font
+weight and ink instead — emphasis via typography, never a second bar color.
+
+The heatmap uses a **sequential** green ramp (five steps: an empty-day track plus
+four levels), which is a different job again — magnitude, not identity. See the
+note on it below before touching those values.
+
+`chartChromeColors()` in the same file holds the gridline / axis-text / surface /
+track hexes the Recharts charts need: Recharts writes those into SVG
+**attributes**, where `var()` does not resolve, so they duplicate `--border` /
+`--text-secondary` / `--surface` and must be kept in step if those tokens change.
+
+This is the one place the app's `priorityColors` (used by every priority badge,
+including the ones in the My Tasks widget on this same page) is deliberately not
+reused — a badge is text on a tint and answers to text-contrast rules, a donut
+segment is a bare block of color. If you change one, you do not have to change the
+other.
+
+### Page layout
+
+`DashboardPage.tsx` renders eight sections top to bottom. The grids are all
+`auto-fit`/`minmax` so they collapse on their own; `@media (max-width: 900px)`
+forces the chart, widget and team rows to a single column.
+
+| # | Section | Layout | Scope |
+|---|---|---|---|
+| 1 | 4 KPI cards | `.kpiGrid`, auto-fit | workspace (unread notifications: yours) |
+| 2 | Status + Priority donuts | `.chartGrid`, 2 up | workspace |
+| 3 | Productivity trend | full width | workspace |
+| 4–6 | My Tasks · Recent Activity · Upcoming Deadlines | `.widgetGrid`, 3 up | My Tasks is yours, the rest workspace |
+| 7 | Workload + Sprint progress | `.teamGrid`, 1.5fr / 1fr | workspace |
+| 8 | Activity heatmap | full width | workspace |
+
+Sections 7 and 8 are deliberate pairings rather than defaults: Workload sits beside
+Sprint Progress because both answer "where does the team stand right now?", and
+because Sprint Progress alone left that row mostly empty.
+
+### Adding a widget
+
+1. Extend the backend `$facet` and `DashboardOverview` (see the backend's
+   "Adding a new dashboard widget"). Never add a second query here.
+2. Add the field to `src/types/index.ts`, then read it off `data` in
+   `DashboardPage` — no new hook.
+3. Reuse `WidgetCard` for a list widget; for a chart, copy an existing card's
+   shell (16px radius, hairline border, `0 1px 2px` shadow, 24px padding).
+4. Colors go in `chartPalette.ts`, per theme, validated — never a raw hex in a
+   component and never a `var(--token)` inside a Recharts prop.
+5. `memo` the component and `useMemo` any data transform, so an unrelated
+   re-render (a checkbox toggling, a refetch landing) doesn't restart animations.
+6. Add `dashboardPage.<widget>.*` to **all three** locales (`en`/`az`/`ru`), and
+   pass counts under a name other than `count` — `count` triggers i18next
+   pluralization, which would need `_one`/`_few`/`_other` keys per language.
+
+### Other things worth knowing
+
+- **The legend is the table view.** Every donut slice's label, count and share are
+  printed under the ring, so no value is reachable only by hovering. Keep it that way
+  when editing the chart.
+- **Slice order is fixed client-side too** (`STATUS_ORDER` / `PRIORITY_ORDER`), not
+  taken from the response array, so a slice can never change position between
+  refetches. The backend already returns both distributions zero-filled in that order.
+- **The trend chart's x-axis labels come from dayjs**, whose locale is kept in sync
+  with the app language (`lib/i18n`), so the weekday abbreviations and the tooltip's
+  dates follow whatever the user picked — no separate weekday translation table.
+- **The trend's dashed rule is the window's daily average.** Dashing is otherwise an
+  anti-pattern for grid/axis lines here; it is used only because this is a reference
+  *level* rather than data, which is the one place dashing carries meaning.
+- **The heatmap is a CSS grid, not a chart library.** `grid-auto-flow: column`
+  over 7 explicit rows fills top-to-bottom then left-to-right — exactly the order
+  the server sends the days in, so the DOM needs no rearranging. Its green ramp is
+  a **sequential** encoding, so the faintest step is *meant* to sit close to the
+  surface; running it through the validator's `--ordinal` gate flags the light end
+  for contrast, but that gate does not apply — darkening level 1 would make one
+  action look like a busy day.
+- **Two things the heatmap got wrong once, both fixed — don't reintroduce them.**
+  (1) Per-cell `onMouseEnter` handlers meant every crossing between two cells
+  re-rendered all 371; it now uses one delegated `onPointerOver` on the scroller
+  plus a `useMemo`'d grid element, so hovering re-renders only the tooltip.
+  (2) The tooltip lived inside the `overflow-x: auto` scroller and was clipped at
+  the right edge; it now renders in the card and flips its anchor near the edge.
+- **`label` is a reserved prop on a Recharts `<Tooltip content={...}>` element.**
+  Recharts clones that element and injects its own `label` (the active category)
+  over any prop of the same name — passing a `label` prop to a custom tooltip
+  silently renders the category instead of your text. `WorkloadByAssigneeChart`
+  calls its equivalent prop `unitLabel` for exactly this reason; this was a real
+  bug (the tooltip printed the person's name twice).
+- **The workload chart's height grows with its row count** rather than being fixed,
+  and names are truncated to `NAME_MAX_CHARS` — a name wider than
+  `NAME_AXIS_WIDTH` is clipped at the card's left edge, not wrapped. Keep the two
+  constants in step; the viewer's own row renders bold, which is the widest case.
+- **The My Tasks checkbox writes through the normal task endpoint** —
+  `taskService.update(..., { status: task.project.doneStatus })`. `doneStatus` is
+  resolved by the backend per project because kanban column names are free-form; the
+  checkbox is disabled (with a tooltip) when a project has no column that reads as
+  "done".
+- **Recharts' entrance animation is driven by `requestAnimationFrame`**, which Chrome
+  freezes in a backgrounded tab — a donut in a background tab stays blank until the
+  tab is focused, then animates in. That is Recharts' behavior for every chart in the
+  app (burndown/velocity too), not something specific to this page. It also makes
+  charts invisible to screenshots of a backgrounded tab, which is worth knowing when
+  automating.
+- `animationBegin` is set to 0: Recharts defaults to a 400ms delay before a 300ms
+  animation, which reads as the chart failing to load.
 
 ---
 
@@ -595,6 +756,7 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ Board page: kanban columns, task cards, drag and drop (cross-column + same-column reorder), create task modal
 - ✅ Task detail modal — title/description editing (Save/Cancel), right panel fields (Save/Cancel), checklist (add + toggle), attachments (drag-and-drop or click upload with per-file progress, presigned download/preview, delete-with-confirm), comments (add/edit/delete)
 - ✅ My Tasks page — cross-project task list, server-side paginated (page-size selector: 10/25/50/100) with `SimplePagination`, search + status/priority/project filters (server-side, debounced), "Customize table" modal offering 9 alternate UI layouts for the same data (`TaskListViews.tsx`), a "Columns" modal to show/hide and drag-reorder individual columns, and a column-resize mode (`react-resizable` drag handles, explicit Save/Cancel) — all row-table variants only (`cards`/`kanban` don't have literal columns). All four preferences (table view, page size, columns incl. widths) are saved per-user on the backend via `table-settings` — see Redux Store Rules
+- ✅ Dashboard page (`DashboardPage`, route `/workspaces/:workspaceId/dashboard`) — 4 KPI cards with previous-period comparison chips, two Recharts donut charts (status + priority) from one reusable `DashboardDonutChart`, a full-width productivity-trend LineChart, a Workload-by-assignee bar chart paired with sprint progress, a full-width GitHub-style activity heatmap closing the page, My Tasks / Recent Activity / Upcoming Deadlines widgets, and a sprint progress meter. Everything comes from a **single** API call (`useDashboardOverview`); see the Dashboard section below
 - ✅ Sprints page — sprint list sidebar with velocity chart, planned/active/completed sprint views, create/start/complete sprint flows, add tasks from backlog, burndown chart
 - ✅ Notifications — bell dropdown + live badge + a toast that slides in from the top and auto-dismisses after 3s. See "Real-time notifications" below.
 - ✅ Search overlay — Cmd+K global search

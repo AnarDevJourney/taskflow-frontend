@@ -36,6 +36,9 @@ const SettingsPage = lazy(
 const NotificationsPage = lazy(
   () => import("@features/notifications/pages/NotificationsPage"),
 );
+const DashboardPage = lazy(
+  () => import("@features/dashboard/pages/DashboardPage"),
+);
 
 const PageLoader = () => (
   <div
@@ -70,6 +73,10 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/workspaces" replace /> },
       { path: "workspaces", element: s(WorkspacesPage) },
+      {
+        path: "workspaces/:workspaceId/dashboard",
+        element: s(DashboardPage),
+      },
       { path: "workspaces/:workspaceId/projects", element: s(ProjectsPage) },
       {
         path: "workspaces/:workspaceId/members",

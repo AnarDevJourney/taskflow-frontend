@@ -1,0 +1,89 @@
+/* Same card spec as the donuts and the widgets — 16px radius, hairline
+   border, minimal shadow — just spanning the full content width. */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* proportional figures — this is a standalone value, not a column */
+.summaryValue {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.summaryLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ─── Tooltip (mirrors the donut's) ─────────────────────────────────── */
+.tooltip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+}
+
+/* a short stroke keys the series, not a filled box */
+.tooltipKey {
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.tooltipValue {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.tooltipLabel {
+  color: var(--text-secondary);
+}

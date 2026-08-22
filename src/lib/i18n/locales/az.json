@@ -208,7 +208,8 @@
       "myTasks": "Tapşırıqlarım",
       "members": "Üzvlər",
       "activity": "Fəaliyyət",
-      "notifications": "Bildirişlər"
+      "notifications": "Bildirişlər",
+      "dashboard": "İdarəetmə paneli"
     },
     "signOut": "Çıxış",
     "searchTooltip": "Axtarış (Ctrl+K)",
@@ -223,7 +224,8 @@
       "default": "TaskFlow",
       "activity": "Fəaliyyət Jurnalı",
       "settings": "Ayarlar",
-      "notifications": "Bildirişlər"
+      "notifications": "Bildirişlər",
+      "dashboard": "İdarəetmə paneli"
     },
     "customizeSidebarTooltip": "Sidebari fərdiləşdir",
     "collapseSidebarTooltip": "Sidebari yığ",
@@ -725,5 +727,88 @@
     "removed": "Şəkil silindi",
     "removeFailed": "Şəkli silmək alınmadı",
     "remove": "Sil"
+  },
+  "dashboardPage": {
+    "title": "İdarəetmə paneli",
+    "subtitle": "Bu iş sahəsinin hazırkı vəziyyəti",
+    "loadFailed": "İdarəetmə paneli yüklənmədi",
+    "kpi": {
+      "activeTasks": "Aktiv tapşırıqlar",
+      "overdueTasks": "Gecikən tapşırıqlar",
+      "completedThisMonth": "Bu ay tamamlanan",
+      "unreadNotifications": "Oxunmamış bildirişlər",
+      "vsLastWeek": "keçən həftəyə nisbətən",
+      "vsLastMonth": "keçən aya nisbətən"
+    },
+    "charts": {
+      "statusTitle": "Tapşırıq statusları",
+      "priorityTitle": "Prioritet bölgüsü",
+      "totalTasks": "ümumi",
+      "openTasks": "açıq",
+      "empty": "Hələ məlumat yoxdur"
+    },
+    "status": {
+      "todo": "Gözləyir",
+      "in_progress": "İcradadır",
+      "done": "Tamamlandı"
+    },
+    "priority": {
+      "critical": "Kritik",
+      "high": "Yüksək",
+      "medium": "Orta",
+      "low": "Aşağı"
+    },
+    "myTasks": {
+      "title": "Bu günkü tapşırıqlarım",
+      "remaining": "{{value}} qaldı",
+      "empty": "Bu gün üçün tapşırıq yoxdur",
+      "completeAria": "\"{{title}}\" tapşırığını tamamla",
+      "noDoneColumn": "Bu layihədə tamamlanma sütunu yoxdur",
+      "completeFailed": "Tapşırıq tamamlanmadı"
+    },
+    "activity": {
+      "title": "Son fəaliyyət",
+      "empty": "Hələ fəaliyyət yoxdur",
+      "unknownUser": "Naməlum istifadəçi"
+    },
+    "deadlines": {
+      "title": "Yaxınlaşan son tarixlər",
+      "empty": "Növbəti 7 gündə son tarix yoxdur"
+    },
+    "sprint": {
+      "title": "Sprint gedişatı",
+      "empty": "Bu iş sahəsində aktiv sprint yoxdur",
+      "daysLeft": "{{days}} gün qaldı"
+    },
+    "due": {
+      "today": "Bu gün",
+      "tomorrow": "Sabah",
+      "inDays": "{{days}} gün",
+      "overdue": "{{days}} gün gecikib"
+    },
+    "trend": {
+      "title": "Məhsuldarlıq trendi",
+      "subtitle": "Son 7 gündə tamamlanan tapşırıqlar",
+      "totalLabel": "tamamlandı",
+      "average": "orta {{value}}"
+    },
+    "workload": {
+      "title": "İcraçılara görə yük",
+      "subtitle": "Hər şəxsə düşən açıq tapşırıqlar",
+      "totalLabel": "təyin olunub",
+      "tooltipLabel": "açıq tapşırıq",
+      "empty": "Hələ heç bir açıq tapşırıq təyin olunmayıb"
+    },
+    "heatmap": {
+      "title": "Fəaliyyət istilik xəritəsi",
+      "subtitle": "Son bir ildə iş sahəsinin günlük fəaliyyəti",
+      "totalLabel": "əməliyyat",
+      "tooltipLabel": "əməliyyat",
+      "less": "Az",
+      "more": "Çox",
+      "empty": "Hələ fəaliyyət qeydə alınmayıb",
+      "ariaEmpty": "{{date}} tarixində fəaliyyət yoxdur",
+      "ariaCount": "{{date}} tarixində {{value}} əməliyyat"
+    }
   }
 }

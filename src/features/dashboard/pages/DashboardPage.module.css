@@ -1,0 +1,94 @@
+/* Spacing throughout the dashboard comes from one scale: 8 / 12 / 16 / 24 /
+   32. Nothing here uses a value outside it. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Refetch keeps the frame: the previous render stays put at reduced opacity
+   rather than collapsing back to skeletons. */
+.refetching {
+  opacity: 0.6;
+  transition: opacity 150ms ease;
+}
+
+/* ─── Page header ───────────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.pageSubtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ─── Grids ─────────────────────────────────────────────────────────── */
+/* `auto-fit` + `minmax` rather than breakpoints: the columns collapse when
+   the container gets narrow, so the same rule handles a phone and a
+   collapsed sidebar on a laptop. */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.chartGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.widgetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* The workload chart carries more content (a row per person) than the sprint
+   meter, so it gets the larger share rather than an even split. */
+.teamGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+/* ─── States ────────────────────────────────────────────────────────── */
+.skeletonCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.errorState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 0;
+}
+
+/* At tablet width three widget columns become unreadably narrow before
+   `auto-fit` would wrap them, so the charts and widgets go single-column
+   together for a consistent rhythm. */
+@media (max-width: 900px) {
+  .chartGrid,
+  .widgetGrid,
+  .teamGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -254,3 +254,125 @@ export interface ActivityLog {
   device: string | null;
   createdAt: string;
 }
+
+// ─────────────────────────────────────────────────────────────────
+// Dashboard — mirrors the backend's DashboardOverview, returned whole
+// by GET /workspaces/:workspaceId/dashboard/overview
+// ─────────────────────────────────────────────────────────────────
+
+/** The three comparable buckets the backend normalizes free-form statuses into. */
+export type TaskStatusBucket = "todo" | "in_progress" | "done";
+
+export interface DashboardKpi {
+  current: number;
+  previous: number;
+  /** null when the previous period had no baseline — the card hides its chip */
+  changePercent: number | null;
+}
+
+export interface DashboardKpis {
+  activeTasks: DashboardKpi;
+  overdueTasks: DashboardKpi;
+  completedThisMonth: DashboardKpi;
+  unreadNotifications: DashboardKpi;
+}
+
+export interface DashboardStatusSlice {
+  status: TaskStatusBucket;
+  count: number;
+}
+
+export interface DashboardPrioritySlice {
+  priority: Priority;
+  count: number;
+}
+
+/** One day of the productivity trend line. */
+export interface DashboardTrendPoint {
+  /** local calendar day, `YYYY-MM-DD` — the client formats the axis label */
+  date: string;
+  count: number;
+}
+
+/** One bar of the workload chart — a person and their open task count. */
+export interface DashboardWorkloadEntry {
+  userId: string;
+  /** null if the assignee's user row no longer exists */
+  name: string | null;
+  avatarUrl: string | null;
+  count: number;
+}
+
+/** One cell of the contribution grid. */
+export interface DashboardHeatmapDay {
+  /** local calendar day, `YYYY-MM-DD` */
+  date: string;
+  count: number;
+}
+
+export interface DashboardActivityHeatmap {
+  /** 53 weeks x 7 days, oldest first, Monday-first, zero-filled */
+  days: DashboardHeatmapDay[];
+  /** today in the server's calendar — cells past this one are in the future */
+  today: string;
+}
+
+export interface DashboardTaskProject {
+  _id: string;
+  name: string;
+  color: string;
+  /** this project's "done" column name — what the My Tasks checkbox PATCHes to */
+  doneStatus: string | null;
+}
+
+export interface DashboardTask {
+  _id: string;
+  taskNumber: number;
+  title: string;
+  status: string;
+  statusBucket: TaskStatusBucket;
+  priority: Priority;
+  dueDate: string | null;
+  projectId: string;
+  project: DashboardTaskProject | null;
+}
+
+export interface DashboardActivity {
+  _id: string;
+  action: string;
+  module: string;
+  field: string | null;
+  createdAt: string;
+  actor: { _id: string; name: string; avatarUrl: string | null } | null;
+  task: { _id: string; title: string; taskNumber: number } | null;
+  project: { _id: string; name: string } | null;
+}
+
+export interface DashboardSprint {
+  id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  total: number;
+  completed: number;
+  inProgress: number;
+  todo: number;
+  progress: number;
+}
+
+export interface DashboardOverview {
+  kpis: DashboardKpis;
+  taskStatus: DashboardStatusSlice[];
+  priorityDistribution: DashboardPrioritySlice[];
+  /** tasks completed per day over the last 7 days, oldest first, zero-filled */
+  productivityTrend: DashboardTrendPoint[];
+  /** open tasks per assignee, busiest first, capped at the top few */
+  workloadByAssignee: DashboardWorkloadEntry[];
+  myTasks: DashboardTask[];
+  myTasksTotal: number;
+  recentActivities: DashboardActivity[];
+  /** activity-log density per day, for the contribution grid */
+  activityHeatmap: DashboardActivityHeatmap;
+  upcomingDeadlines: DashboardTask[];
+  sprint: DashboardSprint | null;
+}
