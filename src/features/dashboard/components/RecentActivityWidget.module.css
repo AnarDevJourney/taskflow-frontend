@@ -5,6 +5,26 @@
   padding: 12px 0;
 }
 
+/* Only applied when a row is actually navigable (see `onActivityClick` on
+   the component) — otherwise the widget stays purely informational. */
+.rowClickable {
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding: 12px 8px;
+  transition: background-color 120ms ease;
+}
+
+.rowClickable:hover,
+.rowClickable:focus-visible {
+  background: var(--surface-secondary);
+}
+
+.rowClickable:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
 .avatar {
   flex-shrink: 0;
   background: var(--primary);

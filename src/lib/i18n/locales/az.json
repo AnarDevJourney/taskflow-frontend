@@ -732,6 +732,8 @@
     "title": "İdarəetmə paneli",
     "subtitle": "Bu iş sahəsinin hazırkı vəziyyəti",
     "loadFailed": "İdarəetmə paneli yüklənmədi",
+    "allProjects": "Bütün layihələr",
+    "projectFilterPlaceholder": "Layihəyə görə filtrlə",
     "kpi": {
       "activeTasks": "Aktiv tapşırıqlar",
       "overdueTasks": "Gecikən tapşırıqlar",
@@ -767,7 +769,7 @@
       "completeFailed": "Tapşırıq tamamlanmadı"
     },
     "activity": {
-      "title": "Son fəaliyyət",
+      "title": "Son fəaliyyətlər",
       "empty": "Hələ fəaliyyət yoxdur",
       "unknownUser": "Naməlum istifadəçi"
     },

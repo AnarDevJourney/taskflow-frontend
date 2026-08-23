@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { KeyboardEvent, memo, useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -23,6 +23,12 @@ interface Props {
   /** the viewer, so their own bar can be marked — never color-coded */
   currentUserId?: string;
   theme: ResolvedTheme;
+  /**
+   * When given, every assignee's name becomes a button that calls this with
+   * their `userId`. Omit it to keep the chart purely informational — nothing
+   * is clickable by default.
+   */
+  onNameClick?: (userId: string) => void;
 }
 
 const ANIMATION_MS = 300;
@@ -54,7 +60,12 @@ const NAME_MAX_CHARS = 12;
  * the rows are sorted by count, every bar would repaint the moment someone's
  * number changed. Identity lives in the name beside the bar.
  */
-function WorkloadByAssigneeChart({ data, currentUserId, theme }: Props) {
+function WorkloadByAssigneeChart({
+  data,
+  currentUserId,
+  theme,
+  onNameClick,
+}: Props) {
   const { t } = useTranslation();
   const color = workloadChartColor(theme);
   const chrome = chartChromeColors(theme);
@@ -120,7 +131,13 @@ function WorkloadByAssigneeChart({ data, currentUserId, theme }: Props) {
             width={NAME_AXIS_WIDTH}
             axisLine={false}
             tickLine={false}
-            tick={<NameTick chrome={chrome} rows={chartData} />}
+            tick={
+              <NameTick
+                chrome={chrome}
+                rows={chartData}
+                onNameClick={onNameClick}
+              />
+            }
           />
 
           <Tooltip
@@ -171,7 +188,8 @@ interface NameTickProps {
   y?: number;
   payload?: { value: string; index: number };
   chrome: ReturnType<typeof chartChromeColors>;
-  rows: { isCurrentUser: boolean }[];
+  rows: { isCurrentUser: boolean; userId: string }[];
+  onNameClick?: (userId: string) => void;
 }
 
 /**
@@ -179,15 +197,21 @@ interface NameTickProps {
  * allowed to run under the bars, and the viewer's own row is marked by weight
  * and ink — never by giving their bar a different color, which would make the
  * chart look like it encodes something it doesn't.
+ *
+ * Clickable only when `onNameClick` is passed — same "nothing is interactive
+ * unless a handler says so" rule as the rest of the dashboard's charts.
  */
-function NameTick({ x = 0, y = 0, payload, chrome, rows }: NameTickProps) {
+function NameTick({ x = 0, y = 0, payload, chrome, rows, onNameClick }: NameTickProps) {
   if (!payload) return <g />;
 
-  const isCurrentUser = rows[payload.index]?.isCurrentUser ?? false;
+  const row = rows[payload.index];
+  const isCurrentUser = row?.isCurrentUser ?? false;
   const label =
     payload.value.length > NAME_MAX_CHARS
       ? `${payload.value.slice(0, NAME_MAX_CHARS - 1)}…`
       : payload.value;
+
+  const clickable = !!onNameClick && !!row?.userId;
 
   return (
     <text
@@ -198,6 +222,20 @@ function NameTick({ x = 0, y = 0, payload, chrome, rows }: NameTickProps) {
       fontSize={13}
       fontWeight={isCurrentUser ? 700 : 500}
       fill={isCurrentUser ? chrome.text : chrome.axis}
+      style={clickable ? { cursor: "pointer" } : undefined}
+      {...(clickable
+        ? {
+            role: "button",
+            tabIndex: 0,
+            onClick: () => onNameClick!(row.userId),
+            onKeyDown: (e: KeyboardEvent<SVGTextElement>) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onNameClick!(row.userId);
+              }
+            },
+          }
+        : {})}
     >
       {label}
     </text>

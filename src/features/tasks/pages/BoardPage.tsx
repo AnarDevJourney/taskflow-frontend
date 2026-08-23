@@ -84,8 +84,24 @@ export default function BoardPage() {
 
   // ─── Filters ────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState<Priority[]>([]);
-  const [assigneeFilter, setAssigneeFilter] = useState<string | null>(null); // memberId | "me" | "unassigned"
+  // Seeded once from `?priority=` — the dashboard's priority donut deep-links
+  // here this way when it's scoped to a single project. A lazy `useState`
+  // initializer only ever runs on mount, so this is a one-time seed; the
+  // Select below is the only thing that changes it afterwards, same as any
+  // other filter here (there is no two-way URL sync for filters, unlike
+  // `?task=`).
+  const [priorityFilter, setPriorityFilter] = useState<Priority[]>(() => {
+    const fromUrl = searchParams.get("priority");
+    return fromUrl && Object.values(Priority).includes(fromUrl as Priority)
+      ? [fromUrl as Priority]
+      : [];
+  });
+  // memberId | "me" | "unassigned". Seeded once from `?assignee=` the same
+  // way as `priorityFilter` above — the dashboard's workload chart deep-links
+  // here by memberId when it's scoped to a single project.
+  const [assigneeFilter, setAssigneeFilter] = useState<string | null>(
+    () => searchParams.get("assignee"),
+  );
   const [dueFilter, setDueFilter] = useState<DueFilter | null>(null);
 
   const { data: project } = useProject(workspaceId ?? "", projectId ?? "");

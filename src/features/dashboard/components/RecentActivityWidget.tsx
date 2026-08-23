@@ -1,3 +1,4 @@
+import { KeyboardEvent } from "react";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,12 @@ dayjs.extend(relativeTime);
 
 interface Props {
   activities: DashboardActivity[];
+  /**
+   * When given, every row becomes a button that calls this with the clicked
+   * activity. Omit it to keep the widget purely informational — nothing is
+   * clickable by default.
+   */
+  onActivityClick?: (activity: DashboardActivity) => void;
 }
 
 /**
@@ -25,7 +32,10 @@ interface Props {
  * than a second copy here — a new `ActivityAction` shows up correctly in both
  * places or neither.
  */
-export default function RecentActivityWidget({ activities }: Props) {
+export default function RecentActivityWidget({
+  activities,
+  onActivityClick,
+}: Props) {
   const { t } = useTranslation();
 
   return (
@@ -38,7 +48,23 @@ export default function RecentActivityWidget({ activities }: Props) {
         const category = getActionCategory(activity.action);
 
         return (
-          <li key={activity._id} className={styles.row}>
+          <li
+            key={activity._id}
+            className={`${styles.row} ${onActivityClick ? styles.rowClickable : ""}`}
+            {...(onActivityClick
+              ? {
+                  role: "button",
+                  tabIndex: 0,
+                  onClick: () => onActivityClick(activity),
+                  onKeyDown: (e: KeyboardEvent) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onActivityClick(activity);
+                    }
+                  },
+                }
+              : {})}
+          >
             <Avatar
               size={32}
               src={activity.actor?.avatarUrl ?? undefined}

@@ -217,6 +217,110 @@ The whole page is one request (`useDashboardOverview` → `GET /workspaces/:id/d
 Do not add a second query for a new widget — extend the backend's `$facet` and the
 `DashboardOverview` type instead, or the widgets can start disagreeing with each other.
 
+### Project filter (top right of the header)
+
+A `Select` next to the page title lets the viewer narrow the entire page to one
+project in the current workspace. State lives in local `useState<string | undefined>`
+in `DashboardPage` (not Redux, not `localStorage` — it's a page-scoped view filter,
+not a preference that should follow the user or survive a reload), and resets to
+`undefined` whenever `workspaceId` changes (the topbar switcher does not remount this
+page) so a stale project selection can't leak into the new workspace — done by
+comparing `workspaceId` against a `renderedForWorkspaceId` bit of state during render
+("adjusting state when a prop changes", not a `useEffect`, which would need an extra
+render and trips the `react-hooks/set-state-in-effect` lint rule). `undefined` means
+"no filter" and is the default; it is passed straight through
+`useDashboardOverview(workspaceId, projectId)` → `dashboardService.getOverview()` as
+an optional `?projectId=` query param, included in the query key so switching
+projects is a normal cache miss, not a stale read. The `Select`'s own sentinel value
+for "All projects" (`ALL_PROJECTS`, a local constant) is translated back to
+`undefined` in `onChange` — AntD's `Select` needs a defined `value` per option, so
+`undefined` can't be an option value itself. Options come from the ordinary
+`useProjects(workspaceId)` hook (already used by `ProjectsPage`), no new service or
+endpoint. Everything past this point (all four KPIs, both donuts, every widget) is
+unaffected — they just read `data` from the now project-scoped response.
+
+### Priority donut → board deep link
+
+Every slice of the priority donut (`DashboardDonutChart`'s `onSliceClick` prop — both
+the ring segment via `Pie`'s own `onClick`, reading the clicked datum off
+`entry.payload`, and its legend row, which gets `role="button"`/keyboard support the
+same way) is clickable **only when the page's project filter above is already set to
+one project** — the board is per-project, so a workspace-wide priority slice has no
+single board to land on; `DashboardPage` passes `onSliceClick={projectId ?
+handlePriorityClick : undefined}`, so with no project selected the priority donut is
+plain and inert, same as the status donut (which never gets `onSliceClick` at all). A
+zero-count slice is also inert (`datum.value > 0` gate in the legend) — there is
+nothing on the board to show. `handlePriorityClick` navigates to
+`/workspaces/:workspaceId/projects/:projectId/board?priority=<id>`; `BoardPage` reads
+`?priority=` once, in `priorityFilter`'s lazy `useState` initializer, to seed its
+existing priority filter `Select` — it is **not** two-way synced back to the URL
+(unlike `?task=`), so changing the filter afterwards on the board doesn't rewrite the
+address bar. This reuses the board's existing filter state and the dashboard's
+existing `Priority` enum; nothing new was added to either's data model.
+
+### Recent Activity → Activity Log deep link
+
+Same gating as the priority donut: each row of `RecentActivityWidget` (its own
+`onActivityClick` prop, same "row becomes a `role="button"` with keyboard support
+only when a handler is passed" shape as the donut's legend rows) is clickable only
+when the dashboard's project filter is already set to one project —
+`DashboardPage` passes `onActivityClick={projectId ? handleActivityClick :
+undefined}`. `handleActivityClick` navigates to
+`/workspaces/:workspaceId/activity?logId=<activity._id>`. Unlike the priority
+filter, this needed a small backend addition: the Activity Log page is filtered
+and paginated, so the clicked entry isn't guaranteed to be on its current page —
+`ActivityLogPage` reads `?logId=` into `selectedLogId` (same `?task=`-style
+URL-is-the-source-of-truth pattern the board uses, via `openLogDrawer`/
+`closeLogDrawer`), first checks whether that id is already in the currently
+loaded `logs` page (the common case — a plain row click needs no extra
+request), and only calls the new `useActivityLogEntry` hook (→
+`activityService.getOne` → `GET /workspaces/:workspaceId/activity/:logId`) when
+it isn't. Either source feeds the same `ActivityDetailDrawer`.
+
+### Task-row widgets (Upcoming Deadlines, My Tasks) → board deep link
+
+Same shape as the priority donut/Recent Activity's `onSliceClick`/`onActivityClick`
+(a row becomes a `role="button"` with keyboard support only when a handler is
+passed), but **not gated on the dashboard's project filter** — unlike the donut
+(a workspace-wide aggregate) and the activity feed (spans every project), every row
+in `UpcomingDeadlinesWidget` and `MyTasksWidget` is a `DashboardTask`, which already
+names its own `projectId`. The click always has a definite board to land on, filter
+selected or not, so `DashboardPage`'s shared `handleTaskRowClick` is passed
+unconditionally to both (`onTaskClick={handleTaskRowClick}`, no `projectId ? ... :
+undefined` guard) and navigates to
+`/workspaces/:workspaceId/projects/:task.projectId/board?task=<task._id>` — always
+the *task's own* `projectId`, never the dashboard filter's (they agree whenever the
+filter happens to be set, but reading it off the task is what's actually correct
+regardless). No backend change was needed for either: `BoardPage` loads every task
+in a project up front (not paginated), so the deep-linked task is always already in
+`allTasks`, and the board's existing `?task=` handling (see Task Detail Modal
+Patterns / Routing above) opens it with no extra request.
+
+`MyTasksWidget`'s row has a second interactive element — the complete checkbox — so
+its `<li>`'s `onClick`/`onKeyDown` sit on the whole row while the checkbox's own
+wrapper `span` stops propagation on both; without that, checking a task off would
+also navigate to the board out from under the mutation in flight.
+
+### Workload chart → board deep link (filtered by assignee)
+
+Gated the same way as the priority donut/Recent Activity — a workspace-wide
+aggregate, so `WorkloadByAssigneeChart`'s new `onNameClick` prop is only passed once
+the project filter is set (`onNameClick={projectId ? handleAssigneeClick :
+undefined}`). Clickability lives on the Y-axis name label itself (`NameTick`, a bare
+SVG `<text>`), not the bar — Recharts' own `Bar`/`Cell` click plumbing is what the
+priority donut uses via `Pie`'s `onClick`, but there is nothing equivalent to hang a
+click off for a category axis label, so this one wires `role="button"`/`tabIndex`/
+`onClick`/`onKeyDown` straight onto the `<text>` node, gated on `onNameClick` being
+passed **and** the row actually having a `userId` (never null here — the pipeline's
+`workloadByAssignee` branch already excludes unassigned work). `handleAssigneeClick`
+navigates to `/workspaces/:workspaceId/projects/:projectId/board?assignee=<userId>`
+(the dashboard filter's `projectId` here, unlike the task-row widgets above — a
+workload bar has no task of its own to read a project off, it's a per-project total
+by construction once the filter is set). `BoardPage` seeds its existing
+`assigneeFilter` from `?assignee=` the same lazy-`useState`-initializer way
+`priorityFilter` reads `?priority=` — no validation needed (it's a plain memberId, not
+a fixed enum), and same as `?priority=`, not two-way synced back to the URL.
+
 ### Chart colors are not UI tokens
 
 `features/dashboard/utils/chartPalette.ts` holds hex values per theme, deliberately

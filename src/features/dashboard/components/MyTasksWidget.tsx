@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { KeyboardEvent, useState } from "react";
 import { Checkbox, Tooltip } from "antd";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -14,6 +14,12 @@ interface Props {
   tasks: DashboardTask[];
   /** every task due today, not just the (up to five) rows shown */
   total: number;
+  /**
+   * When given, every row (outside the checkbox) becomes a button that calls
+   * this with the clicked task. Omit it to keep the widget purely
+   * informational — nothing is clickable by default.
+   */
+  onTaskClick?: (task: DashboardTask) => void;
 }
 
 /**
@@ -26,7 +32,12 @@ interface Props {
  * goes through the ordinary task-update endpoint rather than any new
  * dashboard-specific write path.
  */
-export default function MyTasksWidget({ workspaceId, tasks, total }: Props) {
+export default function MyTasksWidget({
+  workspaceId,
+  tasks,
+  total,
+  onTaskClick,
+}: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -73,13 +84,35 @@ export default function MyTasksWidget({ workspaceId, tasks, total }: Props) {
         const canComplete = !!task.project?.doneStatus;
 
         return (
-          <li key={task._id} className={styles.row}>
+          <li
+            key={task._id}
+            className={`${styles.row} ${onTaskClick ? styles.rowClickable : ""}`}
+            {...(onTaskClick
+              ? {
+                  role: "button",
+                  tabIndex: 0,
+                  onClick: () => onTaskClick(task),
+                  onKeyDown: (e: KeyboardEvent) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onTaskClick(task);
+                    }
+                  },
+                }
+              : {})}
+          >
             <Tooltip
               title={canComplete ? undefined : t("dashboardPage.myTasks.noDoneColumn")}
             >
               {/* span wrapper — a disabled AntD checkbox doesn't emit the
-                  pointer events the tooltip needs */}
-              <span className={styles.checkboxSlot}>
+                  pointer events the tooltip needs. It also stops the row's
+                  own click/keydown from bubbling up: the checkbox completes
+                  the task in place, it must never also navigate away. */}
+              <span
+                className={styles.checkboxSlot}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
                 <Checkbox
                   checked={isCompleting}
                   disabled={!canComplete || isCompleting}

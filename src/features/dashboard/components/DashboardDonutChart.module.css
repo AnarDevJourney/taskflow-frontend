@@ -80,6 +80,30 @@
   font-size: 13px;
 }
 
+/* Only applied when a slice is actually navigable (see `onSliceClick` on
+   the component) — a plain donut's rows stay inert. */
+.legendRowClickable {
+  cursor: pointer;
+  border-radius: 6px;
+  margin: -4px -6px;
+  padding: 4px 6px;
+  transition: background-color 120ms ease;
+}
+
+.legendRowClickable:hover,
+.legendRowClickable:focus-visible {
+  background: var(--surface-secondary);
+}
+
+.legendRowClickable:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.sliceClickable {
+  cursor: pointer;
+}
+
 .swatch {
   width: 10px;
   height: 10px;

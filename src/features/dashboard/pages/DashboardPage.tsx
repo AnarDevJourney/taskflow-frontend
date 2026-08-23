@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { Empty, Skeleton } from "antd";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Empty, Select, Skeleton } from "antd";
 import {
   BellOutlined,
   CheckCircleOutlined,
@@ -8,8 +8,10 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { DashboardActivity, DashboardTask } from "@types/index";
 import { useTheme } from "@lib/theme/ThemeProvider";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
+import { useProjects } from "@features/projects/hooks/useProjects";
 import { useDashboardOverview } from "../hooks/useDashboardOverview";
 import KpiCard from "../components/KpiCard";
 import DashboardDonutChart, { DonutDatum } from "../components/DashboardDonutChart";
@@ -28,16 +30,40 @@ import {
 } from "../utils/chartPalette";
 import styles from "./DashboardPage.module.css";
 
+/** Sentinel `Select` value for "no project filter" — a real `Select` option
+ * needs a defined value, and `undefined` is what the query hook/service
+ * already treat as "workspace-wide", so this is translated at the boundary
+ * rather than threaded through as a magic string everywhere else. */
+const ALL_PROJECTS = "__all__";
+
 export default function DashboardPage() {
   const { t } = useTranslation();
   const { workspaceId } = useParams<{ workspaceId: string }>();
+  const navigate = useNavigate();
   const { resolvedTheme } = useTheme();
   // only so the viewer's own bar can be marked in the workload chart
   const { data: currentUser } = useCurrentUser();
 
+  // the dashboard's project filter — `undefined` (no selection) means the
+  // whole workspace, exactly the previous, unfiltered behavior
+  const [projectId, setProjectId] = useState<string | undefined>(undefined);
+  const { data: projects } = useProjects(workspaceId ?? "");
+
+  // Switching workspace (the topbar switcher, not a route remount) must not
+  // carry a project selection from the previous one into this one's filter.
+  // Adjusted during render rather than in a `useEffect` — the recommended
+  // "state that depends on a prop" pattern — so there is no extra render
+  // where a stale `projectId` briefly still applies.
+  const [renderedForWorkspaceId, setRenderedForWorkspaceId] = useState(workspaceId);
+  if (workspaceId !== renderedForWorkspaceId) {
+    setRenderedForWorkspaceId(workspaceId);
+    setProjectId(undefined);
+  }
+
   // one request for the whole page — every widget below reads from this
   const { data, isLoading, isError, isFetching } = useDashboardOverview(
     workspaceId ?? "",
+    projectId,
   );
 
   // ─── Chart data ────────────────────────────────────────────────────
@@ -84,6 +110,59 @@ export default function DashboardPage() {
     [priorityData],
   );
 
+  // A priority slice is only a link to the board when the dashboard itself
+  // is already scoped to one project — the board is per-project, so a
+  // workspace-wide priority count has no single board to land on.
+  const handlePriorityClick = useCallback(
+    (priority: string) => {
+      if (!workspaceId || !projectId) return;
+      navigate(
+        `/workspaces/${workspaceId}/projects/${projectId}/board?priority=${priority}`,
+      );
+    },
+    [navigate, workspaceId, projectId],
+  );
+
+  // Same gating as the priority donut above: a Recent Activity row only
+  // links to the Activity Log page's drawer once the dashboard is already
+  // scoped to one project.
+  const handleActivityClick = useCallback(
+    (activity: DashboardActivity) => {
+      if (!workspaceId || !projectId) return;
+      navigate(`/workspaces/${workspaceId}/activity?logId=${activity._id}`);
+    },
+    [navigate, workspaceId, projectId],
+  );
+
+  // Unlike the priority donut and Recent Activity above, a task row (Upcoming
+  // Deadlines or My Tasks) already names its own project on every item — the
+  // click always has a definite board to land on, so it is never gated on
+  // the dashboard's own project filter.
+  const handleTaskRowClick = useCallback(
+    (task: DashboardTask) => {
+      if (!workspaceId) return;
+      navigate(
+        `/workspaces/${workspaceId}/projects/${task.projectId}/board?task=${task._id}`,
+      );
+    },
+    [navigate, workspaceId],
+  );
+
+  // Same gating as the priority donut and Recent Activity: the workload
+  // chart is a workspace-wide aggregate (a bar per person across every
+  // project), so a name only links to the board once the dashboard is
+  // already scoped to one project — there'd be no single board to land on
+  // otherwise.
+  const handleAssigneeClick = useCallback(
+    (userId: string) => {
+      if (!workspaceId || !projectId) return;
+      navigate(
+        `/workspaces/${workspaceId}/projects/${projectId}/board?assignee=${userId}`,
+      );
+    },
+    [navigate, workspaceId, projectId],
+  );
+
   if (isLoading) return <DashboardSkeleton />;
 
   if (isError || !data) {
@@ -106,6 +185,21 @@ export default function DashboardPage() {
           <h1 className={styles.pageTitle}>{t("dashboardPage.title")}</h1>
           <p className={styles.pageSubtitle}>{t("dashboardPage.subtitle")}</p>
         </div>
+        <Select
+          className={styles.projectFilter}
+          value={projectId ?? ALL_PROJECTS}
+          placeholder={t("dashboardPage.projectFilterPlaceholder")}
+          onChange={(value) =>
+            setProjectId(value === ALL_PROJECTS ? undefined : value)
+          }
+          options={[
+            { value: ALL_PROJECTS, label: t("dashboardPage.allProjects") },
+            ...(projects?.map((project) => ({
+              value: project._id,
+              label: project.name,
+            })) ?? []),
+          ]}
+        />
       </header>
 
       {/* ─── 1. KPI cards ──────────────────────────────────────────── */}
@@ -166,6 +260,9 @@ export default function DashboardPage() {
           totalLabel={t("dashboardPage.charts.openTasks")}
           data={priorityData}
           colors={priorityColorMap}
+          // clickable only once the dashboard is already narrowed to a
+          // single project — see handlePriorityClick
+          onSliceClick={projectId ? handlePriorityClick : undefined}
         />
       </section>
 
@@ -181,9 +278,22 @@ export default function DashboardPage() {
           workspaceId={workspaceId ?? ""}
           tasks={data.myTasks}
           total={data.myTasksTotal}
+          // always clickable — every task already names its own project,
+          // see handleTaskRowClick
+          onTaskClick={handleTaskRowClick}
         />
-        <RecentActivityWidget activities={data.recentActivities} />
-        <UpcomingDeadlinesWidget tasks={data.upcomingDeadlines} />
+        <RecentActivityWidget
+          activities={data.recentActivities}
+          // clickable only once the dashboard is already narrowed to a
+          // single project — see handleActivityClick
+          onActivityClick={projectId ? handleActivityClick : undefined}
+        />
+        <UpcomingDeadlinesWidget
+          tasks={data.upcomingDeadlines}
+          // always clickable — every task already names its own project,
+          // see handleTaskRowClick
+          onTaskClick={handleTaskRowClick}
+        />
       </section>
 
       {/* ─── 7. Team status — workload beside sprint progress ─────────
@@ -195,6 +305,9 @@ export default function DashboardPage() {
           data={data.workloadByAssignee}
           currentUserId={currentUser?._id}
           theme={resolvedTheme}
+          // clickable only once the dashboard is already narrowed to a
+          // single project — see handleAssigneeClick
+          onNameClick={projectId ? handleAssigneeClick : undefined}
         />
         <SprintProgressCard sprint={data.sprint} theme={resolvedTheme} />
       </section>

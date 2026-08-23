@@ -35,6 +35,12 @@
   color: var(--text-secondary);
 }
 
+/* The project filter — top right of the header, next to the title. */
+.projectFilter {
+  width: 220px;
+  flex-shrink: 0;
+}
+
 /* ─── Grids ─────────────────────────────────────────────────────────── */
 /* `auto-fit` + `minmax` rather than breakpoints: the columns collapse when
    the container gets narrow, so the same rule handles a phone and a

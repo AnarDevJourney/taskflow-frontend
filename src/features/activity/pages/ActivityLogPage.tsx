@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, Button, DatePicker, Empty, Select, Skeleton, Tag, Tooltip } from "antd";
 import {
@@ -17,7 +17,7 @@ import type { TFunction } from "i18next";
 import dayjs, { Dayjs } from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Resizable, ResizeCallbackData } from "react-resizable";
-import { useWorkspaceActivity } from "../hooks/useWorkspaceActivity";
+import { useActivityLogEntry, useWorkspaceActivity } from "../hooks/useWorkspaceActivity";
 import { workspaceService } from "@features/workspaces/services/workspaceService";
 import ActivityDetailDrawer from "../components/ActivityDetailDrawer";
 import SimplePagination from "@components/ui/SimplePagination";
@@ -68,7 +68,11 @@ export default function ActivityLogPage() {
   const [module, setModule] = useState<ActivityModule | null>(null);
   const [action, setAction] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>(null);
-  const [selectedLog, setSelectedLog] = useState<ActivityLog | null>(null);
+  // `?logId=<id>` is the single source of truth for which entry's drawer is
+  // open — same pattern as the board's `?task=`. It also powers the
+  // dashboard's Recent Activity widget deep-linking straight to one entry.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedLogId = searchParams.get("logId");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
@@ -179,6 +183,34 @@ export default function ActivityLogPage() {
 
   const logs = data?.items ?? [];
   const meta = data?.meta;
+
+  // The clicked row is almost always already in `logs` (no extra request);
+  // a deep link from elsewhere (the dashboard) may name an entry that isn't
+  // on this page's current filtered/paged view, so that case falls back to
+  // fetching it directly by id.
+  const logFromList = logs.find((l) => l._id === selectedLogId) ?? null;
+  const { data: fetchedLog } = useActivityLogEntry(
+    workspaceId ?? "",
+    logFromList ? undefined : (selectedLogId ?? undefined),
+  );
+  const selectedLog = logFromList ?? fetchedLog ?? null;
+
+  const openLogDrawer = (logId: string) => {
+    setSearchParams((params) => {
+      params.set("logId", logId);
+      return params;
+    });
+  };
+
+  const closeLogDrawer = () => {
+    setSearchParams(
+      (params) => {
+        params.delete("logId");
+        return params;
+      },
+      { replace: true },
+    );
+  };
 
   const hasFilters = !!(userId || module || action || dateRange);
   const clearFilters = () => {
@@ -364,7 +396,7 @@ export default function ActivityLogPage() {
                 variant={tableView}
                 striped={tableView === "striped" && i % 2 === 1}
                 resizable={resizeMode}
-                onView={() => setSelectedLog(log)}
+                onView={() => openLogDrawer(log._id)}
                 t={t}
               />
             ))
@@ -378,7 +410,7 @@ export default function ActivityLogPage() {
         </div>
       )}
 
-      <ActivityDetailDrawer log={selectedLog} members={members} onClose={() => setSelectedLog(null)} />
+      <ActivityDetailDrawer log={selectedLog} members={members} onClose={closeLogDrawer} />
 
       <ActivityViewModal
         open={viewModalOpen}

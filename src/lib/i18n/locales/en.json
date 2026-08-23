@@ -732,6 +732,8 @@
     "title": "Dashboard",
     "subtitle": "How this workspace is doing right now",
     "loadFailed": "Dashboard could not be loaded",
+    "allProjects": "All projects",
+    "projectFilterPlaceholder": "Filter by project",
     "kpi": {
       "activeTasks": "Active tasks",
       "overdueTasks": "Overdue tasks",
@@ -767,7 +769,7 @@
       "completeFailed": "Task could not be completed"
     },
     "activity": {
-      "title": "Recent activity",
+      "title": "Recent activities",
       "empty": "No activity yet",
       "unknownUser": "Unknown user"
     },

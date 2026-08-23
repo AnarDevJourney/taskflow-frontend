@@ -1,5 +1,12 @@
-import { memo, useMemo } from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { KeyboardEvent, memo, useMemo } from "react";
+import {
+  Cell,
+  Pie,
+  PieChart,
+  PieSectorDataItem,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
 import { useTranslation } from "react-i18next";
 import styles from "./DashboardDonutChart.module.css";
 
@@ -19,6 +26,12 @@ interface Props {
   data: DonutDatum[];
   /** color per datum id — a slice keeps its hue when others empty out */
   colors: Record<string, string>;
+  /**
+   * When given, every slice (ring segment and legend row alike) becomes a
+   * button that calls this with the clicked datum's `id`. Omit it for a
+   * purely informational donut — nothing is clickable by default.
+   */
+  onSliceClick?: (id: string) => void;
 }
 
 /** matches the 300ms the rest of the dashboard's transitions use */
@@ -50,7 +63,14 @@ const RADIUS = { inner: 58, outer: 84 };
  * dashboard changes (a checkbox toggling, a refetch landing) while their own
  * props usually have not.
  */
-function DashboardDonutChart({ title, total, totalLabel, data, colors }: Props) {
+function DashboardDonutChart({
+  title,
+  total,
+  totalLabel,
+  data,
+  colors,
+  onSliceClick,
+}: Props) {
   const { t } = useTranslation();
 
   // Recharts wants a flat array with a numeric key, and it re-reads `data` on
@@ -93,6 +113,19 @@ function DashboardDonutChart({ title, total, totalLabel, data, colors }: Props) 
                   animationBegin={ANIMATION_BEGIN_MS}
                   animationDuration={ANIMATION_MS}
                   isAnimationActive
+                  className={onSliceClick ? styles.sliceClickable : undefined}
+                  onClick={
+                    onSliceClick
+                      ? (entry: PieSectorDataItem) => {
+                          // the clicked slice's own datum lives on `.payload`
+                          // (Recharts also spreads it onto the sector itself,
+                          // but `.payload` is the documented, stable place)
+                          const id = (entry.payload as DonutDatum | undefined)
+                            ?.id;
+                          if (id) onSliceClick(id);
+                        }
+                      : undefined
+                  }
                 >
                   {chartData.map((datum) => (
                     <Cell key={datum.id} fill={colors[datum.id]} />
@@ -118,8 +151,27 @@ function DashboardDonutChart({ title, total, totalLabel, data, colors }: Props) 
       {/* Custom legend, below the ring. Doubles as the chart's table view —
           every slice's exact count and share is readable without hovering. */}
       <ul className={styles.legend}>
-        {data.map((datum) => (
-          <li key={datum.id} className={styles.legendRow}>
+        {data.map((datum) => {
+          // an empty slice has nothing to filter the board down to
+          const clickable = !!onSliceClick && datum.value > 0;
+          return (
+          <li
+            key={datum.id}
+            className={`${styles.legendRow} ${clickable ? styles.legendRowClickable : ""}`}
+            {...(clickable
+              ? {
+                  role: "button",
+                  tabIndex: 0,
+                  onClick: () => onSliceClick(datum.id),
+                  onKeyDown: (e: KeyboardEvent) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onSliceClick(datum.id);
+                    }
+                  },
+                }
+              : {})}
+          >
             <span
               className={styles.swatch}
               style={{ background: colors[datum.id] }}
@@ -131,7 +183,8 @@ function DashboardDonutChart({ title, total, totalLabel, data, colors }: Props) 
               {total > 0 ? `${Math.round((datum.value / total) * 100)}%` : "—"}
             </span>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </section>
   );
