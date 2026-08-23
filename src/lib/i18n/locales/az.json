@@ -109,7 +109,55 @@
     "roleRequired": "Zəhmət olmasa rol seçin",
     "sendInvite": "Dəvət göndər",
     "roleUpdated": "Rol yeniləndi",
-    "roleUpdateFailed": "Rolu yeniləmək alınmadı"
+    "roleUpdateFailed": "Rolu yeniləmək alınmadı",
+    "totalCount": "{{count}} üzv",
+    "filterRole": "Rol",
+    "allRoles": "Bütün rollar",
+    "clearFilters": "Filtrləri təmizlə",
+    "perPage": "Səhifədə",
+    "customizeTable": "Cədvəli fərdiləşdir",
+    "customizeColumns": "Sütunları fərdiləşdir",
+    "resizeColumns": "Sütunları ölçüləndir",
+    "saveWidths": "Saxla",
+    "cancelResize": "Ləğv et",
+    "viewModalTitle": "Cədvəli fərdiləşdir",
+    "viewModalHint": "Üzvlər cədvəlinin necə göstərildiyini seçin.",
+    "columnsModalTitle": "Sütunları fərdiləşdir",
+    "columnsModalHint": "Hansı sütunların göstəriləcəyini seçin və sıralamaq üçün sürükləyin.",
+    "removeMember": "Üzvü sil",
+    "empty": "Üzv tapılmadı",
+    "column": {
+      "name": "Ad",
+      "email": "Email",
+      "role": "Rol",
+      "joinedAt": "Qoşulma tarixi"
+    },
+    "view": {
+      "classic": {
+        "name": "Klassik",
+        "desc": "Rahat aralıq, standart görünüş."
+      },
+      "compact": {
+        "name": "Kompakt",
+        "desc": "Ekranda daha çox sətir sığsın deyə sıx görünüş."
+      },
+      "striped": {
+        "name": "Zolaqlı",
+        "desc": "Asan izləmək üçün növbələşən sətir rəngləri."
+      },
+      "minimal": {
+        "name": "Minimal",
+        "desc": "Kart çərçivəsi yoxdur, sadə xətt ayırıcılar."
+      },
+      "colorful": {
+        "name": "Rəngli",
+        "desc": "Üzvün rolunu bir baxışda göstərən sol rəng zolağı."
+      },
+      "spreadsheet": {
+        "name": "Cədvəl",
+        "desc": "Tam grid xətləri, monospace şrift, künc yumşaltması yoxdur."
+      }
+    }
   },
   "workspaces": {
     "title": "İş sahələri",

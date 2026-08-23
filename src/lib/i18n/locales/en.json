@@ -109,7 +109,55 @@
     "roleRequired": "Please select a role",
     "sendInvite": "Send invite",
     "roleUpdated": "Role updated",
-    "roleUpdateFailed": "Failed to update role"
+    "roleUpdateFailed": "Failed to update role",
+    "totalCount": "{{count}} members",
+    "filterRole": "Role",
+    "allRoles": "All roles",
+    "clearFilters": "Clear filters",
+    "perPage": "Per page",
+    "customizeTable": "Customize table",
+    "customizeColumns": "Customize columns",
+    "resizeColumns": "Resize columns",
+    "saveWidths": "Save",
+    "cancelResize": "Cancel",
+    "viewModalTitle": "Customize table",
+    "viewModalHint": "Choose how the members table is laid out.",
+    "columnsModalTitle": "Customize columns",
+    "columnsModalHint": "Choose which columns are shown and drag to reorder them.",
+    "removeMember": "Remove member",
+    "empty": "No members found",
+    "column": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "joinedAt": "Joined"
+    },
+    "view": {
+      "classic": {
+        "name": "Classic",
+        "desc": "Comfortable spacing, the default look."
+      },
+      "compact": {
+        "name": "Compact",
+        "desc": "Denser rows to fit more on screen."
+      },
+      "striped": {
+        "name": "Striped",
+        "desc": "Zebra-striped rows for easier scanning."
+      },
+      "minimal": {
+        "name": "Minimal",
+        "desc": "No card chrome, plain hairline dividers."
+      },
+      "colorful": {
+        "name": "Colorful",
+        "desc": "A left color bar showing the member's role at a glance."
+      },
+      "spreadsheet": {
+        "name": "Spreadsheet",
+        "desc": "Full grid borders, monospace font, no rounding."
+      }
+    }
   },
   "workspaces": {
     "title": "Workspaces",

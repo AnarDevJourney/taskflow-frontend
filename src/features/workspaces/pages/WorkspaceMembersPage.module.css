@@ -1,69 +1,337 @@
 .page {
-  max-width: 720px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.section {
+/* ─── Page header ───────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.pageSubtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}
+
+.totalBadge {
+  flex-shrink: 0;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-}
-
-.sectionHeader {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.sectionTitle {
-  font-size: 18px;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text);
-  margin-bottom: 4px;
+  white-space: nowrap;
 }
 
-.sectionDesc {
-  font-size: 14px;
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ─── Filter panel ──────────────────────────────────────────────── */
+.filterCard {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.filterField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.pageSizeField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filterLabel {
+  font-size: 12px;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
-.sectionBody {
-  padding: 20px;
+.filterControl {
+  width: 200px;
+  height: 36px;
 }
 
-.memberList {
-  display: flex;
-  flex-direction: column;
+.filterControl :global(.ant-select-selector) {
+  border-radius: 8px !important;
+}
+
+.clearBtn {
+  height: 36px;
+  border-radius: 10px;
+}
+
+/* ─── Table ─────────────────────────────────────────────────────── */
+.tableScroll {
+  overflow-x: auto;
+  transition: opacity 0.15s;
+}
+
+.table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 220px 1fr 160px 170px 64px;
+  align-items: center;
+  padding: 0 20px;
+  min-height: 64px;
+  border-bottom: 1px solid var(--surface-secondary);
   gap: 12px;
+  width: max-content;
+  min-width: 100%;
 }
 
-.memberRow {
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: var(--surface-secondary);
+}
+
+.row:hover .removeBtn {
+  opacity: 1;
+}
+
+.rowHeader {
+  min-height: 44px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: var(--surface-secondary);
+  cursor: default;
+}
+
+.rowHeader:hover {
+  background: var(--surface-secondary);
+}
+
+/* ─── compact view: denser rows, no card radius ───────────────────── */
+.table_compact {
+  composes: table;
+  border-radius: 6px;
+}
+
+.row_compact {
+  composes: row;
+  min-height: 44px;
+  padding: 0 16px;
+  gap: 8px;
+  font-size: 13px;
+}
+
+/* ─── striped view: zebra rows ─────────────────────────────────────── */
+.table_striped {
+  composes: table;
+}
+
+.row_striped {
+  composes: row;
+}
+
+.rowStriped {
+  background: var(--surface-secondary);
+}
+
+.rowStriped:hover {
+  background: var(--bg);
+}
+
+/* ─── minimal view: no card chrome, plain hairline dividers ────────── */
+.table_minimal {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.row_minimal {
+  composes: row;
+  border-bottom: 1px solid var(--border);
+  min-height: 52px;
+}
+
+.row_minimal:hover {
+  background: transparent;
+}
+
+/* ─── colorful view: role-colored left bar ──────────────────────────── */
+.table_colorful {
+  composes: table;
+}
+
+.row_colorful {
+  composes: row;
+}
+
+/* ─── spreadsheet view: full grid borders, monospace, no rounding ──── */
+.table_spreadsheet {
+  border: 1px solid var(--border);
+  border-radius: 0;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  width: fit-content;
+  min-width: 100%;
+}
+
+.row_spreadsheet {
+  composes: row;
+  border: 1px solid var(--border);
+  min-height: 52px;
+  font-size: 12px;
+}
+
+.row_spreadsheet:hover {
+  background: var(--bg);
+}
+
+/* ─── column resize mode ────────────────────────────────────────────── */
+.resizableHeaderCell {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  height: 100%;
+  padding-right: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  z-index: 1;
+  touch-action: none;
 }
 
-.memberInfo {
-  flex: 1;
-  min-width: 0;
+.resizeHandle::after {
+  content: "";
+  width: 2px;
+  height: 60%;
+  background: var(--border);
+  border-radius: 1px;
+  transition: background 0.12s;
 }
 
-.memberName {
-  font-size: 14px;
+.resizeHandle:hover::after {
+  background: var(--primary);
+}
+
+/* ─── Name cell ─────────────────────────────────────────────────── */
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.nameText {
+  font-size: 13px;
   font-weight: 600;
   color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.memberEmail {
+.emailCell {
+  font-size: 13px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Role tag ──────────────────────────────────────────────────── */
+.roleTag {
+  border: none;
+  background: var(--surface-secondary);
+  color: var(--text);
+  font-weight: 500;
+  font-size: 12px;
+  border-radius: 999px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0 12px;
+  margin: 0;
+}
+
+/* ─── Joined date cell ──────────────────────────────────────────── */
+.dateCell {
   font-size: 13px;
   color: var(--text-secondary);
 }
 
+/* ─── Remove button ─────────────────────────────────────────────── */
+.removeCell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.removeBtn {
+  opacity: 0.45;
+  transition: opacity 150ms;
+}
+
+/* ─── Pagination ─────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+/* ─── Invite modal ──────────────────────────────────────────────── */
 .linkRow {
   display: flex;
   align-items: center;

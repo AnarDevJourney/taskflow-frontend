@@ -71,9 +71,14 @@ src/
     ├── workspaces/
     │   ├── services/workspaceService.ts  # getMyWorkspaces, create, getOne, update, archive, getArchivedWorkspaces, restore, getMembers, inviteMember, removeMember, updateMemberRole
     │   ├── hooks/useWorkspaces.ts
+    │   ├── utils/
+    │   │   ├── membersColumns.ts          # column customization model (ColumnId: name/email/role/joinedAt), same shape as activityColumns.ts — the trailing "remove member" column is fixed, not part of this
+    │   │   └── membersViews.ts            # 6 table view variants (classic/compact/striped/minimal/colorful/spreadsheet), mirrors activityViews.ts
+    │   ├── components/
+    │   │   └── MembersViewModal.tsx + .module.css   # "Customize table" picker — same pattern as ActivityViewModal, CSS module copied from that component
     │   └── pages/
     │       ├── WorkspacesPage.tsx + WorkspacesPage.module.css   # grid of workspace cards, create/edit/archive/restore modals
-    │       ├── WorkspaceMembersPage.tsx + .module.css           # member list, invite, remove, per-member role Select
+    │       ├── WorkspaceMembersPage.tsx + .module.css           # member table (same structure as ActivityLogPage/NotificationsPage — see "Completed Features" below), invite, remove, per-member role Select
     │       └── (workspace "active" selection is Redux `ui.activeWorkspaceId`, persisted to localStorage — see Redux Store Rules)
     ├── projects/
     │   ├── services/projectService.ts    # getAll, getOne, create
@@ -854,7 +859,7 @@ On logout → `queryClient.clear()` to wipe all cached data, then redirect to `/
 - ✅ AppLayout: sidebar, topbar, workspace switcher (derived from URL, falling back to the persisted `ui.activeWorkspaceId`, falling back to first workspace), user menu, notifications panel, Cmd+K search overlay, sidebar customization (`SidebarModulesModal` — show/hide + drag-reorder nav modules) and a collapsed/expanded toggle, both backend-persisted per user via `sidebar-settings` (default: expanded, all modules visible)
 - ✅ AuthGuard: route protection
 - ✅ Workspaces page: grid of workspace cards (member count, description), create/edit/archive/restore modals, owner-only archive/restore
-- ✅ Workspace Members page: member list, invite (email + role), remove member, per-member role update (Select, owner/admin only, can't change own role)
+- ✅ Workspace Members page (`WorkspaceMembersPage`) — same table structure/mechanics as `ActivityLogPage`/`NotificationsPage`: a single Role filter (one filter for now, as requested), server-independent pagination (`SimplePagination` — the member list endpoint returns the whole workspace unpaginated, so filtering/paging happen client-side, unlike the other three tables), 6-variant "Customize table" (`MembersViewModal`, mirrors `ActivityViewModal`), column show/hide/reorder (shared `ColumnsModal`) + resize, all persisted to `table-settings` with `key: "members"` — same collection as My Tasks/Activity Log/Notifications, just a new key. Columns: name/email/role/joinedAt (`features/workspaces/utils/membersColumns.ts`), trailing fixed "remove member" column (not customizable, same treatment as Activity Log's eye-icon column). Invite (email + role), remove member, and per-member role update (inline `Select` in the role column, owner/admin only, can't edit own role or the owner's) are unchanged from before
 - ✅ Projects page: project grid, create project modal
 - ✅ Project Settings page: edit project, manage columns and members
 - ✅ Board page: kanban columns, task cards, drag and drop (cross-column + same-column reorder), create task modal
