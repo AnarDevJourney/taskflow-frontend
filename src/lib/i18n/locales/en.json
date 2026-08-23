@@ -812,5 +812,20 @@
       "ariaEmpty": "No activity on {{date}}",
       "ariaCount": "{{value}} actions on {{date}}"
     }
+  },
+  "globalSearch": {
+    "placeholder": "Search tasks, projects, members…",
+    "typeToSearch": "Type at least 2 characters to search",
+    "noResultsPrefix": "No results for",
+    "sections": {
+      "tasks": "Tasks",
+      "projects": "Projects",
+      "members": "Members"
+    },
+    "hints": {
+      "navigate": "navigate",
+      "select": "select",
+      "close": "close"
+    }
   }
 }

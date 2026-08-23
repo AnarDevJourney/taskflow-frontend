@@ -812,5 +812,20 @@
       "ariaEmpty": "{{date}}: активности нет",
       "ariaCount": "{{date}}: действий — {{value}}"
     }
+  },
+  "globalSearch": {
+    "placeholder": "Поиск задач, проектов, участников…",
+    "typeToSearch": "Введите минимум 2 символа для поиска",
+    "noResultsPrefix": "Нет результатов по запросу",
+    "sections": {
+      "tasks": "Задачи",
+      "projects": "Проекты",
+      "members": "Участники"
+    },
+    "hints": {
+      "navigate": "навигация",
+      "select": "выбрать",
+      "close": "закрыть"
+    }
   }
 }

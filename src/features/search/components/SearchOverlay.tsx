@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Spin } from "antd";
 import {
   SearchOutlined,
@@ -24,6 +25,7 @@ type ResultItem =
   | { type: "member"; data: User };
 
 export default function SearchOverlay({ open, onClose }: Props) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const [query, setQuery] = useState("");
@@ -72,8 +74,11 @@ export default function SearchOverlay({ open, onClose }: Props) {
           typeof item.data.projectId === "object"
             ? (item.data.projectId as unknown as { _id: string })._id
             : item.data.projectId;
+        // `?task=` is the board's existing source of truth for which task's
+        // detail modal is open (see BoardPage) — reusing it here means the
+        // modal opens automatically on arrival, not just the board itself.
         navigate(
-          `/workspaces/${workspaceId}/projects/${projectId}/board`,
+          `/workspaces/${workspaceId}/projects/${projectId}/board?task=${item.data._id}`,
         );
       } else if (item.type === "project") {
         navigate(`/workspaces/${workspaceId}/projects/${item.data._id}/board`);
@@ -119,7 +124,7 @@ export default function SearchOverlay({ open, onClose }: Props) {
           <input
             ref={inputRef}
             className={styles.input}
-            placeholder="Search tasks, projects, members…"
+            placeholder={t("globalSearch.placeholder")}
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -136,19 +141,19 @@ export default function SearchOverlay({ open, onClose }: Props) {
         {/* Results */}
         <div className={styles.results}>
           {!showResults ? (
-            <div className={styles.empty}>
-              Type at least 2 characters to search
-            </div>
+            <div className={styles.empty}>{t("globalSearch.typeToSearch")}</div>
           ) : !hasResults && !isFetching ? (
             <div className={styles.empty}>
-              No results for "<strong>{query}</strong>"
+              {t("globalSearch.noResultsPrefix")} "<strong>{query}</strong>"
             </div>
           ) : (
             <>
               {/* Tasks */}
               {(data?.tasks.length ?? 0) > 0 && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Tasks</div>
+                  <div className={styles.sectionTitle}>
+                    {t("globalSearch.sections.tasks")}
+                  </div>
                   {data!.tasks.map((task) => {
                     const idx = globalIndex++;
                     return (
@@ -181,7 +186,9 @@ export default function SearchOverlay({ open, onClose }: Props) {
               {/* Projects */}
               {(data?.projects.length ?? 0) > 0 && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Projects</div>
+                  <div className={styles.sectionTitle}>
+                    {t("globalSearch.sections.projects")}
+                  </div>
                   {data!.projects.map((project) => {
                     const idx = globalIndex++;
                     return (
@@ -215,7 +222,9 @@ export default function SearchOverlay({ open, onClose }: Props) {
               {/* Members */}
               {(data?.members.length ?? 0) > 0 && (
                 <div className={styles.section}>
-                  <div className={styles.sectionTitle}>Members</div>
+                  <div className={styles.sectionTitle}>
+                    {t("globalSearch.sections.members")}
+                  </div>
                   {data!.members.map((member) => {
                     const idx = globalIndex++;
                     return (
@@ -246,13 +255,15 @@ export default function SearchOverlay({ open, onClose }: Props) {
         {/* Footer hints */}
         <div className={styles.footer}>
           <span className={styles.hint}>
-            <kbd className={styles.kbd}>↑↓</kbd> navigate
+            <kbd className={styles.kbd}>↑↓</kbd>{" "}
+            {t("globalSearch.hints.navigate")}
           </span>
           <span className={styles.hint}>
-            <kbd className={styles.kbd}>↵</kbd> select
+            <kbd className={styles.kbd}>↵</kbd> {t("globalSearch.hints.select")}
           </span>
           <span className={styles.hint}>
-            <kbd className={styles.kbd}>ESC</kbd> close
+            <kbd className={styles.kbd}>ESC</kbd>{" "}
+            {t("globalSearch.hints.close")}
           </span>
         </div>
       </div>

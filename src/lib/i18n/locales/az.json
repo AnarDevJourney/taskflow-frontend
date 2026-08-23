@@ -812,5 +812,20 @@
       "ariaEmpty": "{{date}} tarixində fəaliyyət yoxdur",
       "ariaCount": "{{date}} tarixində {{value}} əməliyyat"
     }
+  },
+  "globalSearch": {
+    "placeholder": "Tapşırıq, layihə, üzv axtar…",
+    "typeToSearch": "Axtarış üçün ən azı 2 simvol daxil edin",
+    "noResultsPrefix": "Nəticə tapılmadı:",
+    "sections": {
+      "tasks": "Tapşırıqlar",
+      "projects": "Layihələr",
+      "members": "Üzvlər"
+    },
+    "hints": {
+      "navigate": "naviqasiya",
+      "select": "seç",
+      "close": "bağla"
+    }
   }
 }
