@@ -875,5 +875,72 @@
       "select": "select",
       "close": "close"
     }
+  },
+  "sprintsPage": {
+    "title": "Sprints",
+    "newSprint": "New Sprint",
+    "startSprint": "Start Sprint",
+    "editSprint": "Edit sprint",
+    "completeSprint": "Complete Sprint",
+    "selectOrCreate": "Select a sprint or create one",
+    "totalPoints": "Total points",
+    "completed": "Completed",
+    "completion": "Completion",
+    "burndown": "Burndown",
+    "addTasksFromBacklog": "Add tasks from backlog",
+    "noTasksInSprint": "No tasks in this sprint",
+    "sidebarTitle": "Sprints",
+    "noSprintsYet": "No sprints yet",
+    "velocity": "Velocity",
+    "toasts": {
+      "createError": "Failed to create sprint",
+      "updateSprintError": "Failed to update sprint",
+      "sprintStarted": "Sprint started",
+      "startError": "Failed to start sprint",
+      "sprintCompleted": "Sprint completed",
+      "completeError": "Failed to complete sprint",
+      "tasksAdded": "Tasks added to sprint",
+      "addTasksError": "Failed to add tasks"
+    },
+    "status": {
+      "planned": "Planned",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "points": "{{completed}}/{{total}} points",
+    "createModal": {
+      "title": "New Sprint",
+      "editTitle": "Edit Sprint",
+      "nameLabel": "Sprint name",
+      "namePlaceholder": "Sprint 4",
+      "nameRequired": "Please enter a sprint name",
+      "goalLabel": "Goal (optional)",
+      "goalPlaceholder": "What is this sprint trying to achieve?",
+      "datesLabel": "Sprint dates",
+      "datesRequired": "Please select start and end dates",
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save"
+    },
+    "completeModal": {
+      "title": "Complete Sprint",
+      "question": "What should happen to tasks that aren't done yet?",
+      "moveToBacklog": "Move incomplete tasks to Backlog",
+      "moveToNextSprint": "Move to next sprint",
+      "selectNextSprint": "Select next sprint",
+      "cancel": "Cancel",
+      "complete": "Complete Sprint"
+    },
+    "addTasksModal": {
+      "title": "Add tasks from backlog",
+      "noBacklogTasks": "No backlog tasks",
+      "cancel": "Cancel",
+      "add": "Add"
+    },
+    "chart": {
+      "ideal": "Ideal",
+      "actual": "Actual",
+      "points": "Points"
+    }
   }
 }

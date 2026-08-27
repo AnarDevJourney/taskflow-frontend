@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Modal, Checkbox, Button, Empty } from "antd";
+import { useTranslation } from "react-i18next";
 import { Task } from "@types/index";
 
 interface Props {
@@ -17,6 +18,7 @@ export default function AddTasksToSprintModal({
   onSubmit,
   isPending,
 }: Props) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<string[]>([]);
 
   useEffect(() => {
@@ -31,14 +33,14 @@ export default function AddTasksToSprintModal({
 
   return (
     <Modal
-      title="Add tasks from backlog"
+      title={t("sprintsPage.addTasksModal.title")}
       open={open}
       onCancel={onClose}
       width={480}
       destroyOnClose
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Cancel
+          {t("sprintsPage.addTasksModal.cancel")}
         </Button>,
         <Button
           key="submit"
@@ -47,12 +49,16 @@ export default function AddTasksToSprintModal({
           disabled={selected.length === 0}
           onClick={() => onSubmit(selected)}
         >
-          Add {selected.length > 0 ? `(${selected.length})` : ""}
+          {t("sprintsPage.addTasksModal.add")}
+          {selected.length > 0 ? ` (${selected.length})` : ""}
         </Button>,
       ]}
     >
       {backlogTasks.length === 0 ? (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No backlog tasks" />
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={t("sprintsPage.addTasksModal.noBacklogTasks")}
+        />
       ) : (
         <div style={{ maxHeight: 400, overflowY: "auto" }}>
           {backlogTasks.map((task) => (
@@ -63,21 +69,21 @@ export default function AddTasksToSprintModal({
                 alignItems: "center",
                 gap: 10,
                 padding: "8px 4px",
-                borderBottom: "1px solid #f0f0f0",
+                borderBottom: "1px solid var(--border)",
                 cursor: "pointer",
               }}
               onClick={() => toggle(task._id)}
             >
               <Checkbox checked={selected.includes(task._id)} onChange={() => toggle(task._id)} />
-              <span style={{ fontSize: 11, color: "#8c8c8c" }}>#{task.taskNumber}</span>
-              <span style={{ fontSize: 13, color: "#1a1f2e" }}>{task.title}</span>
+              <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>#{task.taskNumber}</span>
+              <span style={{ fontSize: 13, color: "var(--text)" }}>{task.title}</span>
               {task.storyPoints != null && (
                 <span
                   style={{
                     marginLeft: "auto",
                     fontSize: 11,
-                    color: "#8c8c8c",
-                    background: "#f5f5f5",
+                    color: "var(--text-secondary)",
+                    background: "var(--surface-secondary)",
                     padding: "1px 5px",
                     borderRadius: 3,
                   }}

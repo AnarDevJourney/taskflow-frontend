@@ -875,5 +875,72 @@
       "select": "seç",
       "close": "bağla"
     }
+  },
+  "sprintsPage": {
+    "title": "Sprintlər",
+    "newSprint": "Yeni Sprint",
+    "startSprint": "Sprinti Başlat",
+    "editSprint": "Sprinti redaktə et",
+    "completeSprint": "Sprinti Tamamla",
+    "selectOrCreate": "Sprint seçin və ya yenisini yaradın",
+    "totalPoints": "Ümumi xallar",
+    "completed": "Tamamlanıb",
+    "completion": "Tamamlanma",
+    "burndown": "Burndown",
+    "addTasksFromBacklog": "Backlog-dan tapşırıq əlavə et",
+    "noTasksInSprint": "Bu sprintdə tapşırıq yoxdur",
+    "sidebarTitle": "Sprintlər",
+    "noSprintsYet": "Hələ sprint yoxdur",
+    "velocity": "Sürət",
+    "toasts": {
+      "createError": "Sprint yaradıla bilmədi",
+      "updateSprintError": "Sprint yenilənə bilmədi",
+      "sprintStarted": "Sprint başladıldı",
+      "startError": "Sprint başladıla bilmədi",
+      "sprintCompleted": "Sprint tamamlandı",
+      "completeError": "Sprint tamamlana bilmədi",
+      "tasksAdded": "Tapşırıqlar sprintə əlavə edildi",
+      "addTasksError": "Tapşırıqlar əlavə edilə bilmədi"
+    },
+    "status": {
+      "planned": "Planlaşdırılıb",
+      "active": "Aktiv",
+      "completed": "Tamamlanıb"
+    },
+    "points": "{{completed}}/{{total}} xal",
+    "createModal": {
+      "title": "Yeni Sprint",
+      "editTitle": "Sprinti redaktə et",
+      "nameLabel": "Sprint adı",
+      "namePlaceholder": "Sprint 4",
+      "nameRequired": "Zəhmət olmasa sprint adı daxil edin",
+      "goalLabel": "Məqsəd (istəyə bağlı)",
+      "goalPlaceholder": "Bu sprint nəyə nail olmağa çalışır?",
+      "datesLabel": "Sprint tarixləri",
+      "datesRequired": "Zəhmət olmasa başlanğıc və bitmə tarixlərini seçin",
+      "cancel": "Ləğv et",
+      "create": "Yarat",
+      "save": "Yadda saxla"
+    },
+    "completeModal": {
+      "title": "Sprinti Tamamla",
+      "question": "Hələ bitməmiş tapşırıqlara nə olmalıdır?",
+      "moveToBacklog": "Tamamlanmamış tapşırıqları Backlog-a köçür",
+      "moveToNextSprint": "Növbəti sprintə köçür",
+      "selectNextSprint": "Növbəti sprinti seçin",
+      "cancel": "Ləğv et",
+      "complete": "Sprinti Tamamla"
+    },
+    "addTasksModal": {
+      "title": "Backlog-dan tapşırıq əlavə et",
+      "noBacklogTasks": "Backlog-da tapşırıq yoxdur",
+      "cancel": "Ləğv et",
+      "add": "Əlavə et"
+    },
+    "chart": {
+      "ideal": "İdeal",
+      "actual": "Faktiki",
+      "points": "Xallar"
+    }
   }
 }

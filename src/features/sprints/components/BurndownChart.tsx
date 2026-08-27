@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 import { BurndownDay } from "../services/sprintService";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function BurndownChart({ days }: Props) {
+  const { t } = useTranslation();
   const data = days.map((d) => ({
     ...d,
     label: dayjs(d.date).format("MMM D"),
@@ -30,7 +32,7 @@ export default function BurndownChart({ days }: Props) {
         <Line
           type="monotone"
           dataKey="ideal"
-          name="Ideal"
+          name={t("sprintsPage.chart.ideal")}
           stroke="#d9d9d9"
           strokeDasharray="4 4"
           dot={false}
@@ -39,7 +41,7 @@ export default function BurndownChart({ days }: Props) {
         <Line
           type="monotone"
           dataKey="actual"
-          name="Actual"
+          name={t("sprintsPage.chart.actual")}
           stroke="#4a6cf7"
           dot={{ r: 3 }}
           strokeWidth={2}

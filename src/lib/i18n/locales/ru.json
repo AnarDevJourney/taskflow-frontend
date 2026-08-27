@@ -875,5 +875,72 @@
       "select": "выбрать",
       "close": "закрыть"
     }
+  },
+  "sprintsPage": {
+    "title": "Спринты",
+    "newSprint": "Новый спринт",
+    "startSprint": "Начать спринт",
+    "editSprint": "Редактировать спринт",
+    "completeSprint": "Завершить спринт",
+    "selectOrCreate": "Выберите спринт или создайте новый",
+    "totalPoints": "Всего баллов",
+    "completed": "Завершено",
+    "completion": "Завершённость",
+    "burndown": "Burndown",
+    "addTasksFromBacklog": "Добавить задачи из бэклога",
+    "noTasksInSprint": "В этом спринте нет задач",
+    "sidebarTitle": "Спринты",
+    "noSprintsYet": "Спринтов пока нет",
+    "velocity": "Скорость",
+    "toasts": {
+      "createError": "Не удалось создать спринт",
+      "updateSprintError": "Не удалось обновить спринт",
+      "sprintStarted": "Спринт начат",
+      "startError": "Не удалось начать спринт",
+      "sprintCompleted": "Спринт завершён",
+      "completeError": "Не удалось завершить спринт",
+      "tasksAdded": "Задачи добавлены в спринт",
+      "addTasksError": "Не удалось добавить задачи"
+    },
+    "status": {
+      "planned": "Запланирован",
+      "active": "Активен",
+      "completed": "Завершён"
+    },
+    "points": "{{completed}}/{{total}} баллов",
+    "createModal": {
+      "title": "Новый спринт",
+      "editTitle": "Редактировать спринт",
+      "nameLabel": "Название спринта",
+      "namePlaceholder": "Спринт 4",
+      "nameRequired": "Пожалуйста, введите название спринта",
+      "goalLabel": "Цель (необязательно)",
+      "goalPlaceholder": "Чего должен достичь этот спринт?",
+      "datesLabel": "Даты спринта",
+      "datesRequired": "Пожалуйста, выберите даты начала и окончания",
+      "cancel": "Отмена",
+      "create": "Создать",
+      "save": "Сохранить"
+    },
+    "completeModal": {
+      "title": "Завершить спринт",
+      "question": "Что должно произойти с незавершёнными задачами?",
+      "moveToBacklog": "Переместить незавершённые задачи в бэклог",
+      "moveToNextSprint": "Переместить в следующий спринт",
+      "selectNextSprint": "Выберите следующий спринт",
+      "cancel": "Отмена",
+      "complete": "Завершить спринт"
+    },
+    "addTasksModal": {
+      "title": "Добавить задачи из бэклога",
+      "noBacklogTasks": "В бэклоге нет задач",
+      "cancel": "Отмена",
+      "add": "Добавить"
+    },
+    "chart": {
+      "ideal": "Идеал",
+      "actual": "Факт",
+      "points": "Баллы"
+    }
   }
 }

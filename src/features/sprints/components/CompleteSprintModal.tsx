@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Radio, Select, Button } from "antd";
+import { useTranslation } from "react-i18next";
 import { Sprint } from "@types/index";
 import { IncompleteTaskAction } from "../services/sprintService";
 
@@ -18,6 +19,7 @@ export default function CompleteSprintModal({
   isPending,
   otherPlannedSprints,
 }: Props) {
+  const { t } = useTranslation();
   const [action, setAction] = useState<IncompleteTaskAction>(
     IncompleteTaskAction.MOVE_TO_BACKLOG,
   );
@@ -32,14 +34,14 @@ export default function CompleteSprintModal({
 
   return (
     <Modal
-      title="Complete Sprint"
+      title={t("sprintsPage.completeModal.title")}
       open={open}
       onCancel={onClose}
       width={440}
       destroyOnClose
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Cancel
+          {t("sprintsPage.completeModal.cancel")}
         </Button>,
         <Button
           key="submit"
@@ -48,12 +50,12 @@ export default function CompleteSprintModal({
           disabled={!canSubmit}
           onClick={handleOk}
         >
-          Complete Sprint
+          {t("sprintsPage.completeModal.complete")}
         </Button>,
       ]}
     >
       <p style={{ color: "#8c8c8c", fontSize: 13, marginBottom: 16 }}>
-        What should happen to tasks that aren't done yet?
+        {t("sprintsPage.completeModal.question")}
       </p>
       <Radio.Group
         value={action}
@@ -61,16 +63,16 @@ export default function CompleteSprintModal({
         style={{ display: "flex", flexDirection: "column", gap: 12 }}
       >
         <Radio value={IncompleteTaskAction.MOVE_TO_BACKLOG}>
-          Move incomplete tasks to Backlog
+          {t("sprintsPage.completeModal.moveToBacklog")}
         </Radio>
         <Radio value={IncompleteTaskAction.MOVE_TO_NEXT_SPRINT}>
-          Move to next sprint
+          {t("sprintsPage.completeModal.moveToNextSprint")}
         </Radio>
       </Radio.Group>
       {action === IncompleteTaskAction.MOVE_TO_NEXT_SPRINT && (
         <Select
           style={{ width: "100%", marginTop: 12 }}
-          placeholder="Select next sprint"
+          placeholder={t("sprintsPage.completeModal.selectNextSprint")}
           value={nextSprintId}
           onChange={setNextSprintId}
           options={otherPlannedSprints.map((s) => ({

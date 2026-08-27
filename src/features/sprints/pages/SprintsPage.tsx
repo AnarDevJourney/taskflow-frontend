@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Empty, Skeleton, Progress, Input } from "antd";
+import { Button, Empty, Skeleton, Progress } from "antd";
+import { useTranslation } from "react-i18next";
 import { toast } from "@lib/toast";
-import { PlusOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { PlusOutlined, ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useProject } from "@features/projects/hooks/useProjects";
 import { useTasks } from "@features/tasks/hooks/useTasks";
@@ -31,6 +32,7 @@ export default function SprintsPage() {
   }>();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { t } = useTranslation();
 
   const wsId = workspaceId ?? "";
   const prId = projectId ?? "";
@@ -43,10 +45,9 @@ export default function SprintsPage() {
   const [selectedSprintId, setSelectedSprintId] = useState<string | null>(null);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const [addTasksModalOpen, setAddTasksModalOpen] = useState(false);
-  const [goalDraft, setGoalDraft] = useState("");
-  const [editingGoal, setEditingGoal] = useState(false);
 
   useEffect(() => {
     if (!sprints || selectedSprintId) return;
@@ -92,26 +93,26 @@ export default function SprintsPage() {
       setCreateModalOpen(false);
       setSelectedSprintId(sprint._id);
     },
-    onError: () => toast.error("Failed to create sprint"),
+    onError: () => toast.error(t("sprintsPage.toasts.createError")),
   });
 
-  const { mutate: updateGoal } = useMutation({
-    mutationFn: (goal: string) =>
-      sprintService.update(wsId, prId, selectedSprint!._id, { goal }),
+  const { mutate: updateSprint, isPending: isUpdating } = useMutation({
+    mutationFn: (dto: CreateSprintDto) =>
+      sprintService.update(wsId, prId, selectedSprint!._id, dto),
     onSuccess: () => {
       invalidateAll();
-      setEditingGoal(false);
+      setEditModalOpen(false);
     },
-    onError: () => toast.error("Failed to update goal"),
+    onError: () => toast.error(t("sprintsPage.toasts.updateSprintError")),
   });
 
   const { mutate: startSprint, isPending: isStarting } = useMutation({
     mutationFn: () => sprintService.start(wsId, prId, selectedSprint!._id),
     onSuccess: () => {
       invalidateAll();
-      toast.success("Sprint started");
+      toast.success(t("sprintsPage.toasts.sprintStarted"));
     },
-    onError: () => toast.error("Failed to start sprint"),
+    onError: () => toast.error(t("sprintsPage.toasts.startError")),
   });
 
   const { mutate: completeSprint, isPending: isCompleting } = useMutation({
@@ -129,9 +130,9 @@ export default function SprintsPage() {
     onSuccess: () => {
       invalidateAll();
       setCompleteModalOpen(false);
-      toast.success("Sprint completed");
+      toast.success(t("sprintsPage.toasts.sprintCompleted"));
     },
-    onError: () => toast.error("Failed to complete sprint"),
+    onError: () => toast.error(t("sprintsPage.toasts.completeError")),
   });
 
   const { mutate: addTasksToSprint, isPending: isAddingTasks } = useMutation({
@@ -147,9 +148,9 @@ export default function SprintsPage() {
     onSuccess: () => {
       invalidateAll();
       setAddTasksModalOpen(false);
-      toast.success("Tasks added to sprint");
+      toast.success(t("sprintsPage.toasts.tasksAdded"));
     },
-    onError: () => toast.error("Failed to add tasks"),
+    onError: () => toast.error(t("sprintsPage.toasts.addTasksError")),
   });
 
   if (!project) {
@@ -178,7 +179,7 @@ export default function SprintsPage() {
     if (!selectedSprint) {
       return (
         <div className={styles.emptyState}>
-          <Empty description="Select a sprint or create one" />
+          <Empty description={t("sprintsPage.selectOrCreate")} />
         </div>
       );
     }
@@ -191,13 +192,20 @@ export default function SprintsPage() {
           <div className={styles.sprintHeaderTop}>
             <div className={styles.sprintTitle}>{selectedSprint.name}</div>
             {selectedSprint.status === SprintStatus.PLANNED && (
-              <Button type="primary" onClick={() => startSprint()} loading={isStarting}>
-                Start Sprint
-              </Button>
+              <div className={styles.headerActions}>
+                <Button
+                  icon={<EditOutlined />}
+                  onClick={() => setEditModalOpen(true)}
+                  title={t("sprintsPage.editSprint")}
+                />
+                <Button type="primary" onClick={() => startSprint()} loading={isStarting}>
+                  {t("sprintsPage.startSprint")}
+                </Button>
+              </div>
             )}
             {selectedSprint.status === SprintStatus.ACTIVE && (
               <Button danger onClick={() => setCompleteModalOpen(true)}>
-                Complete Sprint
+                {t("sprintsPage.completeSprint")}
               </Button>
             )}
           </div>
@@ -206,29 +214,9 @@ export default function SprintsPage() {
             {new Date(selectedSprint.endDate).toLocaleDateString()}
           </div>
 
-          {!isCompleted &&
-            (editingGoal ? (
-              <Input.TextArea
-                autoFocus
-                defaultValue={selectedSprint.goal ?? ""}
-                rows={2}
-                onChange={(e) => setGoalDraft(e.target.value)}
-                onBlur={() => updateGoal(goalDraft)}
-              />
-            ) : (
-              <div
-                className={styles.sprintGoal}
-                onClick={() => {
-                  setGoalDraft(selectedSprint.goal ?? "");
-                  setEditingGoal(true);
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                {selectedSprint.goal || (
-                  <span style={{ color: "#8c8c8c" }}>Click to add a goal…</span>
-                )}
-              </div>
-            ))}
+          {!isCompleted && selectedSprint.goal && (
+            <div className={styles.sprintGoal}>{selectedSprint.goal}</div>
+          )}
 
           {selectedSprint.status === SprintStatus.ACTIVE && (
             <Progress percent={progressPct} size="small" style={{ marginTop: 12 }} />
@@ -240,13 +228,13 @@ export default function SprintsPage() {
                 <div className={styles.statValue}>
                   {selectedSprint.totalPoints ?? 0}
                 </div>
-                <div className={styles.statLabel}>Total points</div>
+                <div className={styles.statLabel}>{t("sprintsPage.totalPoints")}</div>
               </div>
               <div className={styles.statBox}>
                 <div className={styles.statValue}>
                   {selectedSprint.completedPoints ?? 0}
                 </div>
-                <div className={styles.statLabel}>Completed</div>
+                <div className={styles.statLabel}>{t("sprintsPage.completed")}</div>
               </div>
               <div className={styles.statBox}>
                 <div className={styles.statValue}>
@@ -259,7 +247,7 @@ export default function SprintsPage() {
                     : 0}
                   %
                 </div>
-                <div className={styles.statLabel}>Completion</div>
+                <div className={styles.statLabel}>{t("sprintsPage.completion")}</div>
               </div>
             </div>
           )}
@@ -267,7 +255,7 @@ export default function SprintsPage() {
 
         {isCompleted && burndown && (
           <div className={styles.sidebarCard} style={{ marginBottom: 16 }}>
-            <div className={styles.sidebarTitle}>Burndown</div>
+            <div className={styles.sidebarTitle}>{t("sprintsPage.burndown")}</div>
             <BurndownChart days={burndown.days} />
           </div>
         )}
@@ -275,7 +263,7 @@ export default function SprintsPage() {
         {!isCompleted && (
           <div style={{ marginBottom: 12 }}>
             <Button icon={<PlusOutlined />} onClick={() => setAddTasksModalOpen(true)}>
-              Add tasks from backlog
+              {t("sprintsPage.addTasksFromBacklog")}
             </Button>
           </div>
         )}
@@ -284,7 +272,7 @@ export default function SprintsPage() {
           {sprintTasks.length === 0 ? (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="No tasks in this sprint"
+              description={t("sprintsPage.noTasksInSprint")}
             />
           ) : (
             sprintTasks.map((task) => (
@@ -312,14 +300,16 @@ export default function SprintsPage() {
             }
           />
           <span className={styles.projectKey}>{project.key}</span>
-          <span className={styles.projectName}>{project.name} — Sprints</span>
+          <span className={styles.projectName}>
+            {project.name} — {t("sprintsPage.title")}
+          </span>
         </div>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => setCreateModalOpen(true)}
         >
-          New Sprint
+          {t("sprintsPage.newSprint")}
         </Button>
       </div>
 
@@ -328,11 +318,14 @@ export default function SprintsPage() {
 
         <div className={styles.sidebar}>
           <div className={styles.sidebarCard}>
-            <div className={styles.sidebarTitle}>Sprints</div>
+            <div className={styles.sidebarTitle}>{t("sprintsPage.sidebarTitle")}</div>
             {sprintsLoading ? (
               <Skeleton active paragraph={{ rows: 3 }} />
             ) : (sprints ?? []).length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No sprints yet" />
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("sprintsPage.noSprintsYet")}
+              />
             ) : (
               sprints!.map((sprint: Sprint) => (
                 <SprintCard
@@ -347,7 +340,7 @@ export default function SprintsPage() {
 
           {velocity && velocity.length > 0 && (
             <div className={styles.sidebarCard}>
-              <div className={styles.sidebarTitle}>Velocity</div>
+              <div className={styles.sidebarTitle}>{t("sprintsPage.velocity")}</div>
               <VelocityChart data={velocity} />
             </div>
           )}
@@ -359,6 +352,14 @@ export default function SprintsPage() {
         onClose={() => setCreateModalOpen(false)}
         onSubmit={createSprint}
         isPending={isCreating}
+      />
+
+      <CreateSprintModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSubmit={updateSprint}
+        isPending={isUpdating}
+        sprint={selectedSprint}
       />
 
       <CompleteSprintModal

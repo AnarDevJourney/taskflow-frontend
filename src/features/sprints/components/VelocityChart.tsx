@@ -6,6 +6,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTranslation } from "react-i18next";
 import { VelocityPoint } from "../services/sprintService";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function VelocityChart({ data }: Props) {
+  const { t } = useTranslation();
   const chartData = [...data].reverse();
 
   return (
@@ -21,7 +23,12 @@ export default function VelocityChart({ data }: Props) {
         <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#8c8c8c" }} />
         <YAxis tick={{ fontSize: 10, fill: "#8c8c8c" }} width={24} />
         <Tooltip />
-        <Bar dataKey="completedPoints" name="Points" fill="#4a6cf7" radius={[4, 4, 0, 0]} />
+        <Bar
+          dataKey="completedPoints"
+          name={t("sprintsPage.chart.points")}
+          fill="#4a6cf7"
+          radius={[4, 4, 0, 0]}
+        />
       </BarChart>
     </ResponsiveContainer>
   );
