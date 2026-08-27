@@ -541,7 +541,11 @@ function MemberRow({
       case "name":
         return (
           <span className={styles.nameCell}>
-            <Avatar size={32} style={{ background: "#4a6cf7", fontSize: 13, flexShrink: 0 }}>
+            <Avatar
+              size={32}
+              src={member.userId.avatarUrl ?? undefined}
+              style={{ background: "#4a6cf7", fontSize: 13, flexShrink: 0 }}
+            >
               {member.userId.name?.[0]?.toUpperCase()}
             </Avatar>
             <span className={styles.nameText}>{member.userId.name}</span>

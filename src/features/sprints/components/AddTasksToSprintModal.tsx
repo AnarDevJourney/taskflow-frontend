@@ -74,7 +74,11 @@ export default function AddTasksToSprintModal({
               }}
               onClick={() => toggle(task._id)}
             >
-              <Checkbox checked={selected.includes(task._id)} onChange={() => toggle(task._id)} />
+              <Checkbox
+                checked={selected.includes(task._id)}
+                onClick={(e) => e.stopPropagation()}
+                onChange={() => toggle(task._id)}
+              />
               <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>#{task.taskNumber}</span>
               <span style={{ fontSize: 13, color: "var(--text)" }}>{task.title}</span>
               {task.storyPoints != null && (

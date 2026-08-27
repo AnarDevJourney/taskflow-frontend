@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { KeyboardEvent, memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import { DashboardSprint, TaskStatusBucket } from "@types/index";
@@ -8,6 +8,13 @@ import styles from "./SprintProgressCard.module.css";
 interface Props {
   sprint: DashboardSprint | null;
   theme: ResolvedTheme;
+  /**
+   * When given, the whole card becomes a button that calls this — used to
+   * deep-link into the sprint's own Sprints page. Omit it to keep the card
+   * purely informational (same "no handler passed → nothing clickable"
+   * pattern as the other dashboard widgets).
+   */
+  onClick?: () => void;
 }
 
 /**
@@ -18,7 +25,7 @@ interface Props {
  *
  * Segments are separated by a 2px gap in the card surface, not by a stroke.
  */
-function SprintProgressCard({ sprint, theme }: Props) {
+function SprintProgressCard({ sprint, theme, onClick }: Props) {
   const { t } = useTranslation();
   const colors = statusChartColors(theme);
 
@@ -48,7 +55,22 @@ function SprintProgressCard({ sprint, theme }: Props) {
   const daysLeft = Math.max(0, dayjs(sprint.endDate).startOf("day").diff(dayjs().startOf("day"), "day"));
 
   return (
-    <section className={styles.card}>
+    <section
+      className={`${styles.card} ${onClick ? styles.clickable : ""}`}
+      {...(onClick
+        ? {
+            role: "button",
+            tabIndex: 0,
+            onClick,
+            onKeyDown: (e: KeyboardEvent) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onClick();
+              }
+            },
+          }
+        : {})}
+    >
       <header className={styles.header}>
         <div>
           <h3 className={styles.title}>{t("dashboardPage.sprint.title")}</h3>

@@ -130,7 +130,11 @@ export default function ActivityDetailDrawer({
           {t("activityLogPage.detailUser")}
         </div>
         <div className={styles.actorRow}>
-          <Avatar size={48} style={{ background: "#4a6cf7", fontSize: 18 }}>
+          <Avatar
+            size={48}
+            src={log.actorId?.avatarUrl ?? undefined}
+            style={{ background: "#4a6cf7", fontSize: 18 }}
+          >
             {log.actorId?.name?.[0]?.toUpperCase()}
           </Avatar>
           <div>

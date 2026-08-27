@@ -306,6 +306,7 @@ export default function AppLayout() {
                   <button className={styles.workspaceBtn}>
                     <Avatar
                       size={22}
+                      src={activeWorkspace?.logoUrl ?? undefined}
                       style={{ background: "#4a6cf7", fontSize: 12 }}
                     >
                       {activeWorkspace?.name?.[0]?.toUpperCase()}
@@ -366,6 +367,7 @@ export default function AppLayout() {
               <button className={styles.userBtn}>
                 <Avatar
                   size={36}
+                  src={user?.avatarUrl ?? undefined}
                   style={{ background: "#4a6cf7", flexShrink: 0 }}
                   icon={<UserOutlined />}
                 >

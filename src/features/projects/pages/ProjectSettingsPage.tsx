@@ -449,7 +449,11 @@ export default function ProjectSettingsPage() {
             <div className={styles.memberList}>
               {members?.map((member) => (
                 <div key={member.userId._id} className={styles.memberRow}>
-                  <Avatar size={32} style={{ background: "#4a6cf7", flexShrink: 0 }}>
+                  <Avatar
+                    size={32}
+                    src={member.userId.avatarUrl ?? undefined}
+                    style={{ background: "#4a6cf7", flexShrink: 0 }}
+                  >
                     {member.userId.name?.[0]?.toUpperCase()}
                   </Avatar>
                   <div className={styles.memberInfo}>

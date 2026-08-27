@@ -114,6 +114,21 @@
   font-variant-numeric: tabular-nums;
 }
 
+.clickable {
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.clickable:hover,
+.clickable:focus-visible {
+  background: var(--surface-secondary);
+}
+
+.clickable:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
 .empty {
   margin: 0;
   font-size: 13px;

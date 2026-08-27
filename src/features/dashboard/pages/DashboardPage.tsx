@@ -163,6 +163,17 @@ export default function DashboardPage() {
     [navigate, workspaceId, projectId],
   );
 
+  // Same gating as the priority donut/Recent Activity/workload chart above:
+  // the sprint card is only a link to the Sprints page once the dashboard is
+  // already scoped to one project — sprints belong to a project, so a
+  // workspace-wide card has no single project's Sprints page to land on.
+  const handleSprintClick = useCallback(() => {
+    if (!workspaceId || !projectId || !data?.sprint) return;
+    navigate(
+      `/workspaces/${workspaceId}/projects/${projectId}/sprints?sprintId=${data.sprint.id}`,
+    );
+  }, [navigate, workspaceId, projectId, data?.sprint]);
+
   if (isLoading) return <DashboardSkeleton />;
 
   if (isError || !data) {
@@ -309,7 +320,13 @@ export default function DashboardPage() {
           // single project — see handleAssigneeClick
           onNameClick={projectId ? handleAssigneeClick : undefined}
         />
-        <SprintProgressCard sprint={data.sprint} theme={resolvedTheme} />
+        <SprintProgressCard
+          sprint={data.sprint}
+          theme={resolvedTheme}
+          // clickable only once the dashboard is already narrowed to a
+          // single project — see handleSprintClick
+          onClick={projectId ? handleSprintClick : undefined}
+        />
       </section>
 
       {/* ─── 8. Activity heatmap — full width, closes the page ──────── */}

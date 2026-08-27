@@ -467,7 +467,11 @@ function ActivityRow({
       case "user":
         return (
           <span className={styles.userCell}>
-            <Avatar size={32} style={{ background: "#4a6cf7", fontSize: 13, flexShrink: 0 }}>
+            <Avatar
+              size={32}
+              src={log.actorId?.avatarUrl ?? undefined}
+              style={{ background: "#4a6cf7", fontSize: 13, flexShrink: 0 }}
+            >
               {log.actorId?.name?.[0]?.toUpperCase()}
             </Avatar>
             <span className={styles.userText}>

@@ -120,6 +120,7 @@ export default function TaskCard({
           <Tooltip title={task.assigneeId.name}>
             <Avatar
               size={22}
+              src={task.assigneeId.avatarUrl ?? undefined}
               style={{ background: "#4a6cf7", fontSize: 10 }}
               icon={<UserOutlined />}
             >

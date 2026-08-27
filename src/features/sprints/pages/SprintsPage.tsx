@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button, Empty, Skeleton, Progress } from "antd";
 import { useTranslation } from "react-i18next";
 import { toast } from "@lib/toast";
@@ -33,6 +33,7 @@ export default function SprintsPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
 
   const wsId = workspaceId ?? "";
   const prId = projectId ?? "";
@@ -42,7 +43,13 @@ export default function SprintsPage() {
   const { data: tasksData } = useTasks(wsId, prId);
   const tasks = useMemo(() => tasksData?.items ?? [], [tasksData]);
 
-  const [selectedSprintId, setSelectedSprintId] = useState<string | null>(null);
+  // Seeded once from a `?sprintId=` deep link (e.g. the dashboard's sprint
+  // progress card) — same lazy-`useState`-initializer pattern the board uses
+  // for `?priority=`/`?assignee=`, not two-way synced back to the URL, so
+  // picking a different sprint afterwards doesn't rewrite the address bar.
+  const [selectedSprintId, setSelectedSprintId] = useState<string | null>(
+    () => searchParams.get("sprintId"),
+  );
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);

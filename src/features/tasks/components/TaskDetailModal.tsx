@@ -506,6 +506,7 @@ export default function TaskDetailModal({
               <div key={comment._id} className={styles.comment}>
                 <Avatar
                   size={30}
+                  src={comment.authorId?.avatarUrl ?? undefined}
                   style={{ background: "#4a6cf7", flexShrink: 0, fontSize: 12 }}
                 >
                   {comment.authorId?.name?.[0]?.toUpperCase()}
@@ -596,6 +597,7 @@ export default function TaskDetailModal({
             <div className={styles.addComment}>
               <Avatar
                 size={28}
+                src={currentUser?.avatarUrl ?? undefined}
                 style={{ background: "#4a6cf7", flexShrink: 0, fontSize: 11 }}
               >
                 {currentUser?.name?.[0]?.toUpperCase()}
@@ -715,6 +717,7 @@ export default function TaskDetailModal({
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <Avatar
                       size={18}
+                      src={m.userId.avatarUrl ?? undefined}
                       style={{ background: "#4a6cf7", fontSize: 10 }}
                     >
                       {m.userId.name?.[0]?.toUpperCase()}
@@ -735,6 +738,7 @@ export default function TaskDetailModal({
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <Avatar
                   size={22}
+                  src={task.reporterId?.avatarUrl ?? undefined}
                   style={{ background: "#4a6cf7", fontSize: 11 }}
                 >
                   {task.reporterId?.name?.[0]?.toUpperCase()}
