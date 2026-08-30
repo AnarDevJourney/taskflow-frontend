@@ -261,19 +261,7 @@ export default function AppLayout() {
           {/* Logo */}
           <Link to="/workspaces" className={styles.logo}>
             <div className={styles.logoIcon}>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#fff"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M9 11l3 3L22 4" />
-                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-              </svg>
+              <img src="/logo.png" alt="TaskFlow" className={styles.logoImg} />
             </div>
             {!collapsed && <span className={styles.logoText}>{t("appLayout.logoText")}</span>}
           </Link>
