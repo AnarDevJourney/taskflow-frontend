@@ -24,8 +24,19 @@
 
 .siderCollapsed .nav :global(.ant-menu-item) {
   margin-inline: 12px;
+  width: calc(100% - 24px);
   padding-inline: 0 !important;
-  text-align: center;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.siderCollapsed .nav :global(.ant-menu-item .anticon) {
+  margin-inline-end: 0;
+}
+
+.siderCollapsed .nav :global(.ant-menu-title-content) {
+  display: none;
 }
 
 .siderInner {

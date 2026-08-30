@@ -54,8 +54,17 @@ api.interceptors.response.use(
         processQueue(null);
         return api(originalRequest);
       } catch (refreshError) {
+        // Don't force a hard navigation here — a failed refresh just means
+        // "not logged in", which is an expected outcome on public pages
+        // (Login/Register/ForgotPassword call useCurrentUser() to check
+        // whether someone is already logged in) as well as on protected
+        // ones. AuthGuard already reacts to useCurrentUser()'s resulting
+        // error with a soft `<Navigate to="/login" />`. A `window.location`
+        // reassignment here reloads the whole document — and since LoginPage
+        // itself calls useCurrentUser(), landing back on /login re-triggers
+        // this exact same failure, which reassigned the URL to itself again:
+        // an infinite reload loop instead of a redirect.
         processQueue(refreshError as AxiosError);
-        window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
