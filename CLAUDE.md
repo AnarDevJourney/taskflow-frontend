@@ -513,7 +513,7 @@ Priority colors (task priority tags, unrelated to light/dark) stay as their own 
 Always use these — never use relative imports that go up more than one level:
 
 ```typescript
-@types/*        → src/types/*
+@models/*       → src/types/*
 @lib/*          → src/lib/*
 @store/*        → src/store/*
 @styles/*       → src/styles/*
