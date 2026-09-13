@@ -22,6 +22,7 @@ A full-featured SPA: kanban boards with drag-and-drop, sprint planning with burn
 ## Table of Contents
 
 - [What is this?](#what-is-this)
+- [Live Demo](#live-demo)
 - [Feature Overview](#feature-overview)
 - [Tech Stack](#tech-stack)
 - [Architecture & State Management](#architecture--state-management)
@@ -48,6 +49,25 @@ built end-to-end as a demonstration of production-grade frontend engineering —
 UI showcase over mock data. Every screen in this app is backed by a real REST API and
 a real WebSocket connection, served by the companion
 [NestJS backend](https://github.com/AnarDevJourney/taskflow-backend).
+
+---
+
+## Live Demo
+
+**[taskflow-anar.netlify.app](https://taskflow-anar.netlify.app)** — deployed on
+Netlify, talking to the [backend](https://github.com/AnarDevJourney/taskflow-backend)
+on a Hetzner VPS.
+
+- **Demo login**: `anar@taskflow.dev` / `Test1234!`
+
+> **This is a public demo — feel free to click around, create workspaces/projects/
+> tasks, upload files, invite (fake) members, anything.** Every **6 hours** (00:00,
+> 06:00, 12:00, 18:00 UTC), the backend wipes its database and object storage back to
+> the seeded starting state (see the backend repo's
+> [`scripts/reset-demo-data.sh`](https://github.com/AnarDevJourney/taskflow-backend/blob/main/scripts/reset-demo-data.sh)).
+> Nothing you do here is permanent, and nothing you do here can break it for the next
+> visitor. If something errors out with a 401 right after a reset happens mid-session,
+> just log back in with the demo credentials above.
 
 ---
 
