@@ -18,7 +18,6 @@ import {
   LogoutOutlined,
   UserOutlined,
   DownOutlined,
-  PlusOutlined,
   SearchOutlined,
   TeamOutlined,
   SettingOutlined,
@@ -418,7 +417,7 @@ export default function AppLayout() {
                 arrow={false}
                 open={notificationsOpen}
                 onOpenChange={setNotificationsOpen}
-                styles={{ body: { padding: 0 } }}
+                styles={{ content: { padding: 0 } }}
               >
                 <Badge count={unreadCount} size="small">
                   <Button icon={<BellOutlined />} type="text" shape="circle" />

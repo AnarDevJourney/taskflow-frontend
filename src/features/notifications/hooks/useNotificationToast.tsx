@@ -3,7 +3,7 @@ import { App as AntApp } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Notification } from "@types/index";
+import { Notification } from "@models/index";
 import NotificationToast from "../components/NotificationToast";
 import { notificationService } from "../services/notificationService";
 

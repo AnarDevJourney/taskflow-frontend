@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Priority, Task } from "@types/index";
+import { Priority, Task } from "@models/index";
 
 export const priorityColors: Record<Priority, string> = {
   [Priority.CRITICAL]: "#f5222d",

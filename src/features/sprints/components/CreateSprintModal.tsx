@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Modal, Form, Input, DatePicker, Button } from "antd";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { Sprint } from "@types/index";
+import { Sprint } from "@models/index";
 import { CreateSprintDto } from "../services/sprintService";
 
 const { RangePicker } = DatePicker;

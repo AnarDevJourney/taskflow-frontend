@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-import type { Attachment } from "@types/index";
+import type { Attachment } from "@models/index";
 import FileDropZone from "./FileDropZone";
 import {
   useAttachmentUploads,

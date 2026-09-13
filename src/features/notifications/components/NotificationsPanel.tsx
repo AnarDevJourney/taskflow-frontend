@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Notification } from "@types/index";
+import { Notification } from "@models/index";
 import { useAppSelector } from "@store/index";
 import { useNotifications } from "../hooks/useNotifications";
 import { notificationIcon } from "../utils/notificationIcon";

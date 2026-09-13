@@ -2,7 +2,7 @@ import { KeyboardEvent, useState } from "react";
 import { Checkbox, Tooltip } from "antd";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { DashboardTask } from "@types/index";
+import { DashboardTask } from "@models/index";
 import { taskService } from "@features/tasks/services/taskService";
 import { priorityColors } from "@features/tasks/utils/taskGrouping";
 import { toast } from "@lib/toast";

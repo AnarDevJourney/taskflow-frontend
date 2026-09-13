@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, Task, Project, User } from "@types/index";
+import { ApiResponse, Task, Project, User } from "@models/index";
 
 export interface SearchResults {
   tasks: Task[];

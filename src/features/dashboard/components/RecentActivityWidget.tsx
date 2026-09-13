@@ -4,7 +4,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { DashboardActivity } from "@types/index";
+import { DashboardActivity } from "@models/index";
 import {
   ACTION_CATEGORY_COLORS,
   getActionCategory,

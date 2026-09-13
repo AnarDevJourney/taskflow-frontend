@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, Project, ProjectMember, StatusConfig } from "@types/index";
+import { ApiResponse, Project, ProjectMember } from "@models/index";
 
 export interface CreateProjectDto {
   name: string;

@@ -1,6 +1,6 @@
 import type { AxiosProgressEvent } from "axios";
 import api from "@lib/axios";
-import type { ApiResponse, Attachment } from "@types/index";
+import type { ApiResponse, Attachment } from "@models/index";
 
 export interface UploadAttachmentDto {
   workspaceId: string;

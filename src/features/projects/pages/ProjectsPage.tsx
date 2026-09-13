@@ -28,7 +28,7 @@ import {
   CreateProjectDto,
   UpdateProjectDto,
 } from "../services/projectService";
-import { Project } from "@types/index";
+import { Project } from "@models/index";
 import styles from "./ProjectsPage.module.css";
 
 export default function ProjectsPage() {

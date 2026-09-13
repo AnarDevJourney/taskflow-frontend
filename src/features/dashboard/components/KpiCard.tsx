@@ -1,6 +1,6 @@
 import { memo, ReactNode } from "react";
 import { ArrowDownOutlined, ArrowUpOutlined, MinusOutlined } from "@ant-design/icons";
-import { DashboardKpi } from "@types/index";
+import { DashboardKpi } from "@models/index";
 import styles from "./KpiCard.module.css";
 
 interface Props {

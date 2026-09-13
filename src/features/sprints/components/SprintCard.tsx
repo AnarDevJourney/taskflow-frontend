@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Sprint, SprintStatus } from "@types/index";
+import { Sprint, SprintStatus } from "@models/index";
 import dayjs from "dayjs";
 import styles from "./SprintCard.module.css";
 

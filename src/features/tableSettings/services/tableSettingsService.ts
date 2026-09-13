@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse } from "@types/index";
+import { ApiResponse } from "@models/index";
 
 export interface TableColumnSetting {
   id: string;

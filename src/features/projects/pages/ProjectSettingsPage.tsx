@@ -45,7 +45,7 @@ import {
   UpdateStatusConfigItem,
 } from "../services/projectService";
 import { workspaceService } from "@features/workspaces/services/workspaceService";
-import { ProjectMember, StatusConfig } from "@types/index";
+import { ProjectMember, StatusConfig } from "@models/index";
 import styles from "./ProjectSettingsPage.module.css";
 
 const DEFAULT_STATUS_COLOR = "#4a6cf7";

@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, Workspace, WorkspaceMember, WorkspaceRole } from "@types/index";
+import { ApiResponse, Workspace, WorkspaceMember, WorkspaceRole } from "@models/index";
 
 export interface CreateWorkspaceDto {
   name: string;

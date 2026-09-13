@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal, Radio, Select, Button } from "antd";
 import { useTranslation } from "react-i18next";
-import { Sprint } from "@types/index";
+import { Sprint } from "@models/index";
 import { IncompleteTaskAction } from "../services/sprintService";
 
 interface Props {

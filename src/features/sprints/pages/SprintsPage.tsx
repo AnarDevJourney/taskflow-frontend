@@ -10,7 +10,7 @@ import { useTasks } from "@features/tasks/hooks/useTasks";
 import { taskService } from "@features/tasks/services/taskService";
 import TaskCard from "@features/tasks/components/TaskCard";
 import TaskDetailModal from "@features/tasks/components/TaskDetailModal";
-import { Sprint, SprintStatus, Task } from "@types/index";
+import { Sprint, SprintStatus } from "@models/index";
 import { useSprints } from "../hooks/useSprints";
 import {
   sprintService,

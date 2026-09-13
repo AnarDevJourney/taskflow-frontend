@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, DashboardOverview } from "@types/index";
+import { ApiResponse, DashboardOverview } from "@models/index";
 
 export const dashboardService = {
   /**

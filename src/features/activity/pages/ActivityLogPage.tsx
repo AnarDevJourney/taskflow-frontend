@@ -24,7 +24,7 @@ import SimplePagination from "@components/ui/SimplePagination";
 import ColumnsModal from "@components/ui/ColumnsModal";
 import ActivityViewModal from "../components/ActivityViewModal";
 import { useSaveTableSettings, useTableSettings } from "@features/tableSettings/hooks/useTableSettings";
-import { ActivityLog, WorkspaceMember } from "@types/index";
+import { ActivityLog, WorkspaceMember } from "@models/index";
 import {
   ACTION_CATEGORY_COLORS,
   ACTION_CATEGORY_ICONS,

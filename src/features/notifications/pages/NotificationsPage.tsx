@@ -15,7 +15,7 @@ import NotificationViewModal from "../components/NotificationViewModal";
 import SimplePagination from "@components/ui/SimplePagination";
 import ColumnsModal from "@components/ui/ColumnsModal";
 import { useSaveTableSettings, useTableSettings } from "@features/tableSettings/hooks/useTableSettings";
-import { Notification, NotificationType } from "@types/index";
+import { Notification, NotificationType } from "@models/index";
 import {
   ColumnId,
   ColumnSetting,

@@ -15,7 +15,6 @@ import {
 } from "antd";
 import { toast } from "@lib/toast";
 import {
-  UserOutlined,
   DeleteOutlined,
   EditOutlined,
   SendOutlined,
@@ -24,10 +23,9 @@ import {
 } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Task, Priority, Comment } from "@types/index";
+import { Task, Priority, Comment } from "@models/index";
 import { taskService, UpdateTaskDto } from "../services/taskService";
 import { commentService } from "@features/comments/services/commentService";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";

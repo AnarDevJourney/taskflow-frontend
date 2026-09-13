@@ -1,6 +1,6 @@
 import { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { DashboardTask } from "@types/index";
+import { DashboardTask } from "@models/index";
 import { getDueBadge } from "../utils/dueBadge";
 import WidgetCard from "./WidgetCard";
 import styles from "./UpcomingDeadlinesWidget.module.css";

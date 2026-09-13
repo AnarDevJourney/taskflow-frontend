@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { searchService } from "../services/searchService";
-import { Task, Project, User } from "@types/index";
+import { Task, Project, User } from "@models/index";
 import { useDebounce } from "@hooks/useDebounce";
 import styles from "./SearchOverlay.module.css";
 

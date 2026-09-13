@@ -1,7 +1,7 @@
 import { KeyboardEvent, memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-import { DashboardSprint, TaskStatusBucket } from "@types/index";
+import { DashboardSprint, TaskStatusBucket } from "@models/index";
 import { ResolvedTheme, statusChartColors } from "../utils/chartPalette";
 import styles from "./SprintProgressCard.module.css";
 

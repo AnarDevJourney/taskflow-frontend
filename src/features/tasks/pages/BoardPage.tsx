@@ -32,7 +32,7 @@ import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { workspaceService } from "@features/workspaces/services/workspaceService";
 import { useTasks } from "../hooks/useTasks";
 import { taskService, CreateTaskDto } from "../services/taskService";
-import { Task, PaginatedResponse, Priority } from "@types/index";
+import { Task, PaginatedResponse, Priority } from "@models/index";
 import BoardColumn from "../components/BoardColumn";
 import TaskCard from "../components/TaskCard";
 import CreateTaskModal from "../components/CreateTaskModal";

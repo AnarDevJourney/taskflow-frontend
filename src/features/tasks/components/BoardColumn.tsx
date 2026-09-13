@@ -6,7 +6,7 @@ import {
 import { Button, Tooltip } from "antd";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
-import { Task, StatusConfig } from "@types/index";
+import { Task, StatusConfig } from "@models/index";
 import TaskCard from "./TaskCard";
 import styles from "./BoardColumn.module.css";
 

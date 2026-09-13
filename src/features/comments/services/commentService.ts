@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, PaginatedResponse, Comment } from "@types/index";
+import { ApiResponse, PaginatedResponse, Comment } from "@models/index";
 
 const base = (workspaceId: string, projectId: string, taskId: string) =>
   `/workspaces/${workspaceId}/projects/${projectId}/tasks/${taskId}/comments`;

@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, User } from "@types/index";
+import { ApiResponse, User } from "@models/index";
 
 export interface LoginDto {
   email: string;

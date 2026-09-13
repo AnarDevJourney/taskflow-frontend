@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal, Checkbox, Button, Empty } from "antd";
 import { useTranslation } from "react-i18next";
-import { Task } from "@types/index";
+import { Task } from "@models/index";
 
 interface Props {
   open: boolean;

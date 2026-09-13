@@ -1,4 +1,4 @@
-import { Priority, TaskStatusBucket } from "@types/index";
+import { Priority, TaskStatusBucket } from "@models/index";
 
 /**
  * Chart colors for the dashboard.

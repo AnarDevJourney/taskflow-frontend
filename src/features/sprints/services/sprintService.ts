@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, Sprint } from "@types/index";
+import { ApiResponse, Sprint } from "@models/index";
 
 export interface CreateSprintDto {
   name: string;

@@ -32,7 +32,7 @@ import type { TFunction } from "i18next";
 import dayjs from "dayjs";
 import { Resizable, ResizeCallbackData } from "react-resizable";
 import { workspaceService, InviteMemberDto } from "../services/workspaceService";
-import { WorkspaceMember, WorkspaceRole } from "@types/index";
+import { WorkspaceMember, WorkspaceRole } from "@models/index";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { useSaveTableSettings, useTableSettings } from "@features/tableSettings/hooks/useTableSettings";
 import SimplePagination from "@components/ui/SimplePagination";

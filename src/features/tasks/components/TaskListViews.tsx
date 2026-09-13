@@ -3,7 +3,7 @@ import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
 import { Resizable, ResizeCallbackData } from "react-resizable";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { Task } from "@types/index";
+import { Task } from "@models/index";
 import {
   dueDateGroups,
   groupByDueDate,

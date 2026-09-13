@@ -2,7 +2,7 @@ import { Avatar, Drawer, Tag } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { Notification } from "@types/index";
+import { Notification } from "@models/index";
 import { notificationIcon } from "../utils/notificationIcon";
 import { renderNotificationText } from "../utils/notificationText";
 import styles from "./NotificationDetailDrawer.module.css";

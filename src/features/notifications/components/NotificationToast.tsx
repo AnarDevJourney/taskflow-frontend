@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Notification } from "@types/index";
+import { Notification } from "@models/index";
 import { notificationIcon } from "../utils/notificationIcon";
 import { renderNotificationText } from "../utils/notificationText";
 import styles from "./NotificationToast.module.css";

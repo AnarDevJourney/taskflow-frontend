@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import dayjs from "dayjs";
-import { DashboardActivityHeatmap } from "@types/index";
+import { DashboardActivityHeatmap } from "@models/index";
 import {
   HEATMAP_LEVEL_COUNT,
   heatmapLevelColors,

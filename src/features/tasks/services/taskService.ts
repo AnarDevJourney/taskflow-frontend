@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, PaginatedResponse, Task, Priority } from "@types/index";
+import { ApiResponse, PaginatedResponse, Task, Priority } from "@models/index";
 
 export interface CreateTaskDto {
   title: string;

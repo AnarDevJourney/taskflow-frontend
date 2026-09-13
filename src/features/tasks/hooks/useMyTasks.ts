@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { taskService, QueryMyTasksDto } from "../services/taskService";
-import { PaginatedResponse, Task } from "@types/index";
+import { PaginatedResponse, Task } from "@models/index";
 
 export const useMyTasks = (workspaceId: string, query: QueryMyTasksDto = {}) => {
   const { data: user } = useCurrentUser();

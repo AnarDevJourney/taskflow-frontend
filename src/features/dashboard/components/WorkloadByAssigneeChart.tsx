@@ -9,7 +9,7 @@ import {
   YAxis,
 } from "recharts";
 import { useTranslation } from "react-i18next";
-import { DashboardWorkloadEntry } from "@types/index";
+import { DashboardWorkloadEntry } from "@models/index";
 import {
   chartChromeColors,
   ResolvedTheme,
@@ -163,7 +163,8 @@ function WorkloadByAssigneeChart({
             radius={[0, 4, 4, 0]}
             // the unfilled remainder, so every bar reads against the same
             // full-width track instead of floating in space
-            background={{ fill: chrome.track, radius: [0, 4, 4, 0] }}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts' Bar `background` prop type is not usable directly with a radius tuple
+            background={{ fill: chrome.track, radius: [0, 4, 4, 0] } as any}
             animationBegin={ANIMATION_BEGIN_MS}
             animationDuration={ANIMATION_MS}
             isAnimationActive

@@ -1,5 +1,5 @@
 import { TFunction } from "i18next";
-import { Notification } from "@types/index";
+import { Notification } from "@models/index";
 
 // Translates a notification's titleKey/bodyKey + params into the current
 // UI language via `notifications.messages.<key>.title` / `.body` — mirrors

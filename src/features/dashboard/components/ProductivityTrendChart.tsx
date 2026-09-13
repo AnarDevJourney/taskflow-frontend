@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
-import { DashboardTrendPoint } from "@types/index";
+import { DashboardTrendPoint } from "@models/index";
 import {
   chartChromeColors,
   ResolvedTheme,
@@ -163,9 +163,9 @@ function ProductivityTrendChart({ data, theme }: Props) {
             animationBegin={ANIMATION_BEGIN_MS}
             animationDuration={ANIMATION_MS}
             isAnimationActive
-            label={(props: EndLabelProps) =>
-              renderEndLabel(props, lastIndex, color)
-            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts' own label-render prop type is too broad (RenderableText) to line up with our narrower EndLabelProps
+            label={((props: EndLabelProps) =>
+              renderEndLabel(props, lastIndex, color)) as any}
           />
         </LineChart>
       </ResponsiveContainer>
@@ -174,9 +174,9 @@ function ProductivityTrendChart({ data, theme }: Props) {
 }
 
 interface EndLabelProps {
-  x?: number;
-  y?: number;
-  value?: number;
+  x?: number | string;
+  y?: number | string;
+  value?: number | string | null;
   index?: number;
 }
 
@@ -190,12 +190,14 @@ function renderEndLabel(
   lastIndex: number,
   color: string,
 ) {
-  if (index !== lastIndex || x == null || y == null) return <g />;
+  const numX = typeof x === "string" ? parseFloat(x) : x;
+  const numY = typeof y === "string" ? parseFloat(y) : y;
+  if (index !== lastIndex || numX == null || numY == null) return <g />;
 
   return (
     <text
-      x={x}
-      y={y - 14}
+      x={numX}
+      y={numY - 14}
       textAnchor="middle"
       fontSize={13}
       fontWeight={700}

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Form, Input, Select, Button, Modal } from "antd";
 import { useTranslation } from "react-i18next";
-import { Priority } from "@types/index";
+import { Priority } from "@models/index";
 import { CreateTaskDto } from "../services/taskService";
 
 interface Props {

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "composite": true,
     "target": "es2023",
     "lib": ["ES2023"],
     "types": ["node"],
@@ -11,7 +12,8 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./node_modules/.tmp/tsconfig.node.out",
 
     /* Linting */
     "noUnusedLocals": true,

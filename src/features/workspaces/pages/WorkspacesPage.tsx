@@ -29,7 +29,7 @@ import {
   CreateWorkspaceDto,
   UpdateWorkspaceDto,
 } from "../services/workspaceService";
-import { Workspace } from "@types/index";
+import { Workspace } from "@models/index";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { useAppDispatch, useAppSelector } from "@store/index";
 import { setActiveWorkspace } from "@store/uiSlice";

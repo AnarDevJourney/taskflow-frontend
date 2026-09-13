@@ -10,7 +10,7 @@ import {
   TeamOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
-import { NotificationType } from "@types/index";
+import { NotificationType } from "@models/index";
 
 // icon + accent colour per notification type, shared by the bell panel and
 // the pop-up toast so the same event always looks the same

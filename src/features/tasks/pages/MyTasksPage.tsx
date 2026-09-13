@@ -17,7 +17,7 @@ import {
   useSaveTableSettings,
   useTableSettings,
 } from "@features/tableSettings/hooks/useTableSettings";
-import { Task, Priority } from "@types/index";
+import { Task, Priority } from "@models/index";
 import TaskDetailModal from "../components/TaskDetailModal";
 import TaskListView, {
   ColumnId,

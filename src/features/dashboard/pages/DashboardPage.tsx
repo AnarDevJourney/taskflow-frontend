@@ -8,7 +8,7 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { DashboardActivity, DashboardTask } from "@types/index";
+import { DashboardActivity, DashboardTask } from "@models/index";
 import { useTheme } from "@lib/theme/ThemeProvider";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { useProjects } from "@features/projects/hooks/useProjects";

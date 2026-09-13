@@ -6,7 +6,7 @@ import { receiveNotification, setUnreadCount } from "@store/notificationsSlice";
 import { useCurrentUser } from "@features/auth/hooks/useCurrentUser";
 import { useNotificationToast } from "./useNotificationToast";
 import api from "@lib/axios";
-import { Notification } from "@types/index";
+import { Notification } from "@models/index";
 
 // server → client events, mirrored from notifications.constants.ts
 const EVENT_NEW = "notification:new";

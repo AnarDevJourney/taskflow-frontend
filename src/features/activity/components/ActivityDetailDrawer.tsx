@@ -3,7 +3,7 @@ import { RightOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import dayjs from "dayjs";
-import { ActivityLog, WorkspaceMember } from "@types/index";
+import { ActivityLog, WorkspaceMember } from "@models/index";
 import {
   ACTION_CATEGORY_COLORS,
   ACTION_CATEGORY_ICONS,

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { dashboardService } from "../services/dashboardService";
-import { DashboardOverview } from "@types/index";
+import { DashboardOverview } from "@models/index";
 
 /**
  * The dashboard's only data source — one query, one request, every widget.

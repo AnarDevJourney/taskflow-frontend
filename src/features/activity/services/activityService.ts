@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, PaginatedResponse, ActivityLog } from "@types/index";
+import { ApiResponse, PaginatedResponse, ActivityLog } from "@models/index";
 
 export interface QueryWorkspaceActivityDto {
   page?: number;

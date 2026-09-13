@@ -1,5 +1,5 @@
 import api from "@lib/axios";
-import { ApiResponse, PaginatedResponse, Notification } from "@types/index";
+import { ApiResponse, PaginatedResponse, Notification } from "@models/index";
 
 export interface QueryNotificationsDto {
   page?: number;

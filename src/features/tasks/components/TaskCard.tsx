@@ -4,9 +4,8 @@ import { Avatar, Checkbox, Tag, Tooltip } from "antd";
 import {
   UserOutlined,
   CalendarOutlined,
-  MessageOutlined,
 } from "@ant-design/icons";
-import { Task, Priority } from "@types/index";
+import { Task, Priority } from "@models/index";
 import dayjs from "dayjs";
 import styles from "./TaskCard.module.css";
 
